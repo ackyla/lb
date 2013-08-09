@@ -4,15 +4,22 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements LocationListener{
 	LocationManager mLocationManager;
+	double mLatitude;
+	double mLongitude;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +34,20 @@ public class MainActivity extends Activity implements LocationListener{
 		mLocationManager.requestLocationUpdates(provider, 0, 0, this);
 		TextView tv = (TextView) findViewById(R.id.textView2);
 		tv.setText(provider);
+		
+		Button bt = (Button)findViewById(R.id.button1);
+		bt.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent();
+				i.setAction(Intent.ACTION_VIEW);
+				i.setClassName("com.google.android.apps.maps", "com.google.android.maps.driveabout.app.NavigationActivity");
+
+				Uri uri = Uri.parse("google.navigation:///?ll="+mLatitude+","+mLongitude);
+				i.setData(uri);
+				startActivity(i);
+			}			
+		});
 	}
 
 	@Override
@@ -39,13 +60,14 @@ public class MainActivity extends Activity implements LocationListener{
 	@Override
 	public void onLocationChanged(Location location) {
 		TextView tv = (TextView) findViewById(R.id.text_view_01);
-        tv.setText("Latitude:"+location.getLatitude() + ", Longitude:"+location.getLongitude());
+		mLatitude = location.getLatitude();
+		mLongitude = location.getLongitude();
+        tv.setText("("+location.getLatitude() + ","+location.getLongitude()+")");
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
