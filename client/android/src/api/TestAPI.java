@@ -1,5 +1,4 @@
 package api;
-import api.API;
 
 public class TestAPI {
 
@@ -9,7 +8,8 @@ public class TestAPI {
 	public static void main(String[] args) {
 		System.out.println("test");
 		api.API client = new api.API("phelrine");
-		System.out.println("test");
+		System.out.println(client.getUserId());
+		System.out.println(client.getToken());
 	}
 
 }

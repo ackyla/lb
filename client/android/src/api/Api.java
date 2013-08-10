@@ -1,8 +1,10 @@
 package api;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -10,6 +12,10 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class API {
 	int userId;
@@ -19,7 +25,9 @@ public class API {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("name", name);
 		try {
-			InputStream stream = post("users/create", params);
+			JSONObject obj = post("users/create", params);
+			this.userId = obj.getInt("id");
+			this.token = obj.getString("token");
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -29,9 +37,10 @@ public class API {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		// this.token = ret.token;
 	}
 	
 	public API(int userId, String token) {
@@ -39,9 +48,37 @@ public class API {
 		this.token = token;
 	}
 	
-	public InputStream post(String path, Map<String, String> params) 
-			throws MalformedURLException, ProtocolException, IOException{
-		URL url = new URL("http://localhost:3000/" + path);
+	public int getUserId() {
+		return this.userId;
+	}
+	
+	public String getToken() {
+		return this.token;
+	}
+	
+	public JSONObject convertStreamToJson(InputStream is) throws JSONException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		StringBuilder sb = new StringBuilder();
+		String line = null;
+		try {
+		    while ((line = reader.readLine()) != null) {
+		        sb.append(line + "\n");
+		    }
+		} catch (IOException e) {
+		    e.printStackTrace();
+		} finally {
+		    try {
+		        is.close();
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    }
+		}
+		return new JSONObject(sb.toString());
+	}
+	
+	public JSONObject post(String path, Map<String, String> params) 
+			throws MalformedURLException, ProtocolException, IOException, JSONException{
+		URL url = new URL("http://localhost:3000/" + path + ".json");
 		HttpURLConnection http;
 		http = (HttpURLConnection) url.openConnection();
 		http.setRequestMethod("POST");
@@ -57,17 +94,16 @@ public class API {
 		    i++;
 		    os.flush();
 			os.close();
-		}		
-		return new BufferedInputStream(http.getInputStream());
+		}
+		return convertStreamToJson(new BufferedInputStream(http.getInputStream()));
 	}
 	
-	public InputStream get(String path, Map<String, String> params) 
-			throws MalformedURLException, ProtocolException, IOException {
+	public JSONObject get(String path, Map<String, String> params) 
+			throws MalformedURLException, ProtocolException, IOException, JSONException {
 		URL url = new URL("http://localhost:3000/" + path);
 		HttpURLConnection http;
 		http = (HttpURLConnection) url.openConnection();
 		http.setRequestMethod("GET");
-		BufferedInputStream stream = new BufferedInputStream(http.getInputStream());
-		return stream;
+		return convertStreamToJson(new BufferedInputStream(http.getInputStream()));
 	}
 }

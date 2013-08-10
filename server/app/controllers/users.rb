@@ -25,9 +25,10 @@ Server::App.controllers :users do
   end
 
 
-  post :create do
+  post :create, :provides => :json do
     @user = User.create(:name => params[:name])
-    p @user
+    content_type :json
+    @user.to_json
   end
 
 end
