@@ -6,9 +6,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -16,7 +18,12 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements LocationListener{
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+
+public class MainActivity extends FragmentActivity implements LocationListener{
+	
+	GoogleMap mMap;
 	LocationManager mLocationManager;
 	double mLatitude;
 	double mLongitude;
@@ -48,6 +55,17 @@ public class MainActivity extends Activity implements LocationListener{
 				startActivity(i);
 			}			
 		});
+	
+		SupportMapFragment mapFragment = SupportMapFragment.newInstance(); 
+		//map = ((SupportMapFragment)getSupportFragmentManager().).getMap();
+		//mMap = ((SupportMapFragment) map01).getMap();
+		
+		Fragment map01 = new MapFragment();
+		Fragment map02 = new MapFragment();
+    	FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+		fragmentTransaction.replace(R.id.map01, map01);
+		fragmentTransaction.replace(R.id.map02, map02);
+		fragmentTransaction.commit();
 	}
 
 	@Override
