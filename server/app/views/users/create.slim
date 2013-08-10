@@ -1,0 +1,8 @@
+doctype html
+html
+  head
+    title aa
+  body
+    - form_for @user, :create do |f|
+      = f.text_field_block :name, :value => "hoge"
+      = f.submit_block "submit"
