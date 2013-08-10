@@ -2,7 +2,6 @@
 <resources>
     <string name="init_table">
 		create table user(
-			id		integer primary key,
 			name	varchar(255),
 			user_id	integer not null,
 			token 	varchar(32)

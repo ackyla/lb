@@ -1,7 +1,7 @@
 package com.example.lb;
 
-import logic.db.InitLogic;
-import logic.user.SignupLogic;
+import logic.db.DBLogic;
+import logic.user.UserLogic;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -118,11 +118,20 @@ public class MainActivity extends FragmentActivity implements LocationListener{
     		fragmentTransaction.add(R.id.map02, mapFragment02, "map02");
 			fragmentTransaction.commit();
 		}
-		
-		SignupLogic logic = new SignupLogic(this);
-		logic.register("hoge");
 	}
 
+	@Override
+	public void onStart(){
+		super.onStart();
+		
+		UserLogic userLogic = new UserLogic(this);
+		if(!userLogic.checkRegister()){
+			Intent intent = new Intent();
+			intent.setClass(this, SignupActivity.class);
+			startActivity(intent);
+		}
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

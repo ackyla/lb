@@ -78,7 +78,7 @@ public class API {
 	
 	public JSONObject post(String path, Map<String, String> params) 
 			throws MalformedURLException, ProtocolException, IOException, JSONException{
-		URL url = new URL("http://localhost:3000/" + path + ".json");
+		URL url = new URL("http://ackyla.com:3000/" + path + ".json");
 		HttpURLConnection http;
 		http = (HttpURLConnection) url.openConnection();
 		http.setRequestMethod("POST");
