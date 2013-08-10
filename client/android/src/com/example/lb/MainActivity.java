@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
@@ -18,15 +19,24 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.lb.R;
+import com.example.lb.R.id;
+import com.example.lb.R.layout;
+import com.example.lb.R.menu;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class MainActivity extends FragmentActivity implements LocationListener{
 	
-	GoogleMap mMap;
 	LocationManager mLocationManager;
 	double mLatitude;
 	double mLongitude;
+	GoogleMap gMap;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +45,7 @@ public class MainActivity extends FragmentActivity implements LocationListener{
 		
 		mLocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		Criteria criteria = new Criteria();
-		criteria.setAccuracy(Criteria.ACCURACY_FINE); // 低精度
+		criteria.setAccuracy(Criteria.ACCURACY_COARSE); // 低精度
 		criteria.setPowerRequirement(Criteria.POWER_LOW); // 低消費電力
 		String provider = mLocationManager.getBestProvider(criteria, true);
 		mLocationManager.requestLocationUpdates(provider, 0, 0, this);
@@ -46,28 +56,66 @@ public class MainActivity extends FragmentActivity implements LocationListener{
 		bt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				Intent i = new Intent();
-				i.setAction(Intent.ACTION_VIEW);
-				i.setClassName("com.google.android.apps.maps", "com.google.android.maps.driveabout.app.NavigationActivity");
-
-				Uri uri = Uri.parse("google.navigation:///?ll="+mLatitude+","+mLongitude);
-				i.setData(uri);
-				startActivity(i);
+				FragmentManager manager = getSupportFragmentManager();
+				SupportMapFragment mapFragment01 = (SupportMapFragment)manager.findFragmentByTag("map01");
+				gMap = mapFragment01.getMap();
+				
+				double[] latArray = {mLatitude, mLatitude-0.5, mLatitude-1.0, mLatitude};
+				double[] lonArray = {mLongitude, mLongitude, mLongitude-1.0, mLongitude+2.2};
+				
+				LatLng pos = new LatLng(mLatitude, mLongitude);
+				
+				CameraPosition cameraPos = new CameraPosition.Builder()
+					.target(pos).zoom(15.5f)
+					.bearing(0).tilt(25).build();
+				gMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPos));
+				
+				MarkerOptions options = new MarkerOptions();
+				PolylineOptions pOptions = new PolylineOptions();
+				pOptions.color(0xcc00ffff);
+				pOptions.width(10);
+				pOptions.geodesic(true); // 測地線で表示
+				
+				
+				for(int i = 0; i < latArray.length; i++){
+					pos = new LatLng(latArray[i], lonArray[i]);
+					options.position(pos);
+					options.title("なう");
+					pOptions.add(pos);
+					gMap.addMarker(options);
+				}
+				
+				gMap.addPolyline(pOptions);
+				
+				SupportMapFragment mapFragment02 = (SupportMapFragment)manager.findFragmentByTag("map02");
+				gMap = mapFragment02.getMap();
+				
+				pos = new LatLng(-33.87365, 151.20689);
+				options = new MarkerOptions();
+				options.position(pos);
+				options.title("みっしょん");
+				gMap.addMarker(options);
+				
+				cameraPos = new CameraPosition.Builder()
+					.target(pos).zoom(15.5f)
+					.bearing(0).tilt(25).build();
+				gMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPos));
 			}			
 		});
-	
-		SupportMapFragment mapFragment = SupportMapFragment.newInstance(); 
-		//map = ((SupportMapFragment)getSupportFragmentManager().).getMap();
-		//mMap = ((SupportMapFragment) map01).getMap();
-		//getSupportFragmentManager().beginTransaction().add(android.R.id.content, mMapFragment, TAG_MAP_FRAGMENT)
-        //.commit();
+
+		FragmentManager manager = getSupportFragmentManager();
+		SupportMapFragment mapFragment01 = (SupportMapFragment)manager.findFragmentByTag("map01");
+		SupportMapFragment mapFragment02 = (SupportMapFragment)manager.findFragmentByTag("map02");
 		
-		Fragment map01 = new MapFragment();
-		Fragment map02 = new MapFragment();
-    	FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-		fragmentTransaction.replace(R.id.map01, map01);
-		fragmentTransaction.replace(R.id.map02, map02);
-		fragmentTransaction.commit();
+		if(mapFragment01 == null){
+			mapFragment01 = SupportMapFragment.newInstance();
+			mapFragment02 = SupportMapFragment.newInstance();
+			
+    		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+    		fragmentTransaction.add(R.id.map01, mapFragment01, "map01");
+    		fragmentTransaction.add(R.id.map02, mapFragment02, "map02");
+			fragmentTransaction.commit();
+		}		
 	}
 
 	@Override
@@ -82,7 +130,7 @@ public class MainActivity extends FragmentActivity implements LocationListener{
 		TextView tv = (TextView) findViewById(R.id.text_view_01);
 		mLatitude = location.getLatitude();
 		mLongitude = location.getLongitude();
-        tv.setText("("+location.getLatitude() + ","+location.getLongitude()+")");
+        tv.setText("("+location.getLatitude() + ","+location.getLongitude()+")");        
 	}
 
 	@Override
