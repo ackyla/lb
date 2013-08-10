@@ -1,5 +1,9 @@
 package logic.user;
 
+import java.util.List;
+
+import dao.user.UserDAO;
+import dao.user.UserEntity;
 import logic.base.LogicBase;
 import logic.db.DBLogic;
 
@@ -12,8 +16,13 @@ import api.API;
 
 public class UserLogic extends LogicBase {
 	
+	private static SQLiteDatabase db;
+	
 	public UserLogic(Context context) {
 		super(context);
+		
+		DBLogic dbLogic = new DBLogic(super.context);
+		this.db = dbLogic.connect();
 	}
 	
 	/**
@@ -21,21 +30,12 @@ public class UserLogic extends LogicBase {
 	 * @return boolean
 	 */
 	public boolean checkRegister() {
-		DBLogic dbLogic = new DBLogic(super.context);
-		SQLiteDatabase db = dbLogic.connect();
-		
-		Cursor cursor = null;
-        try{
-        	cursor = db.query( "user", null, null, null, null, null, null );
-        	if(cursor.getCount() == 1){
-        		return true;
-        	}
-        }finally{
-        	if( cursor != null ){
-        		cursor.close();
-            }
-        }
-
+		UserDAO userDAO = this.getDAO();
+		List<UserEntity> userList = userDAO.get();
+		Log.v("main", "userList="+userList);
+		if(userList.size() == 1){
+			return true;
+		}
 		return false;
 	}
 	
@@ -45,22 +45,27 @@ public class UserLogic extends LogicBase {
 	 * @return boolean
 	 */
 	public boolean register(String name) {
-		API api = new API(name);
+		//API api = new API(name);
 
-		int userId = api.getUserId();
-		String token = api.getToken();
+		int userId = 1;//api.getUserId();
+		String token = "hoge";//api.getToken();
     
-		DBLogic logic = new DBLogic(super.context);
-		SQLiteDatabase db = logic.connect();
-
-        ContentValues val = new ContentValues();
-        val.put("name", name);
-        val.put("user_id", userId);
-        val.put("token", token);
-        
-        if(db.insert("user", null, val) > 0){
-        	return true;
-        }
-        return false;
+		UserDAO userDAO = this.getDAO();
+		UserEntity userEntity = new UserEntity();
+		userEntity.setName(name);
+		userEntity.setUserId(userId);
+		userEntity.setToken(token);
+		
+		try	{
+			userDAO.insert(userEntity);
+		} catch(Exception e){
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private UserDAO getDAO() {
+		return new UserDAO(this.db);
 	}
 }
