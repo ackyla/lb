@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="10"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="18" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -28,7 +28,7 @@
         android:theme="@style/AppTheme" >
         <meta-data
     		android:name="com.google.android.maps.v2.API_KEY"
-    		android:value="Insert API Key"/>
+    		android:value="@string/google_map_api_key"/>
         <activity
             android:name="com.example.lb.MainActivity"
             android:label="@string/app_name" >

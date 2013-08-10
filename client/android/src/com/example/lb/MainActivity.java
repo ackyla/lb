@@ -59,6 +59,8 @@ public class MainActivity extends FragmentActivity implements LocationListener{
 		SupportMapFragment mapFragment = SupportMapFragment.newInstance(); 
 		//map = ((SupportMapFragment)getSupportFragmentManager().).getMap();
 		//mMap = ((SupportMapFragment) map01).getMap();
+		//getSupportFragmentManager().beginTransaction().add(android.R.id.content, mMapFragment, TAG_MAP_FRAGMENT)
+        //.commit();
 		
 		Fragment map01 = new MapFragment();
 		Fragment map02 = new MapFragment();
