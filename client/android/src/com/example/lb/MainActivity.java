@@ -1,5 +1,7 @@
 package com.example.lb;
 
+import logic.db.InitLogic;
+import logic.user.SignupLogic;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -115,7 +117,10 @@ public class MainActivity extends FragmentActivity implements LocationListener{
     		fragmentTransaction.add(R.id.map01, mapFragment01, "map01");
     		fragmentTransaction.add(R.id.map02, mapFragment02, "map02");
 			fragmentTransaction.commit();
-		}		
+		}
+		
+		SignupLogic logic = new SignupLogic(this);
+		logic.register("hoge");
 	}
 
 	@Override

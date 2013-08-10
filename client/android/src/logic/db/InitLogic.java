@@ -7,15 +7,18 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class InitLogic extends LogicBase{
 	
+	private DBHelper helper;
+	
+	private static final String DB_NAME = "lb.db";
+	private static final int DB_VERSION = 1;
+	
 	public InitLogic(Context context) {
 		super(context);
+		
+		helper = new DBHelper(context, DB_NAME, null, DB_VERSION);
 	}
-
-	public SQLiteDatabase create() {
-		
-		SQLiteDatabase db;
-		db = super.context.openOrCreateDatabase("db01_01", 1, null);
-		
-		return db;
+	
+	public SQLiteDatabase open() {
+		return helper.getWritableDatabase();
 	}
 }
