@@ -102,4 +102,9 @@ public class MainActivity extends FragmentActivity implements LocationListener{
 		
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		mLocationManager.removeUpdates(this);
+	}
 }
