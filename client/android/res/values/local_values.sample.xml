@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- このファイルをコピーしてlocal_values.xmlにして使って下さい -->
 <resources>
-    <!-- string name="google_map_api_key">API KEY</string -->
+    <string name="google_map_api_key">AIzaSyDeN0rCtUh2L1gfY2AzigM8O6xhJvkyivE</string>
 </resources>
