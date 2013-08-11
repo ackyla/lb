@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -30,10 +31,17 @@ public class MainActivity extends FragmentActivity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+	
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent = new Intent();
+		intent.setClass(this, SignupActivity.class);
+		startActivity(intent);
+		return true;
+    }
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +57,6 @@ public class MainActivity extends FragmentActivity {
 			}
 			
 		});
-		locationLogic.start();
 		
 		/*Button bt = (Button)findViewById(R.id.button1);
 		bt.setOnClickListener(new OnClickListener(){
@@ -128,6 +135,8 @@ public class MainActivity extends FragmentActivity {
 			intent.setClass(this, SignupActivity.class);
 			startActivity(intent);
 		}
+		
+		locationLogic.start();
 	}
 
 	@Override
