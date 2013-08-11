@@ -16,7 +16,7 @@ import api.API;
 
 public class UserLogic extends LogicBase {
 	
-	private static SQLiteDatabase db;
+	private SQLiteDatabase db;
 	
 	public UserLogic(Context context) {
 		super(context);
@@ -32,7 +32,7 @@ public class UserLogic extends LogicBase {
 	public boolean checkRegister() {
 		UserDAO userDAO = this.getDAO();
 		List<UserEntity> userList = userDAO.get();
-		Log.v("main", "userList="+userList);
+		Log.v("main", "userList="+userList.get(0).getName());
 		if(userList.size() == 1){
 			return true;
 		}
@@ -45,6 +45,7 @@ public class UserLogic extends LogicBase {
 	 * @return boolean
 	 */
 	public boolean register(String name) {
+		// TODO 通信
 		//API api = new API(name);
 
 		int userId = 1;//api.getUserId();
@@ -62,6 +63,51 @@ public class UserLogic extends LogicBase {
 			return false;
 		}
 		
+		return true;
+	}
+	
+	/**
+	 * 名前変更
+	 * @param name
+	 * @return
+	 */
+	public boolean rename(String name) {
+		
+		// TODO 通信
+		
+		UserDAO userDAO = this.getDAO();
+		
+		try	{
+			List<UserEntity> userList = userDAO.get();
+			if(userList.size() == 1) {
+				UserEntity userEntity = userList.get(0);
+				userEntity.setName(name);
+				userDAO.update(userEntity);
+			}else{
+				return false;
+			}
+		} catch(Exception e) {
+			return false;
+		}
+
+		return true;
+	}
+	
+	/**
+	 * ユーザを削除する
+	 * @return boolean
+	 */
+	public boolean delete() {
+		
+		// TODO 通信
+		
+		UserDAO userDAO = this.getDAO();
+		
+		try	{
+			userDAO.delete();
+		} catch(Exception e){
+			return false;
+		}
 		return true;
 	}
 	

@@ -125,6 +125,7 @@ public class MainActivity extends FragmentActivity implements LocationListener{
 		super.onStart();
 		
 		UserLogic userLogic = new UserLogic(this);
+		
 		if(!userLogic.checkRegister()){
 			Intent intent = new Intent();
 			intent.setClass(this, SignupActivity.class);
