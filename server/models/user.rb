@@ -6,5 +6,6 @@ class User < ActiveRecord::Base
     self.token = token
   end
 
+  belongs_to :room
   before_create :generate_token
 end
