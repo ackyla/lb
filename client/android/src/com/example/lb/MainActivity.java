@@ -1,9 +1,9 @@
 package com.example.lb;
 
-import android.location.Criteria;
+import logic.db.DBLogic;
+import logic.location.LocationLogic;
+import logic.user.UserLogic;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.Context;
@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -19,40 +20,38 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.lb.R;
 import com.example.lb.R.id;
-import com.example.lb.R.layout;
-import com.example.lb.R.menu;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.location.LocationListener;
 
-public class MainActivity extends FragmentActivity implements LocationListener{
+public class MainActivity extends FragmentActivity {
 	
-	LocationManager mLocationManager;
-	double mLatitude;
-	double mLongitude;
-	GoogleMap gMap;
+	//GoogleMap gMap;
+	private LocationLogic locationLogic;
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		mLocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-		Criteria criteria = new Criteria();
-		criteria.setAccuracy(Criteria.ACCURACY_COARSE); // 低精度
-		criteria.setPowerRequirement(Criteria.POWER_LOW); // 低消費電力
-		String provider = mLocationManager.getBestProvider(criteria, true);
-		mLocationManager.requestLocationUpdates(provider, 0, 0, this);
-		TextView tv = (TextView) findViewById(R.id.textView2);
-		tv.setText(provider);
+		locationLogic = new LocationLogic(this);
+		locationLogic.setLocationListener(new LocationListener() {
+
+			@Override
+			public void onLocationChanged(Location location) {
+				locationLogic.post(location);
+			}
+			
+		});
+		locationLogic.start();
 		
-		Button bt = (Button)findViewById(R.id.button1);
+		/*Button bt = (Button)findViewById(R.id.button1);
 		bt.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -115,44 +114,25 @@ public class MainActivity extends FragmentActivity implements LocationListener{
     		fragmentTransaction.add(R.id.map01, mapFragment01, "map01");
     		fragmentTransaction.add(R.id.map02, mapFragment02, "map02");
 			fragmentTransaction.commit();
-		}		
+		}*/
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-		TextView tv = (TextView) findViewById(R.id.text_view_01);
-		mLatitude = location.getLatitude();
-		mLongitude = location.getLongitude();
-        tv.setText("("+location.getLatitude() + ","+location.getLongitude()+")");        
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
+	public void onStart(){
+		super.onStart();
 		
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
+		UserLogic userLogic = new UserLogic(this);
 		
+		if(!userLogic.checkRegister()){
+			Intent intent = new Intent();
+			intent.setClass(this, SignupActivity.class);
+			startActivity(intent);
+		}
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		mLocationManager.removeUpdates(this);
+		locationLogic.stop();
 	}
 }
