@@ -16,6 +16,8 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 
 public class API {
 	int userId;
@@ -105,5 +107,9 @@ public class API {
 		http = (HttpURLConnection) url.openConnection();
 		http.setRequestMethod("GET");
 		return convertStreamToJson(new BufferedInputStream(http.getInputStream()));
+	}
+	
+	public void postLocation(long time, double latitude, double longitude) {
+		Log.v("api", "time="+time+", lat="+latitude+", lon="+longitude);
 	}
 }

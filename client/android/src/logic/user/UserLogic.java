@@ -26,14 +26,30 @@ public class UserLogic extends LogicBase {
 	}
 	
 	/**
+	 * ユーザを取得する
+	 * @return UserEntity
+	 */
+	public UserEntity getUser() {
+		UserDAO userDAO = this.getDAO();
+		try	{
+			List<UserEntity> userList = userDAO.get();
+			if(userList.size() == 1) {
+				UserEntity userEntity = userList.get(0);
+				return userEntity;
+			}else{
+				return null;
+			}
+		} catch(Exception e) {
+			return null;
+		}
+	}
+	
+	/**
 	 * ユーザ登録しているかチェックする
 	 * @return boolean
 	 */
 	public boolean checkRegister() {
-		UserDAO userDAO = this.getDAO();
-		List<UserEntity> userList = userDAO.get();
-		Log.v("main", "userList="+userList.get(0).getName());
-		if(userList.size() == 1){
+		if(getUser() != null){
 			return true;
 		}
 		return false;
@@ -76,16 +92,15 @@ public class UserLogic extends LogicBase {
 		// TODO 通信
 		
 		UserDAO userDAO = this.getDAO();
+		UserEntity userEntity = getUser();
+		
+		if(userEntity == null){
+			return false;
+		}
 		
 		try	{
-			List<UserEntity> userList = userDAO.get();
-			if(userList.size() == 1) {
-				UserEntity userEntity = userList.get(0);
-				userEntity.setName(name);
-				userDAO.update(userEntity);
-			}else{
-				return false;
-			}
+			userEntity.setName(name);
+			userDAO.update(userEntity);
 		} catch(Exception e) {
 			return false;
 		}
