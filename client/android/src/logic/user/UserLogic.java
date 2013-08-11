@@ -2,6 +2,11 @@ package logic.user;
 
 import java.util.List;
 
+import org.json.JSONObject;
+
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
 import dao.user.UserDAO;
 import dao.user.UserEntity;
 import logic.base.LogicBase;
@@ -61,23 +66,22 @@ public class UserLogic extends LogicBase {
 	 * @return boolean
 	 */
 	public boolean register(String name) {
-		// TODO 通信
-		//API api = new API(name);
-
-		int userId = 1;//api.getUserId();
-		String token = "hoge";//api.getToken();
-    
-		UserDAO userDAO = this.getDAO();
-		UserEntity userEntity = new UserEntity();
+		final UserDAO userDAO = getDAO();
+		final UserEntity userEntity = new UserEntity();
 		userEntity.setName(name);
-		userEntity.setUserId(userId);
-		userEntity.setToken(token);
 		
-		try	{
-			userDAO.insert(userEntity);
-		} catch(Exception e){
-			return false;
-		}
+		API.register(name, new JsonHttpResponseHandler() {
+			@Override
+			public void onSuccess(JSONObject json) {
+				try	{
+					userEntity.setUserId(json.getInt("id"));
+					userEntity.setToken(json.getString("token"));
+					userDAO.insert(userEntity);
+				} catch(Exception e){
+					
+				}
+			}
+		});
 		
 		return true;
 	}

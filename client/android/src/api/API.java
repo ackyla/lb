@@ -1,8 +1,12 @@
 package api;
 
+import android.location.Location;
+
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
+import dao.user.UserEntity;
 
 public class API {
 	private static final String URL = "http://localhost:3000/";
@@ -20,5 +24,19 @@ public class API {
 
 	private static String getAbsoluteUrl(String relativeUrl) {
 		return URL + relativeUrl;
+	}
+	
+	public static void register(String name, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		params.put("name", name);
+		post("users/create", params, handler);
+	}
+	
+	public static void postLocation(UserEntity user, Location loc, AsyncHttpResponseHandler handler) {
+		// RequestParams params = null;
+		loc.getTime();
+		loc.getLatitude();
+		loc.getLongitude();
+		// post("", params, handler);
 	}
 }

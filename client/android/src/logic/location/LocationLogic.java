@@ -84,9 +84,7 @@ public class LocationLogic extends LogicBase {
 		if(userEntity == null){
 			return;
 		}
-		
-		API api = new API(userEntity.getUserId(), userEntity.getToken());
-		
-		api.postLocation(location.getTime(), location.getLatitude(), location.getLongitude());
+
+		API.postLocation(userEntity, location, null);
 	}
 }
