@@ -8,6 +8,7 @@ import logic.base.LogicBase;
 import logic.db.DBLogic;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class UserLogic extends LogicBase {
 	
@@ -108,6 +109,25 @@ public class UserLogic extends LogicBase {
 		} catch(Exception e){
 			return false;
 		}
+		return true;
+	}
+	
+	/**
+	 * 入室状況をクライアント側に保存する
+	 * @param roomId
+	 * @return boolean
+	 */
+	public boolean enterRoom(UserEntity userEntity, int roomId) {
+		Log.v("room", ""+userEntity.getName()+", "+roomId);
+		UserDAO userDAO = this.getDAO();
+
+		try {
+			userEntity.setRoomId(roomId);
+			userDAO.update(userEntity);
+		} catch(Exception e){
+			return false;
+		}
+		
 		return true;
 	}
 	

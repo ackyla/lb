@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 public class HomeFragment extends Fragment {
 	
+	private UserEntity userEntity;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -20,12 +22,15 @@ public class HomeFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	View v = inflater.inflate(R.layout.fragment_home, container, false);
     	
-    	TextView tv = (TextView)v.findViewById(R.id.textView1);
+    	TextView tv1 = (TextView)v.findViewById(R.id.textView1);
+    	TextView tv2 = (TextView)v.findViewById(R.id.textView2);
+    	
     	UserLogic userLogic = new UserLogic(getActivity());
-    	UserEntity userEntity = userLogic.getUser();
+    	userEntity = userLogic.getUser();
     	
     	if(userEntity != null){
-    		tv.setText(userEntity.getName());
+    		tv1.setText(userEntity.getName());
+    		tv2.setText("部屋ID:"+userEntity.getRoomId()+" に入室中．");
     	}
     	
     	return v;

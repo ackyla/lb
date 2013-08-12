@@ -10,17 +10,23 @@
         android:layout_height="wrap_content"
         android:ems="10" >
     </EditText>
-XS
+    
     <Button
         android:id="@+id/buttonCreate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ルーム作成" />
 
-    <LinearLayout
-        android:id="@+id/roomList"
+    <ScrollView        
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-    </LinearLayout>
+        android:layout_height="match_parent" >
+        <LinearLayout
+            android:id="@+id/roomList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+            
+        </LinearLayout>
+    </ScrollView>
+
 </LinearLayout>

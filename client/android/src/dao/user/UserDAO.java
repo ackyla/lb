@@ -12,7 +12,8 @@ public class UserDAO {
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_USER_ID = "user_id";
     private static final String COLUMN_TOKEN = "token";
-    private static final String[] COLUMNS = {COLUMN_NAME, COLUMN_USER_ID, COLUMN_TOKEN};
+    private static final String COLUMN_ROOM_ID = "room_id";
+    private static final String[] COLUMNS = {COLUMN_NAME, COLUMN_USER_ID, COLUMN_TOKEN, COLUMN_ROOM_ID};
 
     private SQLiteDatabase db;
 
@@ -44,6 +45,7 @@ public class UserDAO {
                     entity.setName(cursor.getString(0));
                     entity.setUserId(cursor.getInt(1));
                     entity.setToken(cursor.getString(2));
+                    entity.setRoomId(cursor.getInt(3));
                     entityList.add(entity);
             }
 
@@ -60,6 +62,7 @@ public class UserDAO {
             values.put(COLUMN_NAME, entity.getName());
             values.put(COLUMN_USER_ID, entity.getUserId());
             values.put(COLUMN_TOKEN, entity.getToken());
+            values.put(COLUMN_ROOM_ID, entity.getRoomId());
             return db.insert(TABLE_NAME, null, values);
     }
 
@@ -74,6 +77,7 @@ public class UserDAO {
             values.put(COLUMN_NAME, entity.getName());
             values.put(COLUMN_USER_ID, entity.getUserId());
             values.put(COLUMN_TOKEN, entity.getToken());
+            values.put(COLUMN_ROOM_ID, entity.getRoomId());
             //String whereClause = COLUMN_ID + "=" + entity.getRowId();
             return db.update(TABLE_NAME, values, null, null);
     }

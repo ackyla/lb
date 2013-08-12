@@ -29,6 +29,35 @@ import api.API;
 public class RoomFragment extends Fragment {
 	
 	private UserEntity userEntity;
+	private UserLogic userLogic;
+	
+	private void enterRoom(int roomId) {
+		API.enterRoom(userEntity, roomId, new JsonHttpResponseHandler(){
+			@Override
+			public void onSuccess(JSONObject json) {
+				RoomEntity roomEntity = new RoomEntity(json);
+				roomEntity.getId();
+				userLogic.enterRoom(userEntity, roomEntity.getId());
+			}
+		});
+	}
+	
+	private void addRoom(LinearLayout roomList, JSONObject json) {
+		final RoomEntity roomEntity = new RoomEntity(json);
+		View v = getActivity().getLayoutInflater().inflate(R.layout.layout_room, null);
+		TextView textView = (TextView)v.findViewById(R.id.textView1);
+		textView.setText(roomEntity.getId() + ": " + roomEntity.getTitle());
+		Button button = (Button)v.findViewById(R.id.button1);
+		button.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				enterRoom(roomEntity.getId());
+			}
+			
+		});
+		roomList.addView(v);
+	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -39,9 +68,9 @@ public class RoomFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	View v = inflater.inflate(R.layout.fragment_room, container, false);
     	
-       	UserLogic userLogic = new UserLogic(getActivity());
+       	userLogic = new UserLogic(getActivity());
     	userEntity = userLogic.getUser();
-    	final LinearLayout linearLayout = (LinearLayout)v.findViewById(R.id.roomList);
+    	final LinearLayout roomList = (LinearLayout)v.findViewById(R.id.roomList);
     	
     	API.getRoomList(userEntity, new JsonHttpResponseHandler() {
     		
@@ -50,10 +79,7 @@ public class RoomFragment extends Fragment {
     			for(int i = 0; i < jsonArray.length(); i++){
     				try {
 						JSONObject json = jsonArray.getJSONObject(i);
-						RoomEntity roomEntity = new RoomEntity(json);
-						TextView textView = new TextView(getActivity());
-						textView.setText(roomEntity.getId()+": "+roomEntity.getTitle());
-						linearLayout.addView(textView);
+						addRoom(roomList, json);
 					} catch (JSONException e) {
 					}
     			}
@@ -86,10 +112,7 @@ public class RoomFragment extends Fragment {
 					
 					@Override
 					public void onSuccess(JSONObject json) {
-						RoomEntity roomEntity = new RoomEntity(json);
-						TextView textView = new TextView(getActivity());
-						textView.setText(roomEntity.getId()+": "+roomEntity.getTitle());
-						linearLayout.addView(textView);
+						addRoom(roomList, json);
 						progress.dismiss();
 						Toast.makeText(getActivity(), "新しい部屋を作成しました！", Toast.LENGTH_SHORT).show();
 					}

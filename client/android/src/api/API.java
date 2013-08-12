@@ -56,7 +56,7 @@ public class API {
 	public static void enterRoom(UserEntity user, int roomId, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("user_id", Integer.toString(user.getUserId()));
-		params.put("token_id", user.getToken());
+		params.put("token", user.getToken());
 		params.put("room_id", Integer.toString(roomId));
 		post("rooms/enter", params, handler);
 	}

@@ -7,4 +7,7 @@
 			token 	varchar(32)
 		);
     </string>
+    <string name="update_table_v2">
+        alter table user add column room_id integer;
+    </string>
 </resources>
