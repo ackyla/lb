@@ -26,6 +26,6 @@ Server::App.controllers :rooms do
   end
 
   get :list, :provides => :json do
-    Room.all.order('created_at desc'.limit(20).to_json
+    Room.all.order('created_at desc').limit(20).to_json
   end
 end
