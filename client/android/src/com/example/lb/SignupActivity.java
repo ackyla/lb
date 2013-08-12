@@ -1,55 +1,58 @@
 package com.example.lb;
 
-import dao.user.UserEntity;
+import org.json.JSONObject;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+
 import logic.user.UserLogic;
+import dao.user.UserEntity;
 import android.app.Activity;
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import api.API;
 
 public class SignupActivity extends Activity {
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_signup);
 		
-		final Context context = this;
 		final UserLogic userLogic = new UserLogic(this);
+		final ProgressDialog progress = new ProgressDialog(this);
+		final EditText editText = (EditText)findViewById(R.id.editText1);
+		Button button = (Button)findViewById(R.id.buttonRegister);
 		
-		LinearLayout ll1 = (LinearLayout)findViewById(R.id.linearLayout1);
-		LinearLayout ll2 = (LinearLayout)findViewById(R.id.linearLayout2);
-		
-		UserEntity userEntity = userLogic.getUser();
-		
-		if(userEntity == null){
-			ll1.setVisibility(LinearLayout.VISIBLE);
-			ll2.setVisibility(LinearLayout.GONE);
-		}else{
-			ll1.setVisibility(LinearLayout.GONE);
-			ll2.setVisibility(LinearLayout.VISIBLE);
-			TextView tv = (TextView)findViewById(R.id.textView1);
-			tv.setText("name="+userEntity.getName()+", userId="+userEntity.getUserId()+", token="+userEntity.getToken());
-		}
-		
-		Button button1 = (Button)findViewById(R.id.button1);
-		button1.setOnClickListener(new OnClickListener(){
+		button.setOnClickListener(new OnClickListener(){
 			
 			@Override
 			public void onClick(View v) {
-				EditText editText = (EditText)findViewById(R.id.editText1);
-				editText.getText();
-				userLogic.register(editText.getText().toString());
-				
-				Intent intent = new Intent();
-				intent.setClass(context, MainActivity.class);
-				startActivity(intent);
+					
+				API.register(editText.getText().toString(), new JsonHttpResponseHandler() {					
+					
+					@Override
+					public void onStart() {
+						progress.setMessage("通信中…");
+						progress.show();
+					}
+					
+					@Override
+					public void onSuccess(JSONObject json) {
+						UserEntity userEntity = new UserEntity(json);
+						userLogic.register(userEntity);
+						progress.dismiss();
+						finish();
+					}
+					
+					
+					
+				});
 			}
 		
 		});

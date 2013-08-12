@@ -2,22 +2,12 @@ package logic.user;
 
 import java.util.List;
 
-import org.json.JSONObject;
-
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.JsonHttpResponseHandler;
-
 import dao.user.UserDAO;
 import dao.user.UserEntity;
 import logic.base.LogicBase;
 import logic.db.DBLogic;
-
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-import api.API;
 
 public class UserLogic extends LogicBase {
 	
@@ -65,24 +55,15 @@ public class UserLogic extends LogicBase {
 	 * @param name
 	 * @return boolean
 	 */
-	public boolean register(String name) {
-		final UserDAO userDAO = getDAO();
-		final UserEntity userEntity = new UserEntity();
-		userEntity.setName(name);
-		
-		API.register(name, new JsonHttpResponseHandler() {
-			@Override
-			public void onSuccess(JSONObject json) {
-				try	{
-					userEntity.setUserId(json.getInt("id"));
-					userEntity.setToken(json.getString("token"));
-					userDAO.insert(userEntity);
-				} catch(Exception e){
-					
-				}
-			}
-		});
-		
+	public boolean register(UserEntity userEntity) {
+		UserDAO userDAO = getDAO();
+
+		try {
+			userDAO.insert(userEntity);
+		} catch (Exception e) {
+			return false;
+		}
+
 		return true;
 	}
 	
