@@ -61,6 +61,13 @@ public class API {
 		post("rooms/enter", params, handler);
 	}
 	
+	public static void getRoomUsers(int roomId, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		params.put("room_id", Integer.toString(roomId));
+		get("rooms/users", params, handler);
+	}
+	
+	
 	public static void getRoomInfo(int roomId, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("room_id", Integer.toString(roomId));
