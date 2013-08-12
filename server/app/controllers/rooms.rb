@@ -33,6 +33,17 @@ Server::App.controllers :rooms do
     user.enter_room(room)
   end
 
+  post :location, :provides => :json do
+    room = Room.find_by_id(params[:room_id])
+    return unless room
+    user = User.find_by_id_and_token(params[:user_id], params[:token])
+    return unless user
+    Location.new(:latitude => params[:latitude], :longitude => params[:latitude]){|l|
+      l.user = user
+      l.room = room
+    }.save.to_json
+  end
+
   get :list, :provides => :json do
     Room.order('created_at desc').limit(20).to_json
   end
