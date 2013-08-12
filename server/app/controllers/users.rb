@@ -24,11 +24,15 @@ Server::App.controllers :users do
     render 'users/create'
   end
 
-
   post :create, :provides => :json do
     @user = User.create(:name => params[:name])
     content_type :json
     @user.to_json
   end
 
+  get :show, :provides => :json do
+    usr = User.find_by_id(params[:user_id])
+    return unless user
+    user.to_json
+  end
 end

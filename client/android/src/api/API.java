@@ -9,7 +9,7 @@ import com.loopj.android.http.RequestParams;
 import dao.user.UserEntity;
 
 public class API {
-	private static final String URL = "http://localhost:3000/";
+	private static final String URL = "http://ackyla.com:3000/";
 	private static AsyncHttpClient client = new AsyncHttpClient();
 
 	public static void get(String url, RequestParams params,
@@ -56,8 +56,20 @@ public class API {
 	public static void enterRoom(UserEntity user, int roomId, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("user_id", Integer.toString(user.getUserId()));
-		params.put("token_id", user.getToken());
+		params.put("token", user.getToken());
 		params.put("room_id", Integer.toString(roomId));
 		post("rooms/enter", params, handler);
+	}
+	
+	public static void getRoomInfo(int roomId, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		params.put("room_id", Integer.toString(roomId));
+		get("rooms/show", params, handler);
+	}
+	
+	public static void getUserInfo(int userId, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		params.put("user_id", Integer.toString(userId));
+		get("users/show", params, handler);
 	}
 }

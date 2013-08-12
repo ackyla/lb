@@ -45,6 +45,12 @@ Server::App.controllers :rooms do
     }.save.to_json
   end
 
+  get :show, :provides => :json do
+    room = Room.find_by_id(params[:room_id])
+    return unless room
+    room.to_json
+  end
+
   get :list, :provides => :json do
     Room.order('created_at desc').limit(20).to_json
   end
