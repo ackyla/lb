@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 import api.API;
 
 public class SignupActivity extends Activity {
@@ -27,13 +28,11 @@ public class SignupActivity extends Activity {
 		final UserLogic userLogic = new UserLogic(this);
 		final ProgressDialog progress = new ProgressDialog(this);
 		final EditText editText = (EditText)findViewById(R.id.editText1);
-		Button button = (Button)findViewById(R.id.buttonRegister);
-		
+		Button button = (Button)findViewById(R.id.buttonRegister);		
 		button.setOnClickListener(new OnClickListener(){
 			
 			@Override
 			public void onClick(View v) {
-					
 				API.register(editText.getText().toString(), new JsonHttpResponseHandler() {					
 					
 					@Override
@@ -49,9 +48,12 @@ public class SignupActivity extends Activity {
 						progress.dismiss();
 						finish();
 					}
-					
-					
-					
+
+					@Override
+					public void onFailure(Throwable e) {
+						progress.dismiss();
+						Toast.makeText(getApplicationContext(), "登録に失敗しました!", Toast.LENGTH_LONG).show();
+					}
 				});
 			}
 		
