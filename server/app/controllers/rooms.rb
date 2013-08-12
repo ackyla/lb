@@ -21,7 +21,7 @@ Server::App.controllers :rooms do
   # end
 
   post :create, :provides => :json do
-    @room = Room.create(:titme => params[:title])
+    @room = Room.create(:title => params[:title])
     @room.to_json
   end
 
