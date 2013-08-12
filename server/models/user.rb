@@ -10,6 +10,6 @@ class User < ActiveRecord::Base
   end
 
   def enter_room(room)
-      user.room = room.id
+    self.room = room.id
   end
 end
