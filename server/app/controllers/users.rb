@@ -31,8 +31,14 @@ Server::App.controllers :users do
   end
 
   get :show, :provides => :json do
-    usr = User.find_by_id(params[:user_id])
+    user = User.find_by_id(params[:user_id])
     return unless user
     user.to_json
+  end
+
+  get :locations do
+    user = User.find_by_id(params[:user_id])
+    return unless user
+    user.current_locations.to_json
   end
 end

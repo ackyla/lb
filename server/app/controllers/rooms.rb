@@ -34,17 +34,6 @@ Server::App.controllers :rooms do
     room.to_json
   end
 
-  post :location, :provides => :json do
-    room = Room.find_by_id(params[:room_id])
-    return unless room
-    user = User.find_by_id_and_token(params[:user_id], params[:token])
-    return unless user
-    Location.new(:latitude => params[:latitude], :longitude => params[:latitude]){|l|
-      l.user = user
-      l.room = room
-    }.save.to_json
-  end
-
   get :show, :provides => :json do
     room = Room.find_by_id(params[:room_id])
     return unless room
