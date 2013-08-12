@@ -31,6 +31,7 @@ Server::App.controllers :rooms do
     user = User.find_by_id_and_token(params[:user_id], params[:token])
     return unless user
     user.enter_room(room)
+    room.to_json
   end
 
   post :location, :provides => :json do
