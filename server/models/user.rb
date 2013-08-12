@@ -18,6 +18,6 @@ class User < ActiveRecord::Base
 
   def current_locations
     return nil unless self.room
-    self.locations.where(:room => self.room).take
+    self.locations.where(:room_id => self.room.id).order('created_at desc').limit(30)
   end
 end

@@ -18,8 +18,6 @@ ActiveRecord::Schema.define(:version => 6) do
     t.float    "longitude"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
-    t.integer  "user_id_id"
-    t.integer  "room_id_id"
     t.integer  "user_id"
     t.integer  "room_id"
   end
