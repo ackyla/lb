@@ -3,6 +3,7 @@ require 'securerandom'
 class User < ActiveRecord::Base
   belongs_to :room
   before_create :generate_token
+  has_many :users
 
   def generate_token
     token = SecureRandom.base64(16)
