@@ -36,4 +36,10 @@ Server::App.controllers :rooms do
   get :list, :provides => :json do
     Room.order('created_at desc').limit(20).to_json
   end
+
+  get :users, :provides => :json do
+    room = Room.find_by_id(params[:room_id])
+    return unless room
+    room.users.to_json
+  end
 end
