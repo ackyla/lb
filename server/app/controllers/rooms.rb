@@ -16,7 +16,10 @@ Server::App.controllers :rooms do
   end
 
   post :start, :provides => :json do
-
+    user = User.find_by_id_and_token(params[:user_id], params[:token])
+    return unless user
+    user.start_room
+    user.room.to_json
   end
 
   get :show, :provides => :json do
