@@ -85,6 +85,6 @@ public class LocationLogic extends LogicBase {
 			return;
 		}
 
-		API.postLocation(userEntity, location, null);
+		// API.postLocation(userEntity, location, null);
 	}
 }

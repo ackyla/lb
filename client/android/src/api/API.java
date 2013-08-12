@@ -32,12 +32,14 @@ public class API {
 		post("users/create", params, handler);
 	}
 	
-	public static void postLocation(UserEntity user, Location loc, AsyncHttpResponseHandler handler) {
-		// RequestParams params = null;
-		loc.getTime();
-		loc.getLatitude();
-		loc.getLongitude();
-		// post("", params, handler);
+	public static void postLocation(UserEntity user, int roomId, Location loc, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		params.put("user_id", Integer.toString(user.getUserId()));
+		params.put("token", user.getToken());
+		params.put("room_id", Integer.toString(roomId));
+		params.put("latitude", Double.toString(loc.getLatitude()));
+		params.put("longitude", Double.toString(loc.getLongitude()));
+		post("rooms/location", params, handler);
 	}
 	
 	public static void createRoom(UserEntity user, String title, AsyncHttpResponseHandler handler) {
