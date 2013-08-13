@@ -64,6 +64,25 @@ module Server
     #   end
     #
 
+    helpers do
+      def error_message(code, message)
+        content_type :json
+        halt 500, {error_code: code, message: message}.to_json
+      end
+
+      def find_room(params)
+        error_message(1, "INVALID PARAMETER") unless params.key? "room_id"
+        @room ||= Room.find_by_id(params[:room_id])
+        error_message(1, "INVALID ROOM") unless @room
+      end
+
+      def valid_user(params)
+        error_message(1, "INVALID PARAMETER") unless params.key? "user_id" and params.key? "token"
+        @user = User.find_by_id_and_token(params[:user_id], params[:token])
+        error_message(1, "INVALID USER") unless @user
+      end
+    end
+
     get '/' do
       'Welcome to LB'
     end

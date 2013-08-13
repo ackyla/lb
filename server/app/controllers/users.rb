@@ -1,23 +1,14 @@
 Server::App.controllers :users do
-
-  # get :index, :map => '/foo/bar' do
-  #   session[:foo] = 'bar'
-  #   render 'index'
-  # end
-
-  # get :sample, :map => '/sample/url', :provides => [:any, :js] do
-  #   case content_type
-  #     when :js then ...
-  #     else ...
-  # end
-
-  # get :foo, :with => :id do
-  #   'Maps to url '/foo/#{params[:id]}''
-  # end
-
-  # get '/example' do
-  #   'Hello world!'
-  # end
+  helpers do
+    def find_user(params)
+      error_code(1, "INVALID PARAMETER") unless params.key? "user_id"
+      user = User.find_by_id(params[:user_id])
+      unless user
+        error_code(1, "USER NOT FOUND")
+      end
+      return user
+    end
+  end
 
   get :create do
     @user = User.new
@@ -31,14 +22,10 @@ Server::App.controllers :users do
   end
 
   get :show, :provides => :json do
-    user = User.find_by_id(params[:user_id])
-    return unless user
-    user.to_json
+    find_user(params).to_json
   end
 
   get :locations do
-    user = User.find_by_id(params[:user_id])
-    return unless user
-    user.current_locations.to_json
+    find_user(params).current_locations.to_json
   end
 end
