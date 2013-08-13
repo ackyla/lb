@@ -6,7 +6,7 @@ Server::App.controllers :rooms do
   end
 
   post :create, :provides => :json do
-    valid_user
+    valid_user(params)
     @room = Room.new(:title => params[:title]){|r|
       r.owner = @user
     }.save
@@ -20,32 +20,28 @@ Server::App.controllers :rooms do
   end
 
   post :start, :provides => :json do
-    valid_user
+    valid_user(params)
     @user.start_room
     @user.room.to_json
   end
 
   post :hit, :provides => :json do
-    valid_user
-     user_ids = @room.users.inject({}){|r, u|
-       r[u.id] = u
-       r
-     }
-     if users_ids.key? "target_user_id"
-      target_id = params[:target_user_id]
+    valid_user(params)
+    user_ids = @user.room.users.inject({}){|r, u|
+      r[u.id] = u
+      r
+    }
+    if params.key? "target_user_id" and user_ids.key? params[:target_user_id].to_i
+      target_id = params[:target_user_id].to_i
     else
       error_message(1, "USER IS NOT MEMBER")
     end
-    hit_loc = HitLocation.new(
-      latitude: params[:latitude],
-      longitude: params[:longitude],
-      radius: params[:radius]){|hl|
-      hl.user = user
-      hl.target = user_ids[target_id]
-      hl.room = room
-    }
 
-    hit_loc.to_json
+    HitLocation.new(:latitude => params[:latitude], :longitude => params[:longitude], :radius => params[:radius]){|hit|
+      hit.user = @user
+      hit.target = user_ids[target_id]
+      hit.room = @user.room
+    }.save.to_json
   end
 
   get :show, :provides => :json do
