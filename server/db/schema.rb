@@ -11,7 +11,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 8) do
+ActiveRecord::Schema.define(:version => 9) do
+
+  create_table "hit_locations", :force => true do |t|
+    t.float    "latitude"
+    t.float    "longitude"
+    t.integer  "user_id"
+    t.integer  "room_id"
+    t.integer  "target_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "locations", :force => true do |t|
     t.float    "latitude"

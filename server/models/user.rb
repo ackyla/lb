@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   before_create :generate_token
   has_many :users
   has_many :locations
+  has_many :hit_locations
 
   def generate_token
     token = SecureRandom.base64(16)

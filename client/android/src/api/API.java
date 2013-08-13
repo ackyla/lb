@@ -81,6 +81,15 @@ public class API {
 		get("rooms/users", params, handler);
 	}
 	
+	public static void postHitLocation(UserEntity user, Location loc, int targetId, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		params.put("user_id", Integer.toString(user.getUserId()));
+		params.put("token", user.getToken());
+		params.put("target_user_id", Integer.toString(targetId));
+		params.put("latitude", Double.toString(loc.getLatitude()));
+		params.put("longitude", Double.toString(loc.getLongitude()));
+		post("room/hit", params, handler);
+	}
 	
 	public static void getRoomInfo(int roomId, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
