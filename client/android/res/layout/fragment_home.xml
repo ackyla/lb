@@ -19,7 +19,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="105dp" >
 
         <LinearLayout
             android:id="@+id/userList"
@@ -28,5 +28,12 @@
             android:orientation="vertical" >
         </LinearLayout>
     </ScrollView>
+    
+    <FrameLayout
+        android:id="@+id/mapLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+        
 
 </LinearLayout>

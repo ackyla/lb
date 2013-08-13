@@ -11,6 +11,7 @@ import dao.user.UserEntity;
 
 import logic.room.RoomLogic;
 import logic.user.UserLogic;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,6 +31,10 @@ public class RoomFragment extends Fragment {
 	
 	private UserEntity userEntity;
 	private UserLogic userLogic;
+	
+	public RoomFragment() {
+		setRetainInstance(true);
+	}
 	
 	private void enterRoom(int roomId) {
 		API.enterRoom(userEntity, roomId, new JsonHttpResponseHandler(){
@@ -62,12 +67,13 @@ public class RoomFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.v("life", "room create");
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	View v = inflater.inflate(R.layout.fragment_room, container, false);
-    	
+    	Log.v("life", "room createView");
        	userLogic = new UserLogic(getActivity());
     	userEntity = userLogic.getUser();
     	final LinearLayout roomList = (LinearLayout)v.findViewById(R.id.roomList);
@@ -87,7 +93,7 @@ public class RoomFragment extends Fragment {
     		
     		@Override
     		public void onFailure(Throwable e) {
-    			Toast.makeText(getActivity(), "部屋の取得に失敗しました！", Toast.LENGTH_SHORT).show();
+    			//Toast.makeText(getActivity(), "部屋の取得に失敗しました！", Toast.LENGTH_SHORT).show();
     		}
     	});
     	
@@ -114,12 +120,12 @@ public class RoomFragment extends Fragment {
 					public void onSuccess(JSONObject json) {
 						addRoom(roomList, json);
 						progress.dismiss();
-						Toast.makeText(getActivity(), "新しい部屋を作成しました！", Toast.LENGTH_SHORT).show();
+						//Toast.makeText(getActivity(), "新しい部屋を作成しました！", Toast.LENGTH_SHORT).show();
 					}
 					
 					public void onFailure(Throwable e) {
 						progress.dismiss();
-						Toast.makeText(getActivity(), "部屋の作成に失敗しました！", Toast.LENGTH_SHORT).show();
+						//Toast.makeText(getActivity(), "部屋の作成に失敗しました！", Toast.LENGTH_SHORT).show();
 					}
 					
 				});
@@ -128,5 +134,23 @@ public class RoomFragment extends Fragment {
     	});
     	
     	return v;
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		Log.v("life", "room attach");
+	}
+	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		Log.v("life", "room detach");
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Log.v("life", "room destroy");
 	}
 }

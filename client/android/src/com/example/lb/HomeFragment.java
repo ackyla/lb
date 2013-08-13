@@ -1,23 +1,32 @@
 package com.example.lb;
 
+import logic.user.UserLogic;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import dao.room.RoomEntity;
 import dao.user.UserEntity;
-import logic.user.UserLogic;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,16 +35,24 @@ import api.API;
 public class HomeFragment extends Fragment {
 	
 	private UserEntity userEntity;
+	private GoogleMap gMap;
+	private SupportMapFragment mapFragment;
+	
+    public HomeFragment(){  
+        setRetainInstance(true);  
+    }  
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.v("life", "home create");
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	View v = inflater.inflate(R.layout.fragment_home, container, false);
     	
+    	Log.v("life", "home createView");
     	TextView tv1 = (TextView)v.findViewById(R.id.textView1);
     	final TextView tv2 = (TextView)v.findViewById(R.id.textView2);
     	final LinearLayout userList = (LinearLayout)v.findViewById(R.id.userList);
@@ -48,7 +65,6 @@ public class HomeFragment extends Fragment {
     		API.getRoomInfo(userEntity.getRoomId(), new JsonHttpResponseHandler(){
     			@Override
     			public void onSuccess(JSONObject object) {
-    				Log.v("home", ""+object.toString());
     				RoomEntity roomEntity = new RoomEntity(object);
     				tv2.setText("入室中の部屋: "+roomEntity.getTitle());
     				
@@ -59,7 +75,7 @@ public class HomeFragment extends Fragment {
     		    			for(int i = 0; i < jsonArray.length(); i++){
     		    				try {
     								JSONObject json = jsonArray.getJSONObject(i);
-    								addUser(userList, json);
+    								displayUser(userList, json);
     							} catch (JSONException e) {
     							}
     		    			}
@@ -76,14 +92,119 @@ public class HomeFragment extends Fragment {
     		
     	}
     	
-    	return v;
+    	FragmentManager manager = getChildFragmentManager();
+		FragmentTransaction fragmentTransaction = manager.beginTransaction();
+		mapFragment = (SupportMapFragment)manager.findFragmentByTag("map");
+		if(mapFragment == null){
+			Log.v("home", "create map fragment");
+			mapFragment = SupportMapFragment.newInstance();
+			mapFragment.setRetainInstance(true);
+			fragmentTransaction.replace(R.id.mapLayout, mapFragment, "map");
+			fragmentTransaction.commit();
+		}else{
+			Log.v("home", "map fragment already exists");
+		}
+
+		return v;
 	}
 	
-	private void addUser(LinearLayout userList, JSONObject json) {
+	private void displayUser(LinearLayout userList, JSONObject json) {
 		final UserEntity userEntity = new UserEntity(json);
 		View v = getActivity().getLayoutInflater().inflate(R.layout.layout_user, null);
 		TextView textView = (TextView)v.findViewById(R.id.textView1);
 		textView.setText(userEntity.getUserId() + ": " + userEntity.getName());
+		final LinearLayout locationList = (LinearLayout)v.findViewById(R.id.locationList);
+		
+    	API.getUserLocations(userEntity, null, new JsonHttpResponseHandler(){
+    		@Override
+    		public void onSuccess(JSONArray jsonArray) {
+    			
+    			PolylineOptions options = new PolylineOptions();
+    			options.color(0xcc00ffff);
+    			options.width(10);
+    			options.geodesic(true); // 測地線で表示
+    			
+    			for(int i = 0; i < jsonArray.length(); i++){
+    				try {
+						JSONObject json = jsonArray.getJSONObject(i);
+						displayLocation(userEntity, locationList, json);
+						options.add(new LatLng(json.getDouble("latitude"), json.getDouble("longitude")));
+					} catch (JSONException e) {
+					}
+    			}
+    			
+    			gMap.addPolyline(options);
+    		}
+    		
+    		@Override
+    		public void onFailure(Throwable e) {
+    			Toast.makeText(getActivity(), "ロケーションの取得に失敗しました！", Toast.LENGTH_SHORT).show();
+    		}
+    	});
+		
 		userList.addView(v);
+	}
+	
+	private void displayLocation(UserEntity userEntity, LinearLayout locationList, JSONObject json) {
+
+		try {
+			double lat = json.getDouble("latitude");
+			double lon = json.getDouble("longitude");
+			String time = json.getString("created_at");
+			
+			LatLng position = new LatLng(lat, lon);
+			MarkerOptions options = new MarkerOptions();
+			options.position(position);
+			options.title(time);
+			options.snippet(userEntity.getName());
+			gMap.addMarker(options);
+			
+			CameraPosition sydney = new CameraPosition.Builder()
+	        .target(position).zoom(15.5f)
+	        .bearing(0).tilt(25).build();
+			gMap.animateCamera(CameraUpdateFactory.newCameraPosition(sydney));
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		Log.v("life", "home attach");
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		Log.v("life", "home activityCreated");
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		Log.v("life", "home Start");
+		
+		gMap = mapFragment.getMap();
+		gMap.setOnMapClickListener(new OnMapClickListener() {
+			@Override
+			public void onMapClick(LatLng position) {
+				
+			}
+		});
+		
+	}
+	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		Log.v("life", "home detach");
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Log.v("life", "home destroy");
 	}
 }

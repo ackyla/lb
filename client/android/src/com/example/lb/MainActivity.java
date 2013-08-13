@@ -3,7 +3,7 @@ package com.example.lb;
 import org.json.JSONObject;
 
 import com.google.android.gms.location.LocationListener;
-import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import dao.user.UserEntity;
@@ -14,6 +14,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
@@ -40,11 +41,14 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.v("life", "main create");
 		setContentView(R.layout.activity_main);
 		
 		locationLogic = new LocationLogic(this);
 		
-		replaceFragment(FRAGMENT_HOME);
+		if(savedInstanceState == null){
+			replaceFragment(FRAGMENT_HOME);
+		}
 		
 		Button buttonHome = (Button)findViewById(R.id.buttonHome);
 		Button buttonRoom = (Button)findViewById(R.id.buttonRoom);
@@ -75,6 +79,7 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public void onStart() {
 		super.onStart();
+		Log.v("life", "main start");
 		UserLogic userLogic = new UserLogic(this);
 		if (!userLogic.checkRegister()) {
 			Intent intent = new Intent();
@@ -82,15 +87,19 @@ public class MainActivity extends FragmentActivity {
 			startActivity(intent);
 		} else {
 			userEntity = userLogic.getUser();
-			if(userEntity.getRoomId() >= 0){
+			
+			if(userEntity.getRoomId() > 0){
 				locationLogic.setLocationListener(new LocationListener(){
 
 					@Override
 					public void onLocationChanged(Location location) {
+				    	FragmentManager manager = getSupportFragmentManager();
+						SupportMapFragment mapFragment = (SupportMapFragment)manager.findFragmentByTag("map");
+						Log.v("main", "frag="+mapFragment);
 						API.postLocation(userEntity, location, new JsonHttpResponseHandler(){
 							@Override
 							public void onSuccess(JSONObject json){
-								Log.v("main", ""+json.toString());
+								
 							}
 						});
 					}
@@ -102,8 +111,15 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		Log.v("life", "main resume");
+	}
+	
+	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		Log.v("life", "main destroy");
 		locationLogic.stop();
 	}
 	
@@ -112,22 +128,48 @@ public class MainActivity extends FragmentActivity {
 	 * @param fragmentName
 	 */
 	private final void replaceFragment(int fragmentType) {
-		FragmentTransaction fragmentTransaction = getSupportFragmentManager()
-				.beginTransaction();
+		FragmentManager manager = getSupportFragmentManager();
+		FragmentTransaction fragmentTransaction = manager.beginTransaction();
 		Fragment fragment;
+		String tag;
 		switch(fragmentType){
 			case FRAGMENT_HOME:
 			default:
-				fragment = new HomeFragment();
+				tag = "home";
+				fragment = manager.findFragmentByTag(tag);
+				if(fragment==null){
+					Log.v("main", "create "+tag+"fragment");
+					fragment = new HomeFragment();
+					fragmentTransaction.replace(R.id.mainContent, fragment, tag);
+					fragmentTransaction.commit();
+				}else{
+					Log.v("main", ""+tag+"fragment already exists");
+				}
 				break;
 			case FRAGMENT_ROOM:
-				fragment = new RoomFragment();
+				tag = "room";
+				fragment = manager.findFragmentByTag(tag);
+				if(fragment==null){
+					Log.v("main", "create "+tag+"fragment");
+					fragment = new RoomFragment();
+					fragmentTransaction.replace(R.id.mainContent, fragment, tag);
+					fragmentTransaction.commit();
+				}else{
+					Log.v("main", ""+tag+"fragment already exists");
+				}
 				break;
 			case FRAGMENT_CONFIG:
-				fragment = new ConfigFragment();
+				tag = "config";
+				fragment = manager.findFragmentByTag(tag);
+				if(fragment==null){
+					Log.v("main", "create "+tag+"fragment");
+					fragment = new ConfigFragment();
+					fragmentTransaction.replace(R.id.mainContent, fragment, tag);
+					fragmentTransaction.commit();
+				}else{
+					Log.v("main", ""+tag+"fragment already exists");
+				}
 				break;
 		}
-		fragmentTransaction.replace(R.id.mainContent, fragment);
-		fragmentTransaction.commit();
 	}
 }

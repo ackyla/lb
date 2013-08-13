@@ -44,7 +44,7 @@ public class API {
 	public static void getUserLocations(UserEntity user, Location loc, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("user_id", Integer.toString(user.getUserId()));
-		get("locations/create", params, handler);
+		get("users/locations", params, handler);
 	}	
 	
 	public static void createRoom(UserEntity user, String title, AsyncHttpResponseHandler handler) {
