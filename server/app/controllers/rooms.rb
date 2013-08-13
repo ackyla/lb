@@ -27,11 +27,11 @@ Server::App.controllers :rooms do
 
   post :hit, :provides => :json do
     valid_user(params)
-     user_ids = @room.users.inject({}){|r, u|
-       r[u.id] = u
-       r
-     }
-     if users_ids.key? "target_user_id"
+    user_ids = @user.room.users.inject({}){|r, u|
+      r[u.id] = u
+      r
+    }
+    if users_ids.key? "target_user_id"
       target_id = params[:target_user_id]
     else
       error_message(1, "USER IS NOT MEMBER")
