@@ -1,43 +1,32 @@
 # -*- coding: utf-8 -*-
 Server::App.controllers :rooms do
 
-  # get :index, :map => '/foo/bar' do
-  #   session[:foo] = 'bar'
-  #   render 'index'
-  # end
-
-  # get :sample, :map => '/sample/url', :provides => [:any, :js] do
-  #   case content_type
-  #     when :js then ...
-  #     else ...
-  # end
-
-  # get :foo, :with => :id do
-  #   'Maps to url '/foo/#{params[:id]}''
-  # end
-
-  # get '/example' do
-  #   'Hello world!'
-  # end
+  before :enter, :show, :users do
+    find_room(params)
+  end
 
   post :create, :provides => :json do
-    @room = Room.create(:title => params[:title])
+    valid_user
+    @room = Room.new(:title => params[:title]){|r|
+      r.owner = @user
+    }.save
     @room.to_json
   end
 
   post :enter, :provides => :json do
-    room = Room.find_by_id(params[:room_id])
-    return unless room
-    user = User.find_by_id_and_token(params[:user_id], params[:token])
-    return unless user
-    user.enter_room(room)
-    room.to_json
+    valid_user(params)
+    @user.enter_room(@room)
+    @room.to_json
+  end
+
+  post :start, :provides => :json do
+    valid_user
+    @user.start_room
+    @user.room.to_json
   end
 
   get :show, :provides => :json do
-    room = Room.find_by_id(params[:room_id])
-    return unless room
-    room.to_json
+    @room.to_json
   end
 
   get :list, :provides => :json do
@@ -45,8 +34,6 @@ Server::App.controllers :rooms do
   end
 
   get :users, :provides => :json do
-    room = Room.find_by_id(params[:room_id])
-    return unless room
-    room.users.to_json
+    @room.users.to_json
   end
 end

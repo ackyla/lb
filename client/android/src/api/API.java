@@ -55,6 +55,13 @@ public class API {
 		post("rooms/create", params, handler);
 	}
 	
+	public static void startGame(UserEntity user, String title, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		params.put("user_id", Integer.toString(user.getUserId()));
+		params.put("token", user.getToken());
+		post("rooms/start", params, handler);
+	}
+	
 	public static void getRoomList(UserEntity user, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		get("rooms/list", params, handler);

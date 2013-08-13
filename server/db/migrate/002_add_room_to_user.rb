@@ -1,7 +1,7 @@
 class AddRoomToUser < ActiveRecord::Migration
   def self.up
     change_table :users do |t|
-      t.belongs_to :room
+      t.references :room
     end
   end
 

@@ -2,7 +2,7 @@ class CreateMissions < ActiveRecord::Migration
   def self.up
     create_table :missions do |t|
       t.integer :type
-      t.integer :room_id
+      t.references :room
       t.timestamps
     end
   end

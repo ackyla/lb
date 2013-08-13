@@ -11,15 +11,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 6) do
+ActiveRecord::Schema.define(:version => 8) do
 
   create_table "locations", :force => true do |t|
     t.float    "latitude"
     t.float    "longitude"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
-    t.integer  "user_id_id"
-    t.integer  "room_id_id"
     t.integer  "user_id"
     t.integer  "room_id"
   end
@@ -33,8 +31,10 @@ ActiveRecord::Schema.define(:version => 6) do
 
   create_table "rooms", :force => true do |t|
     t.string   "title"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+    t.boolean  "started",    :default => false
+    t.integer  "owener_id"
   end
 
   create_table "users", :force => true do |t|

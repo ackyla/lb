@@ -8,8 +8,8 @@ class AddLocRefToLocation < ActiveRecord::Migration
 
   def self.down
     change_table :locations do |t|
-      t.remove :user_id
-      t.remove :room_id
+      t.remove :user
+      t.remove :room
     end
   end
 end
