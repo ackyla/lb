@@ -4,4 +4,8 @@ class Room < ActiveRecord::Base
   has_many :locations
   has_many :hit_locations
   has_one :owner, :class_name => "User"
+
+  def started?
+    self.termination_time == nil
+  end
 end
