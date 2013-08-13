@@ -24,8 +24,9 @@ class User < ActiveRecord::Base
 
   def start_room
     if self.room != nil and self.id == self.room.owner.id
-      self.room.started = true
-      self.room.save
+      room = self.room
+      room.termination_time = DateTime.now.advance :minute => room.limit_time
+      room.save
     end
   end
 end

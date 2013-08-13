@@ -8,6 +8,7 @@ Server::App.controllers :rooms do
   post :create, :provides => :json do
     valid_user(params)
     @room = Room.new(:title => params[:title]){|r|
+      r.time_limit = params[:time_limit] if params[:time_limit]
       r.owner = @user
     }.save
     @room.to_json
