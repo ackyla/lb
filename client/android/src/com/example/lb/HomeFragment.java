@@ -9,9 +9,14 @@ import org.json.JSONObject;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -19,6 +24,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import dao.room.RoomEntity;
 import dao.user.UserEntity;
 import android.app.Activity;
+import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,11 +35,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import api.API;
 
 public class HomeFragment extends Fragment {
+	
+	private Marker hitMarker;
+	private Circle hitCircle;
+	private double hitRadius = 1000f;
 	
 	private UserEntity userEntity;
 	private GoogleMap gMap;
@@ -105,6 +118,32 @@ public class HomeFragment extends Fragment {
 			Log.v("home", "map fragment already exists");
 		}
 
+		SeekBar seekBar = (SeekBar)v.findViewById(R.id.seekBar1);
+		seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				// TODO Auto-generated method stub
+				hitRadius = (double)progress;
+				if(hitCircle != null){
+					hitCircle.setRadius(hitRadius);
+				}
+			}
+		});
+		
 		return v;
 	}
 	
@@ -160,7 +199,7 @@ public class HomeFragment extends Fragment {
 			gMap.addMarker(options);
 			
 			CameraPosition sydney = new CameraPosition.Builder()
-	        .target(position).zoom(15.5f)
+	        .target(position).zoom(21.0f)
 	        .bearing(0).tilt(25).build();
 			gMap.animateCamera(CameraUpdateFactory.newCameraPosition(sydney));
 
@@ -190,10 +229,62 @@ public class HomeFragment extends Fragment {
 		gMap.setOnMapClickListener(new OnMapClickListener() {
 			@Override
 			public void onMapClick(LatLng position) {
+				if(hitMarker != null){
+					hitMarker.remove();
+				}
+				if(hitCircle != null){
+					hitCircle.remove();
+				}
 				
-			}
+				MarkerOptions options = new MarkerOptions();
+				options.position(position);
+				options.title("touch!!!");
+				options.draggable(true);
+				options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
+				hitMarker = gMap.addMarker(options);
+				
+				CircleOptions circleOptions = new CircleOptions();
+				circleOptions.center(position);
+				circleOptions.fillColor(Color.argb(20, 0, 255, 255));
+				circleOptions.strokeColor(Color.argb(255, 0, 255, 255));
+				circleOptions.strokeWidth(5f);
+				circleOptions.radius(hitRadius);
+				hitCircle = gMap.addCircle(circleOptions);
+				Log.v("home", "user="+userEntity.getRoomId()+", "+userEntity.getUserId());
+				API.postHitLocation(userEntity, userEntity.getUserId(), position.latitude, position.longitude, hitRadius, new JsonHttpResponseHandler() {
+					@Override
+					public void onSuccess(JSONObject json) {
+						Log.v("home", "json="+json.toString());
+					}
+				});
+			}	
 		});
 		
+		gMap.setOnMarkerDragListener(new OnMarkerDragListener() {
+			
+			@Override
+			public void onMarkerDragStart(Marker marker) {
+				if(hitCircle != null){
+					hitCircle.setCenter(marker.getPosition());
+				}
+			}
+			
+			@Override
+			public void onMarkerDragEnd(Marker marker) {
+				if(hitCircle != null){
+					//hitCircle.setVisible(true);
+					hitCircle.setRadius(hitRadius);
+					hitCircle.setCenter(marker.getPosition());
+				}
+			}
+			
+			@Override
+			public void onMarkerDrag(Marker marker) {
+				if(hitCircle != null){
+					hitCircle.setCenter(marker.getPosition());
+				}
+			}
+		});
 	}
 	
 	@Override

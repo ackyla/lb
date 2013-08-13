@@ -97,7 +97,7 @@ public class API {
 		params.put("latitude", Double.toString(latitude));
 		params.put("longitude", Double.toString(longitude));
 		params.put("radius", Double.toString(radius));
-		post("room/hit", params, handler);
+		post("rooms/hit", params, handler);
 	}
 
 	public static void getRoomInfo(int roomId, AsyncHttpResponseHandler handler) {
