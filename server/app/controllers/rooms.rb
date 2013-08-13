@@ -27,16 +27,19 @@ Server::App.controllers :rooms do
 
   post :hit, :provides => :json do
     valid_user
-    user_ids = @room.users.inject({}){|r, u|
-      r[u.id] = u
-      r
-    }
-    if users_ids.key? "target_user_id"
+     user_ids = @room.users.inject({}){|r, u|
+       r[u.id] = u
+       r
+     }
+     if users_ids.key? "target_user_id"
       target_id = params[:target_user_id]
     else
       error_message(1, "USER IS NOT MEMBER")
     end
-    hit_loc = HitLocation.new(latitude: params[:latitude], longitude: params[:longitude]){|hl|
+    hit_loc = HitLocation.new(
+      latitude: params[:latitude],
+      longitude: params[:longitude],
+      radius: params[:radius]){|hl|
       hl.user = user
       hl.target = user_ids[target_id]
       hl.room = room
