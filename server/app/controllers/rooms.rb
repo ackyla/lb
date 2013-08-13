@@ -31,21 +31,17 @@ Server::App.controllers :rooms do
       r[u.id] = u
       r
     }
-    if users_ids.key? "target_user_id"
-      target_id = params[:target_user_id]
+    if params.key? "target_user_id" and user_ids.key? params[:target_user_id].to_i
+      target_id = params[:target_user_id].to_i
     else
       error_message(1, "USER IS NOT MEMBER")
     end
-    hit_loc = HitLocation.new(
-      latitude: params[:latitude],
-      longitude: params[:longitude],
-      radius: params[:radius]){|hl|
-      hl.user = user
-      hl.target = user_ids[target_id]
-      hl.room = room
-    }
 
-    hit_loc.to_json
+    HitLocation.new(:latitude => params[:latitude], :longitude => params[:longitude], :radius => params[:radius]){|hit|
+      hit.user = @user
+      hit.target = user_ids[target_id]
+      hit.room = @user.room
+    }.save.to_json
   end
 
   get :show, :provides => :json do
