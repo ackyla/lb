@@ -6,7 +6,7 @@ Server::App.controllers :rooms do
   end
 
   post :create, :provides => :json do
-    valid_user
+    valid_user(params)
     @room = Room.new(:title => params[:title]){|r|
       r.owner = @user
     }.save
@@ -20,13 +20,13 @@ Server::App.controllers :rooms do
   end
 
   post :start, :provides => :json do
-    valid_user
+    valid_user(params)
     @user.start_room
     @user.room.to_json
   end
 
   post :hit, :provides => :json do
-    valid_user
+    valid_user(params)
      user_ids = @room.users.inject({}){|r, u|
        r[u.id] = u
        r
