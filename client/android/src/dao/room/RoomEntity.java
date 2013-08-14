@@ -6,6 +6,7 @@ public class RoomEntity {
 	private int id;
 	private String title;
 	private int numUser;
+	private boolean active;
 	
 	public RoomEntity() {
 	}
@@ -14,6 +15,7 @@ public class RoomEntity {
 			setId(json.getInt("id"));
 			setTitle(json.getString("title"));
 			setNumUser(json.getInt("num_user"));
+			setActive(json.getBoolean("active"));
 		} catch(Exception e){
 			
 		}
@@ -38,5 +40,12 @@ public class RoomEntity {
 	}
 	public int getNumUser(){
 		return this.numUser;
+	}
+	
+	public void setActive(boolean active){
+		this.active = active;
+	}
+	public boolean getActive(){
+		return this.active;
 	}
 }

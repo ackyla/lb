@@ -1,5 +1,11 @@
 package com.example.lb;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import dao.room.RoomEntity;
 import dao.user.UserEntity;
 import logic.user.UserLogic;
 import android.content.Intent;
@@ -13,6 +19,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import api.API;
 
 public class MainActivity extends FragmentActivity {
 
@@ -67,12 +74,33 @@ public class MainActivity extends FragmentActivity {
 		super.onStart();
 		Log.v("life", "main start");
 		UserLogic userLogic = new UserLogic(this);
-		// 登録チェック
+		
+		// 端末にユーザ情報あるかをチェック
 		if (!userLogic.checkRegister()) {
 			Intent intent = new Intent();
 			intent.setClass(this, SignupActivity.class);
 			startActivity(intent);
 		}
+		
+		UserEntity userEntity = userLogic.getUser();
+		API.getUserInfo(userEntity.getUserId(), new JsonHttpResponseHandler(){
+			@Override
+			public void onSuccess(JSONObject object) {
+				try {
+					JSONObject roomObject = object.getJSONObject("room");
+					RoomEntity roomEntity = new RoomEntity(roomObject);
+					if(roomEntity.getActive()){
+						Intent intent = new Intent();
+						intent.setClass(MainActivity.this, GameActivity.class);
+						startActivity(intent);
+						finish();
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	@Override

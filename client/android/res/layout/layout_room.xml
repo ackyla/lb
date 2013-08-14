@@ -13,20 +13,42 @@
         android:layout_gravity="center_vertical"
         android:padding="10dp">
 
-        <TextView
-            android:id="@+id/title"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="部屋タイトル"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/numUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="人数" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/startButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.9"
-            android:text="部屋タイトル"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_weight="0.2"
+            android:text="開始"
+            android:visibility="invisible" />
 
         <Button
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.1"
+            android:layout_weight="0.2"
             android:text="入室" />
+
     </LinearLayout>
 
 </LinearLayout>

@@ -58,7 +58,7 @@ public class API {
 		post("rooms/create", params, handler);
 	}
 
-	public static void startGame(UserEntity user, String title,
+	public static void startGame(UserEntity user,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("user_id", Integer.toString(user.getUserId()));
