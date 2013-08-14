@@ -34,9 +34,9 @@ Server::App.controllers :users do
   end
 
   post :enter, :provides => :json do
-    room = find_room(params)
-    @user.enter_room(room)
-    room.to_json
+    find_room(params)
+    @user.enter_room(@room)
+    @room.to_json
   end
 
   post :exit, :provides => :json do

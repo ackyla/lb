@@ -12,7 +12,7 @@ class Room < ActiveRecord::Base
   end
 
   def count_member
-    self.num_user = self.members.size
+    self.num_user = self.users.size
   end
 
   def member_hash
