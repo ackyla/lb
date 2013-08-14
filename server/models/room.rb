@@ -8,4 +8,11 @@ class Room < ActiveRecord::Base
   def started?
     self.termination_time == nil
   end
+
+  def member_hash
+    self.users.inject({}){|r, u|
+      r[u.id] = u
+      r
+    }
+  end
 end

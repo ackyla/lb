@@ -70,16 +70,20 @@ module Server
         halt 500, {error_code: code, message: message}.to_json
       end
 
-      def find_room(params)
-        error_message(1, "INVALID PARAMETER") unless params.key? "room_id"
-        @room ||= Room.find_by_id(params[:room_id])
-        error_message(1, "INVALID ROOM") unless @room
+      def invalid_param_error
+        error_message(100, "INVALID PARAMETER")
       end
 
-      def valid_user(params)
-        error_message(1, "INVALID PARAMETER") unless params.key? "user_id" and params.key? "token"
+      def find_room(params)
+        invalid_param_error unless params.key? "room_id"
+        @room ||= Room.find_by_id(params[:room_id])
+        error_message(300, "INVALID ROOM") unless @room
+      end
+
+      def login(params)
+        invalid_param_error unless params.key? "user_id" and params.key? "token"
         @user = User.find_by_id_and_token(params[:user_id], params[:token])
-        error_message(1, "INVALID USER") unless @user
+        error_message(200, "INVALID USER") unless @user
       end
     end
 
