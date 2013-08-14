@@ -42,16 +42,10 @@ public class MainActivity extends FragmentActivity {
 
 		userLogic = new UserLogic(this);
 
-		// 端末にユーザ情報あるかをチェック
-		if (!userLogic.checkRegister()) {
-			Intent intent = new Intent();
-			intent.setClass(this, SignupActivity.class);
-			startActivity(intent);
-		} else {
-			if (savedInstanceState == null) {
-				replaceFragment(FRAGMENT_HOME);
-			}
+		if (savedInstanceState == null) {
+			replaceFragment(FRAGMENT_HOME);
 		}
+		
 
 		Button buttonHome = (Button) findViewById(R.id.buttonHome);
 		Button buttonRoom = (Button) findViewById(R.id.buttonRoom);
@@ -84,37 +78,26 @@ public class MainActivity extends FragmentActivity {
 		super.onStart();
 		Log.v("life", "main start");
 
-		// 端末にユーザ情報あるかをチェック
-		if (!userLogic.checkRegister()) {
-			Intent intent = new Intent();
-			intent.setClass(this, SignupActivity.class);
-			startActivity(intent);
-		} else {
+		UserEntity userEntity = userLogic.getUser();
+		API.getUserInfo(userEntity.getUserId(), new JsonHttpResponseHandler() {
+			@Override
+			public void onSuccess(JSONObject object) {
+				try {
+					JSONObject roomObject = object.getJSONObject("room");
+					RoomEntity roomEntity = new RoomEntity(roomObject);
+					if (roomEntity.getActive()) {
+						Intent intent = new Intent();
+						intent.setClass(MainActivity.this, GameActivity.class);
+						startActivity(intent);
+						finish();
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 
-			UserEntity userEntity = userLogic.getUser();
-			API.getUserInfo(userEntity.getUserId(),
-					new JsonHttpResponseHandler() {
-						@Override
-						public void onSuccess(JSONObject object) {
-							try {
-								JSONObject roomObject = object
-										.getJSONObject("room");
-								RoomEntity roomEntity = new RoomEntity(
-										roomObject);
-								if (roomEntity.getActive()) {
-									Intent intent = new Intent();
-									intent.setClass(MainActivity.this,
-											GameActivity.class);
-									startActivity(intent);
-									finish();
-								}
-							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					});
-		}
 	}
 
 	@Override
