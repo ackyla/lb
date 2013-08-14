@@ -22,7 +22,7 @@ Server::App.controllers :rooms do
 
   post :timeleft, :provides => :json, :cache => true do
     expires_in 60
-    cache_key request.path_info + "?room_id=#{@user.room.id}"
+    cache_key request.path_info + "?room_id=#{@params[:room_id]}"
     second = (@room.termination_time.to_time - Time.now).to_i
     if second < 0
       @room.active = false
