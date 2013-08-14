@@ -26,7 +26,7 @@ Server::App.controllers :users do
   end
 
   get :show, :provides => :json do
-    find_user(params).to_json
+    find_user(params).to_json(:methods => [:room], :except => [:token])
   end
 
   get :locations do
