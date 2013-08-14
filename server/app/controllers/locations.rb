@@ -8,9 +8,9 @@ Server::App.controllers :locations do
     loc.save
     loc.to_json
   end
-
-  get :list do
+  
+  get :list , :provides => :json do
     find_room(params)
-    @room.locations.to_json
+    @room.locations.to_json(:include => [:user])
   end
 end
