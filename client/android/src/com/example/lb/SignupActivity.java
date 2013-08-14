@@ -46,6 +46,10 @@ public class SignupActivity extends Activity {
 						UserEntity userEntity = new UserEntity(json);
 						userLogic.register(userEntity);
 						progress.dismiss();
+						
+						Intent intent = new Intent();
+						intent.setClass(SignupActivity.this, MainActivity.class);
+						startActivity(intent);
 						finish();
 					}
 
