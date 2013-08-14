@@ -2,17 +2,20 @@ package com.example.lb;
 
 import logic.user.UserLogic;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import dao.room.RoomEntity;
 import dao.user.UserEntity;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -45,7 +48,7 @@ public class HomeFragment extends Fragment {
     	UserLogic userLogic = new UserLogic(getActivity());
     	userEntity = userLogic.getUser();
     	
-    	// ユーザ情報を表示
+    	// ユーザ情報と入室中の部屋を表示
     	API.getUserInfo(userEntity.getUserId(), new JsonHttpResponseHandler(){
     		@Override
     		public void onSuccess(JSONObject object) {
@@ -53,29 +56,46 @@ public class HomeFragment extends Fragment {
     	    	TextView userName = (TextView)userInfo.findViewById(R.id.name);
     	    	userName.setText(userEntity.getName());
     	    	userInfoLayout.addView(userInfo);
+    	    	
+    	    	try {
+    	    		JSONObject roomObject = object.getJSONObject("room");
+    	    		roomEntity = new RoomEntity(roomObject);
+        			View roomInfo = getActivity().getLayoutInflater().inflate(R.layout.layout_room, null);
+        			TextView roomTitle = (TextView)roomInfo.findViewById(R.id.title);
+        			roomTitle.setText(roomEntity.getTitle());
+        			Button exitButton = (Button)roomInfo.findViewById(R.id.button);
+        			exitButton.setText("殺す");
+        			// TODO 殺すボタン
+        			
+        			// 開始ボタン
+        			Button startButton = (Button)roomInfo.findViewById(R.id.startButton);
+        			// ルームオーナーだったら表示する
+        			if(userEntity.getRoomId() == roomEntity.getId()){
+        				startButton.setVisibility(View.VISIBLE);
+        				startButton.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								API.startGame(userEntity, new JsonHttpResponseHandler(){
+									@Override
+									public void onSuccess(JSONObject json){
+										Log.v("home", "json="+json.toString());
+										Intent intent = new Intent();
+										intent.setClass(getActivity(), GameActivity.class);
+										startActivity(intent);
+										getActivity().finish();
+									}
+								});
+							}
+						});
+        			}
+        			
+        			roomInfoLayout.addView(roomInfo);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}    	    	
     		}
     	});
-    	
-    	// 入室している部屋の情報を表示
-	    API.getRoomInfo(userEntity.getRoomId(), new JsonHttpResponseHandler(){
-    		@Override
-    		public void onSuccess(JSONObject object) {
-    			roomEntity = new RoomEntity(object);
-
-    			View roomInfo = getActivity().getLayoutInflater().inflate(R.layout.layout_room, null);
-    			TextView roomTitle = (TextView)roomInfo.findViewById(R.id.title);
-    			roomTitle.setText(roomEntity.getTitle());
-    			Button button = (Button)roomInfo.findViewById(R.id.button);
-    			button.setText("退室");
-    			// TODO 退室ボタン
-    			roomInfoLayout.addView(roomInfo);
-    		}
-    		
-	  		@Override
-	    	public void onFailure(Throwable e) {
-
-	    	}
-	    });
 		
 		return v;
 	}
