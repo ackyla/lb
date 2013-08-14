@@ -1,5 +1,6 @@
 package com.example.lb;
 
+import java.util.HashMap;
 import java.util.TimerTask;
 
 import org.json.JSONArray;
@@ -141,16 +142,26 @@ public class GameActivity extends FragmentActivity {
 				API.getRoomLocations(userEntity.getRoomId(), new JsonHttpResponseHandler(){
 					@Override
 					public void onSuccess(JSONArray jsonArray) {
+						
+						HashMap<Integer, JSONObject> userLocations = new HashMap<Integer, JSONObject>();
 						for(int i = 0; i < jsonArray.length(); i++){
-		    				try {
-								JSONObject json = jsonArray.getJSONObject(i);
+		    				try {		    					
+		    					JSONObject json = jsonArray.getJSONObject(i);
+		    					Log.v("game", "user="+json.toString());
 								double lat = json.getDouble("latitude");
 								double lng = json.getDouble("longitude");
-								JSONObject userObj = json.getJSONObject("user");
-								String name = userObj.getString("name");
-								mapLogic.addMarker(lat, lng, name);
+								UserEntity roomUserEntity = new UserEntity(json.getJSONObject("user"));
+								mapLogic.addMarker(lat, lng, roomUserEntity.getName(), roomUserEntity.getUserId());
+								if(userLocations.containsKey(roomUserEntity.getUserId())){
+									JSONObject preJson = userLocations.get(roomUserEntity.getUserId());
+									double preLat = preJson.getDouble("latitude");
+									double preLng = preJson.getDouble("longitude");
+									mapLogic.drawLine(preLat, preLng, lat, lng, roomUserEntity.getUserId());
+								}
+								userLocations.put(roomUserEntity.getUserId(), json);
 							} catch (JSONException e) {
-								e.printStackTrace();
+								Log.v("game", "error="+e.toString());
+
 							}
 		    			}
 					}

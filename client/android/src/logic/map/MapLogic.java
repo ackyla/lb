@@ -4,6 +4,7 @@ import com.example.lb.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -28,10 +29,11 @@ public class MapLogic extends LogicBase {
 		this.map = mapFragment.getMap();
 	}
 	
-	public Marker addMarker(double lat, double lng, String title) {
+	public Marker addMarker(double lat, double lng, String title, int userId) {
 		MarkerOptions options = new MarkerOptions();
 		options.position(new LatLng(lat, lng));
 		options.title(title);
+		if(userId == 1) options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
 		return map.addMarker(options);
 	}
 	
@@ -41,11 +43,12 @@ public class MapLogic extends LogicBase {
 		map.animateCamera(CameraUpdateFactory.newCameraPosition(camera));
 	}
 	
-	public Polyline drawLine(double latFrom, double lngFrom, double latTo, double lngTo) {
+	public Polyline drawLine(double latFrom, double lngFrom, double latTo, double lngTo, int userId) {
 		PolylineOptions options = new PolylineOptions();
 		options.add(new LatLng(latFrom, lngFrom));
 		options.add(new LatLng(latTo, lngTo));
-		options.color(0xcc00ffff);
+		if(userId == 1) options.color(0xcc00ffff);
+		else options.color(0xccff00ff);
 		options.width(10);
 		options.geodesic(true);
 		return map.addPolyline(options);
