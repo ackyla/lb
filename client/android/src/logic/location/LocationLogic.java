@@ -12,7 +12,6 @@ import dao.user.UserEntity;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
-import api.API;
 import logic.base.LogicBase;
 import logic.user.UserLogic;
 
@@ -24,7 +23,7 @@ public class LocationLogic extends LogicBase {
 	
 	public LocationLogic(Context context) {
 		super(context);
-		setInterval(30000);
+		setInterval(60000);
 	}
 
 	public void setLocationListener(LocationListener _locationListener) {

@@ -1,19 +1,22 @@
 package com.example.lb;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import logic.location.LocationLogic;
+import logic.map.MapLogic;
+import logic.user.UserLogic;
+
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import dao.room.RoomEntity;
 import dao.user.UserEntity;
 
+import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -25,12 +28,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import api.API;
 
 public class GameActivity extends FragmentActivity {
-	
-	GoogleMap map;
+
+	LocationLogic locationLogic;
+	MapLogic mapLogic;
+	UserEntity userEntity;
+	RoomEntity roomEntity;
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -44,6 +49,23 @@ public class GameActivity extends FragmentActivity {
 		Log.v("life", "game create");
 		setContentView(R.layout.activity_game);
 		
+		// ユーザ情報と部屋の情報を取得
+		UserLogic userLogic = new UserLogic(this);
+		userEntity = userLogic.getUser();
+		API.getUserInfo(userEntity.getUserId(), new JsonHttpResponseHandler(){
+			@Override
+			public void onSuccess(JSONObject object) {
+				// TODO †phelrineがuserEntityを殺した†
+				try {
+					JSONObject roomObject = object.getJSONObject("room");
+					roomEntity = new RoomEntity(roomObject);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+				}
+			}
+		});
+		
+		// マップを表示
     	FragmentManager manager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = manager.beginTransaction();
 		SupportMapFragment mapFragment = (SupportMapFragment)manager.findFragmentByTag("map");
@@ -54,6 +76,8 @@ public class GameActivity extends FragmentActivity {
 			fragmentTransaction.commit();
 		}
 		
+		
+		// チャットを表示
 		final EditText editText = (EditText)findViewById(R.id.editText1);
 		Button button1 = (Button)findViewById(R.id.button1);
 		
@@ -65,6 +89,7 @@ public class GameActivity extends FragmentActivity {
 			}
 		});
 		
+		// ミッションを表示
 		final LinearLayout missionView = (LinearLayout)findViewById(R.id.missionView);
 		Button button2 = (Button)findViewById(R.id.button2);
 		
@@ -87,6 +112,30 @@ public class GameActivity extends FragmentActivity {
 			}
 			
 		});
+		
+		// ロケーション送信
+		locationLogic = new LocationLogic(this);
+		locationLogic.setLocationListener(new LocationListener(){
+
+			@Override
+			public void onLocationChanged(Location location) {
+				Log.v("game", "user="+userEntity.getUserId()+", "+userEntity.getToken());
+				API.postLocation(userEntity, location, new JsonHttpResponseHandler(){ 
+					@Override
+					public void onSuccess(JSONObject json) {
+						Log.v("game", "json="+json.toString());
+					}	
+				});
+			}
+			
+		});
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		// 位置取り開始
+		locationLogic.start();
 	}
 	
 	@Override
@@ -99,6 +148,9 @@ public class GameActivity extends FragmentActivity {
 	public void onDestroy() {
 		super.onDestroy();
 		Log.v("life", "game destroy");
+
+		// 位置取り終了
+		locationLogic.stop();
 	}
 	
 	private void displayChat(String text) {

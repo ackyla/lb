@@ -1,5 +1,6 @@
 package dao.user;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class UserEntity {
@@ -13,11 +14,23 @@ public class UserEntity {
 	public UserEntity(JSONObject json) {
 		try	{			
 			setName(json.getString("name"));
-			setUserId(json.getInt("id"));
-			setToken(json.getString("token"));
-			setRoomId(json.getInt("roomId"));
 		} catch(Exception e){
 			
+		}
+		try {
+			setUserId(json.getInt("id"));
+		} catch (JSONException e) {
+
+		}
+		try {
+			setToken(json.getString("token"));
+		} catch (JSONException e) {
+
+		}
+		try {
+			setRoomId(json.getInt("roomId"));
+		} catch (JSONException e) {
+
 		}
 	}
 	
