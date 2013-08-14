@@ -9,7 +9,7 @@ Server::App.controllers :locations do
     loc.to_json
   end
 
-  get :list do
+  get :list, :provides => :json do
     find_room(params)
     @room.locations.to_json
   end
