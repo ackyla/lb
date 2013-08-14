@@ -59,4 +59,8 @@ Server::App.controllers :rooms do
   get :timelimit, :provides => :json do
     (@room.termination_time.to_time - Time.now).to_i
   end
+
+  get :result, :provides => :json do
+
+  end
 end
