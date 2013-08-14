@@ -13,7 +13,9 @@ import logic.timer.TimerLogic;
 import logic.user.UserLogic;
 
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import dao.room.RoomEntity;
@@ -37,9 +39,12 @@ import api.API;
 public class GameActivity extends FragmentActivity {
 
 	LocationLogic locationLogic;
+	TimerLogic timerLogic;
 	MapLogic mapLogic;
 	UserEntity userEntity;
 	RoomEntity roomEntity;
+	TimerTask getLocationTask;
+	TimerTask getLeftTimeTask;
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -61,8 +66,8 @@ public class GameActivity extends FragmentActivity {
 			public void onSuccess(JSONObject object) {
 				// TODO †phelrineがuserEntityを殺した†
 				try {
+					// TODO 殺す
 					JSONObject roomObject = object.getJSONObject("room");
-					Log.v("game", "room="+roomObject.toString());
 					roomEntity = new RoomEntity(roomObject);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -135,8 +140,8 @@ public class GameActivity extends FragmentActivity {
 		});
 		
 		// 一定間隔で位置情報を取得
-		TimerLogic timerLogic = new TimerLogic(this);
-		TimerTask timerTask = timerLogic.create(new Runnable() {
+		timerLogic = new TimerLogic(this);
+		getLocationTask = timerLogic.create(new Runnable() {
 			@Override
 			public void run() {
 				API.getRoomLocations(userEntity.getRoomId(), new JsonHttpResponseHandler(){
@@ -147,7 +152,6 @@ public class GameActivity extends FragmentActivity {
 						for(int i = 0; i < jsonArray.length(); i++){
 		    				try {		    					
 		    					JSONObject json = jsonArray.getJSONObject(i);
-		    					Log.v("game", "user="+json.toString());
 								double lat = json.getDouble("latitude");
 								double lng = json.getDouble("longitude");
 								UserEntity roomUserEntity = new UserEntity(json.getJSONObject("user"));
@@ -160,7 +164,6 @@ public class GameActivity extends FragmentActivity {
 								}
 								userLocations.put(roomUserEntity.getUserId(), json);
 							} catch (JSONException e) {
-								Log.v("game", "error="+e.toString());
 
 							}
 		    			}
@@ -168,7 +171,39 @@ public class GameActivity extends FragmentActivity {
 				});
 			}
 		});
-		timerLogic.start(timerTask, 60000);
+		timerLogic.start(getLocationTask, 60000);
+		
+		// 一定間隔で残り時間を取りに行く
+		getLeftTimeTask = timerLogic.create(new Runnable() {
+
+			@Override
+			public void run() {
+				API.getTimeLeft(userEntity.getRoomId(), new JsonHttpResponseHandler(){
+					@Override
+					public void onSuccess(JSONObject json) {
+						Log.v("game", "time="+json.toString());
+						int leftTime;
+						try {
+							leftTime = json.getInt("second");
+							if(leftTime < 0) {
+								mapLogic.setOnClickListener(new OnMapClickListener(){
+
+									@Override
+									public void onMapClick(LatLng latlng) {
+										mapLogic.addMarker(latlng.latitude, latlng.longitude, "hit!!!!", 1);
+									}
+									
+								});
+							}
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+			
+		});
+		timerLogic.start(getLeftTimeTask, 5000);
 	}
 	
 	@Override
@@ -193,6 +228,10 @@ public class GameActivity extends FragmentActivity {
 
 		// 位置取り終了
 		locationLogic.stop();
+		
+		// タイマー殺す
+		timerLogic.cancel(getLocationTask);
+		timerLogic.cancel(getLeftTimeTask);
 	}
 	
 	private void displayChat(String text) {

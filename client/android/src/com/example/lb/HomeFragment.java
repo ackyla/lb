@@ -78,7 +78,8 @@ public class HomeFragment extends Fragment {
 								API.startGame(userEntity, new JsonHttpResponseHandler(){
 									@Override
 									public void onSuccess(JSONObject json){
-										Log.v("home", "json="+json.toString());
+										RoomEntity roomEntity = new RoomEntity(json);
+										if(!roomEntity.getActive()) return;
 										Intent intent = new Intent();
 										intent.setClass(getActivity(), GameActivity.class);
 										startActivity(intent);

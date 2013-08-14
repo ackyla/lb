@@ -3,6 +3,7 @@ package logic.map;
 import com.example.lb.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -32,6 +33,10 @@ public class MapLogic extends LogicBase {
 		UiSettings settings = this.map.getUiSettings();
 		settings.setZoomControlsEnabled(false);
 		settings.setMyLocationButtonEnabled(true);
+	}
+	
+	public void setOnClickListener(OnMapClickListener listener) {
+		map.setOnMapClickListener(listener);
 	}
 	
 	public Marker addMarker(double lat, double lng, String title, int userId) {
