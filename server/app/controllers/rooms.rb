@@ -38,7 +38,7 @@ Server::App.controllers :rooms do
   end
 
   get :list, :provides => :json do
-    Room.order('created_at desc').limit(20).to_json
+    Room.where(active: false, termination_time: nil).order('created_at desc').limit(20).to_json
   end
 
   get :users, :provides => :json do
