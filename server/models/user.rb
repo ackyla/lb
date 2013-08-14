@@ -14,11 +14,13 @@ class User < ActiveRecord::Base
 
   def enter_room(room)
     self.room = room
+    room.save
     self.save
   end
 
   def exit_room(room)
     self.room = nil
+    room.save
     self.save
   end
 
