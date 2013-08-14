@@ -36,6 +36,16 @@ Server::App.controllers :rooms do
     (@room.termination_time.to_time - Time.now).to_i
   end
 
+  get :timeleft, :provides => :json do
+    # TODO cache
+    second = (@room.termination_time.to_time - Time.now).to_i
+    if second < 0
+      @room.active = false
+      @room.save
+    end
+    return {second: second}.to_json
+  end
+
   get :result, :provides => :json do
 
   end
