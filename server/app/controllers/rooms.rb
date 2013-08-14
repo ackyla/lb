@@ -14,7 +14,8 @@ Server::App.controllers :rooms do
     room = Room.new(:title => params[:title]){|r|
       r.time_limit = params[:time_limit] if params[:time_limit]
       r.owner = @user
-    }.save
+    }
+    room.save
     @user.enter_room(room)
     room.to_json
   end
