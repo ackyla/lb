@@ -17,6 +17,11 @@ class User < ActiveRecord::Base
     self.save
   end
 
+  def exit_room(room)
+    self.room = nil
+    self.save
+  end
+
   def current_locations
     return nil unless self.room
     self.locations.where(:room_id => self.room.id).order('created_at desc').limit(30)

@@ -63,7 +63,7 @@ public class API {
 		RequestParams params = new RequestParams();
 		params.put("user_id", Integer.toString(user.getUserId()));
 		params.put("token", user.getToken());
-		post("rooms/start", params, handler);
+		post("users/start", params, handler);
 	}
 
 	public static void getRoomList(UserEntity user,
@@ -78,7 +78,7 @@ public class API {
 		params.put("user_id", Integer.toString(user.getUserId()));
 		params.put("token", user.getToken());
 		params.put("room_id", Integer.toString(roomId));
-		post("rooms/enter", params, handler);
+		post("users/enter", params, handler);
 	}
 
 	public static void getRoomUsers(int roomId, AsyncHttpResponseHandler handler) {
@@ -97,7 +97,7 @@ public class API {
 		params.put("latitude", Double.toString(latitude));
 		params.put("longitude", Double.toString(longitude));
 		params.put("radius", Double.toString(radius));
-		post("rooms/hit", params, handler);
+		post("users/hit", params, handler);
 	}
 
 	public static void getRoomInfo(int roomId, AsyncHttpResponseHandler handler) {

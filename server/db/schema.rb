@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 13) do
+ActiveRecord::Schema.define(:version => 14) do
 
   create_table "hit_locations", :force => true do |t|
     t.float    "latitude"
@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(:version => 13) do
     t.integer  "time_limit",       :default => 30
     t.datetime "termination_time"
     t.boolean  "active",           :default => false
+    t.integer  "num_user"
   end
 
   create_table "users", :force => true do |t|
