@@ -42,10 +42,9 @@ public class API {
 		post("locations/create", params, handler);
 	}
 
-	public static void getUserLocations(UserEntity user, Location loc,
-			AsyncHttpResponseHandler handler) {
+	public static void getUserLocations(int userId, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
-		params.put("user_id", Integer.toString(user.getUserId()));
+		params.put("user_id", Integer.toString(userId));
 		get("users/locations", params, handler);
 	}
 
