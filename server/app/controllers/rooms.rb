@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 Server::App.controllers :rooms do
 
-  before :enter, :show, :users do
+  before :enter, :show, :users, :timelimit do
     find_room(params)
   end
 
@@ -55,5 +55,9 @@ Server::App.controllers :rooms do
 
   get :users, :provides => :json do
     @room.users.to_json
+  end
+
+  get :timelimit, :provides => :json do
+    (@room.termination_time.to_time - Time.now).to_i
   end
 end
