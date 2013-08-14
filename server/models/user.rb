@@ -22,15 +22,10 @@ class User < ActiveRecord::Base
     self.save
   end
 
-  def current_locations
-    return nil unless self.room
-    self.locations.where(:room_id => self.room.id).order('created_at desc').limit(30)
-  end
-
   def start_room
     if self.room != nil and self.id == self.room.owner.id
       room = self.room
-      room.termination_time = DateTime.now.advance :minute => room.limit_time
+      room.termination_time = DateTime.now.advance :minute => room.time_limit
       room.active = true
       room.save
     end

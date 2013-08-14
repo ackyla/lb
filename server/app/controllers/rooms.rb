@@ -5,7 +5,7 @@ Server::App.controllers :rooms do
     login(params)
   end
 
-  before :enter, :show, :users, :timelimit, :timeleft do
+  before :show, :users, :timelimit, :timeleft do
     find_room(params)
   end
 
@@ -32,6 +32,8 @@ Server::App.controllers :rooms do
   end
 
   get :show, :provides => :json do
+    expires_in 60
+    cache_key request.path_info + "?room_id=#{@params[:room_id]}"
     @room.to_json
   end
 
@@ -40,6 +42,8 @@ Server::App.controllers :rooms do
   end
 
   get :users, :provides => :json do
+    expires_in 60
+    cache_key request.path_info + "?room_id=#{@params[:room_id]}"
     @room.users.to_json
   end
 

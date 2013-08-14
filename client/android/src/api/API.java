@@ -42,10 +42,10 @@ public class API {
 		post("locations/create", params, handler);
 	}
 
-	public static void getUserLocations(int userId, AsyncHttpResponseHandler handler) {
+	public static void getRoomLocations(int roomId, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
-		params.put("user_id", Integer.toString(userId));
-		get("users/locations", params, handler);
+		params.put("room_id", Integer.toString(roomId));
+		get("locations/list", params, handler);
 	}
 
 	public static void createRoom(UserEntity user, String title,

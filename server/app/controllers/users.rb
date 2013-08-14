@@ -29,10 +29,6 @@ Server::App.controllers :users do
     find_user(params).to_json(:methods => [:room], :except => [:token])
   end
 
-  get :locations do
-    find_user(params).current_locations.to_json
-  end
-
   post :enter, :provides => :json do
     find_room(params)
     @user.enter_room(@room)

@@ -138,32 +138,21 @@ public class GameActivity extends FragmentActivity {
 		TimerTask timerTask = timerLogic.create(new Runnable() {
 			@Override
 			public void run() {
-				API.getRoomUsers(userEntity.getRoomId(), new JsonHttpResponseHandler(){
+				API.getRoomLocations(userEntity.getRoomId(), new JsonHttpResponseHandler(){
 					@Override
 					public void onSuccess(JSONArray jsonArray) {
 						for(int i = 0; i < jsonArray.length(); i++){
 		    				try {
 								JSONObject json = jsonArray.getJSONObject(i);
-								final UserEntity roomUserEntity = new UserEntity(json);
-								API.getUserLocations(roomUserEntity.getUserId(), new JsonHttpResponseHandler(){
-									@Override
-									public void onSuccess(JSONArray jsonArray) {
-										for(int i = 0; i < jsonArray.length(); i++){
-						    				try {
-												JSONObject json = jsonArray.getJSONObject(i);
-												double lat = json.getDouble("latitude");
-												double lng = json.getDouble("longitude");
-												mapLogic.addMarker(lat, lng, roomUserEntity.getName());
-											} catch (JSONException e) {
-											}
-						    			}
-										
-									}
-								});
+								double lat = json.getDouble("latitude");
+								double lng = json.getDouble("longitude");
+								JSONObject userObj = json.getJSONObject("user");
+								String name = userObj.getString("name");
+								mapLogic.addMarker(lat, lng, name);
 							} catch (JSONException e) {
+								e.printStackTrace();
 							}
 		    			}
-						
 					}
 				});
 			}
