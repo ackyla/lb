@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 Server::App.controllers :rooms do
 
-  before :create, :enter, :start, :hit, :result do
+  before :create, :result do
     login(params)
   end
 
-  before :enter, :show, :users, :timelimit do
+  before :enter, :show, :users, :timelimit, :timeleft do
     find_room(params)
   end
 
@@ -18,6 +18,17 @@ Server::App.controllers :rooms do
     room.save
     @user.enter_room(room)
     room.to_json
+  end
+
+  post :timeleft, :provides => :json, :cache => true do
+    expires_in 60
+    cache_key request.path_info + "?room_id=#{@user.room.id}"
+    second = (@room.termination_time.to_time - Time.now).to_i
+    if second < 0
+      @room.active = false
+      @room.save
+    end
+    {room: @room, second: second}.to_json
   end
 
   get :show, :provides => :json do
@@ -34,16 +45,6 @@ Server::App.controllers :rooms do
 
   get :timelimit, :provides => :json do
     (@room.termination_time.to_time - Time.now).to_i
-  end
-
-  get :timeleft, :provides => :json do
-    # TODO cache
-    second = (@room.termination_time.to_time - Time.now).to_i
-    if second < 0
-      @room.active = false
-      @room.save
-    end
-    return {second: second}.to_json
   end
 
   get :result, :provides => :json do

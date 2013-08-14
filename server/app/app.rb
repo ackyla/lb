@@ -47,6 +47,8 @@ module Server
     #   end
     #
     configure :development do
+      register Padrino::Cache
+      enable :caching
       set :raise_errors, true       # Raise exceptions (will stop application) (default for test)
       set :dump_errors, true        # Exception backtraces are written to STDERR (default for production/development)
       set :show_exceptions, true    # Shows a stack trace in browser (default for development)

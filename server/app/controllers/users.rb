@@ -1,11 +1,9 @@
 Server::App.controllers :users do
   helpers do
     def find_user(params)
-      error_code(1, "INVALID PARAMETER") unless params.key? "user_id"
+      invalid_param_error unless params.key? "user_id"
       user = User.find_by_id(params[:user_id])
-      unless user
-        error_code(1, "USER NOT FOUND")
-      end
+      error_message(201, "USER NOT FOUND") unless user
       return user
     end
   end
@@ -25,7 +23,9 @@ Server::App.controllers :users do
     @user.to_json
   end
 
-  get :show, :provides => :json do
+  get :show, :provides => :json, :cache => true do
+    expires_in 60
+    cache_key request.path_info + "?user_id=#{params[:user_id]}"
     find_user(params).to_json(:methods => [:room], :except => [:token])
   end
 
@@ -41,7 +41,7 @@ Server::App.controllers :users do
 
   post :exit, :provides => :json do
     @user.exit_room
-    true.to_json
+    @user.to_json
   end
 
   post :start, :provides => :json do
