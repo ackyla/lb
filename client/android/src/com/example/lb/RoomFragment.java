@@ -9,12 +9,13 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import dao.room.RoomEntity;
 import dao.user.UserEntity;
 
-import logic.room.RoomLogic;
 import logic.user.UserLogic;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +25,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import api.API;
 
 public class RoomFragment extends Fragment {
@@ -40,9 +40,19 @@ public class RoomFragment extends Fragment {
 		API.enterRoom(userEntity, roomId, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONObject json) {
+				Log.v("room", "enter");
 				RoomEntity roomEntity = new RoomEntity(json);
 				roomEntity.getId();
 				userLogic.enterRoom(userEntity, roomEntity.getId());
+				
+				FragmentManager manager = getFragmentManager();
+				FragmentTransaction fragmentTransaction = manager.beginTransaction();
+				Fragment fragment = manager.findFragmentByTag("home");
+				if(fragment==null){
+					fragment = new HomeFragment();
+					fragmentTransaction.replace(R.id.mainContent, fragment, "home");
+					fragmentTransaction.commit();
+				}
 			}
 		});
 	}
@@ -50,13 +60,13 @@ public class RoomFragment extends Fragment {
 	private void addRoom(LinearLayout roomList, JSONObject json) {
 		final RoomEntity roomEntity = new RoomEntity(json);
 		View v = getActivity().getLayoutInflater().inflate(R.layout.layout_room, null);
-		TextView textView = (TextView)v.findViewById(R.id.textView1);
-		textView.setText(roomEntity.getId() + ": " + roomEntity.getTitle());
-		Button button = (Button)v.findViewById(R.id.button1);
+		TextView roomTitle = (TextView)v.findViewById(R.id.title);
+		roomTitle.setText(roomEntity.getId() + ": " + roomEntity.getTitle());
+		Button button = (Button)v.findViewById(R.id.button);
 		button.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View arg0) {
+			public void onClick(View v) {
 				enterRoom(roomEntity.getId());
 			}
 			
@@ -74,10 +84,15 @@ public class RoomFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	View v = inflater.inflate(R.layout.fragment_room, container, false);
     	Log.v("life", "room createView");
+    	
+    	
+    	final LinearLayout roomListLayout = (LinearLayout)v.findViewById(R.id.roomListLayout);
+    	final EditText titleInput = (EditText)v.findViewById(R.id.titlInput);
+    	Button createButton = (Button)v.findViewById(R.id.createButton);
        	userLogic = new UserLogic(getActivity());
     	userEntity = userLogic.getUser();
-    	final LinearLayout roomList = (LinearLayout)v.findViewById(R.id.roomList);
     	
+    	// 部屋一覧を取得
     	API.getRoomList(userEntity, new JsonHttpResponseHandler() {
     		
     		@Override
@@ -85,7 +100,7 @@ public class RoomFragment extends Fragment {
     			for(int i = 0; i < jsonArray.length(); i++){
     				try {
 						JSONObject json = jsonArray.getJSONObject(i);
-						addRoom(roomList, json);
+						addRoom(roomListLayout, json);
 					} catch (JSONException e) {
 					}
     			}
@@ -93,39 +108,39 @@ public class RoomFragment extends Fragment {
     		
     		@Override
     		public void onFailure(Throwable e) {
-    			//Toast.makeText(getActivity(), "部屋の取得に失敗しました！", Toast.LENGTH_SHORT).show();
+    			
     		}
     	});
     	
-    	final RoomLogic roomLogic = new RoomLogic(getActivity());
-    	final EditText editText = (EditText)v.findViewById(R.id.editText1);
-    	Button button = (Button)v.findViewById(R.id.buttonCreate);
-    	
-    	button.setOnClickListener(new OnClickListener(){
+    	// 新しく部屋を作成
+    	createButton.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
-				String title = editText.getText().toString();
+				String title = titleInput.getText().toString();
 				API.createRoom(userEntity, title, new JsonHttpResponseHandler() {
 					
 					private ProgressDialog progress = new ProgressDialog(getActivity());
 					
 					@Override
 					public void onStart() {
+						Log.v("room", "start");
 						progress.setMessage("通信中…");
 						progress.show();
 					}
 					
 					@Override
 					public void onSuccess(JSONObject json) {
-						addRoom(roomList, json);
+						Log.v("room", "success");
+						RoomEntity roomEntity = new RoomEntity(json);
+						addRoom(roomListLayout, json);
+						enterRoom(roomEntity.getId());
 						progress.dismiss();
-						//Toast.makeText(getActivity(), "新しい部屋を作成しました！", Toast.LENGTH_SHORT).show();
 					}
 					
 					public void onFailure(Throwable e) {
 						progress.dismiss();
-						//Toast.makeText(getActivity(), "部屋の作成に失敗しました！", Toast.LENGTH_SHORT).show();
+						Log.v("room", "fail");
 					}
 					
 				});

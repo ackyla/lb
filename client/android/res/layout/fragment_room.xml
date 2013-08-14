@@ -4,24 +4,35 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/editText1"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10" >
-    </EditText>
-    
-    <Button
-        android:id="@+id/buttonCreate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ルーム作成" />
+        android:layout_height="wrap_content" >
 
-    <ScrollView        
+        <EditText
+            android:id="@+id/titlInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/createButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="作成" />
+
+    </LinearLayout>
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
+
         <LinearLayout
-            android:id="@+id/roomList"
+            android:id="@+id/roomListLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >

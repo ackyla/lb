@@ -4,42 +4,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="入室中の部屋:" />
-
-    <ScrollView
+    <LinearLayout
+        android:id="@+id/userInfoLayout"
         android:layout_width="match_parent"
-        android:layout_height="105dp" >
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
 
         <LinearLayout
-            android:id="@+id/userList"
+            android:id="@+id/roomInfoLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical" >
         </LinearLayout>
-    </ScrollView>
 
-    <FrameLayout
-        android:id="@+id/mapLayout"
-        android:layout_width="match_parent"
-        android:layout_height="277dp"
-        android:layout_weight="4.50" >
-    </FrameLayout>
-
-    <SeekBar
-        android:id="@+id/seekBar1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
-        android:max="10000"/>
+    </LinearLayout>
 
 </LinearLayout>
