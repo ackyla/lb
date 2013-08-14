@@ -59,7 +59,7 @@ ActiveRecord::Schema.define(:version => 14) do
     t.integer  "room_id"
   end
 
+  add_index "users", ["id", "room_id"], :name => "index_users_on_id_and_room_id", :unique => true
   add_index "users", ["id", "token"], :name => "index_users_on_id_and_token", :unique => true
-  add_index "users", ["room_id"], :name => "index_users_on_room_id", :unique => true
 
 end
