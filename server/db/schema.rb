@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(:version => 14) do
     t.string   "title"
     t.datetime "created_at",                          :null => false
     t.datetime "updated_at",                          :null => false
-    t.integer  "owener_id"
+    t.integer  "owner_id"
     t.integer  "time_limit",       :default => 30
     t.datetime "termination_time"
     t.boolean  "active",           :default => false
