@@ -1,8 +1,8 @@
 require 'securerandom'
 
 class User < ActiveRecord::Base
-  belongs_to :room
   before_create :generate_token
+  belongs_to :room
   has_many :users
   has_many :locations
   has_many :hit_locations
