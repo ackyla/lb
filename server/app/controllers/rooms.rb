@@ -33,7 +33,7 @@ Server::App.controllers :rooms do
 
   get :show, :provides => :json do
     expires_in 60
-    cache_key request.path_info + "?room_id=#{@params[:room_id]}"
+    cache_key room_cache_key
     @room.to_json
   end
 

@@ -87,6 +87,15 @@ module Server
         @user = User.find_by_id_and_token(params[:user_id], params[:token])
         error_message(200, "INVALID USER") unless @user
       end
+
+
+      def user_cache_key
+        "user_cache?user_id=#{params[:user_id]}"
+      end
+
+      def room_cache_key
+        "room_cache?room_id=#{params[:room_id]}"
+      end
     end
 
     get '/' do
