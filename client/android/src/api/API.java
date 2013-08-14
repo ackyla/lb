@@ -111,4 +111,10 @@ public class API {
 		params.put("user_id", Integer.toString(userId));
 		get("users/show", params, handler);
 	}
+	
+	public static void getTimeLeft(int roomId, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		params.put("room_id", Integer.toString(roomId));
+		post("rooms/timeleft", params, handler);
+	}
 }
