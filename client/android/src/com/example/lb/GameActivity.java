@@ -1,14 +1,17 @@
 package com.example.lb;
 
+import java.util.TimerTask;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import logic.location.LocationLogic;
 import logic.map.MapLogic;
+import logic.timer.TimerLogic;
 import logic.user.UserLogic;
 
 import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -58,6 +61,7 @@ public class GameActivity extends FragmentActivity {
 				// TODO †phelrineがuserEntityを殺した†
 				try {
 					JSONObject roomObject = object.getJSONObject("room");
+					Log.v("game", "room="+roomObject.toString());
 					roomEntity = new RoomEntity(roomObject);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -75,7 +79,7 @@ public class GameActivity extends FragmentActivity {
 			fragmentTransaction.replace(R.id.mapLayout, mapFragment, "map");
 			fragmentTransaction.commit();
 		}
-		
+		mapLogic = new MapLogic(this, mapFragment);
 		
 		// チャットを表示
 		final EditText editText = (EditText)findViewById(R.id.editText1);
@@ -119,21 +123,59 @@ public class GameActivity extends FragmentActivity {
 
 			@Override
 			public void onLocationChanged(Location location) {
-				Log.v("game", "user="+userEntity.getUserId()+", "+userEntity.getToken());
 				API.postLocation(userEntity, location, new JsonHttpResponseHandler(){ 
 					@Override
 					public void onSuccess(JSONObject json) {
-						Log.v("game", "json="+json.toString());
+						
 					}	
 				});
 			}
 			
 		});
+		
+		// 一定間隔で位置情報を取得
+		TimerLogic timerLogic = new TimerLogic(this);
+		TimerTask timerTask = timerLogic.create(new Runnable() {
+			@Override
+			public void run() {
+				API.getRoomUsers(userEntity.getRoomId(), new JsonHttpResponseHandler(){
+					@Override
+					public void onSuccess(JSONArray jsonArray) {
+						for(int i = 0; i < jsonArray.length(); i++){
+		    				try {
+								JSONObject json = jsonArray.getJSONObject(i);
+								final UserEntity roomUserEntity = new UserEntity(json);
+								API.getUserLocations(roomUserEntity.getUserId(), new JsonHttpResponseHandler(){
+									@Override
+									public void onSuccess(JSONArray jsonArray) {
+										for(int i = 0; i < jsonArray.length(); i++){
+						    				try {
+												JSONObject json = jsonArray.getJSONObject(i);
+												double lat = json.getDouble("latitude");
+												double lng = json.getDouble("longitude");
+												mapLogic.addMarker(lat, lng, roomUserEntity.getName());
+											} catch (JSONException e) {
+											}
+						    			}
+										
+									}
+								});
+							} catch (JSONException e) {
+							}
+		    			}
+						
+					}
+				});
+			}
+		});
+		timerLogic.start(timerTask, 60000);
 	}
 	
 	@Override
 	public void onStart() {
 		super.onStart();
+		// マップ初期化
+		mapLogic.init();
 		// 位置取り開始
 		locationLogic.start();
 	}

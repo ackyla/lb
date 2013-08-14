@@ -26,7 +26,8 @@ public class MainActivity extends FragmentActivity {
 	private static final int FRAGMENT_HOME = 100;
 	private static final int FRAGMENT_ROOM = 101;
 	private static final int FRAGMENT_CONFIG = 102;
-		
+	private UserLogic userLogic;
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -38,30 +39,39 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		Log.v("life", "main create");
 		setContentView(R.layout.activity_main);
-		
-		if(savedInstanceState == null){
-			replaceFragment(FRAGMENT_HOME);
+
+		userLogic = new UserLogic(this);
+
+		// 端末にユーザ情報あるかをチェック
+		if (!userLogic.checkRegister()) {
+			Intent intent = new Intent();
+			intent.setClass(this, SignupActivity.class);
+			startActivity(intent);
+		} else {
+			if (savedInstanceState == null) {
+				replaceFragment(FRAGMENT_HOME);
+			}
 		}
-		
-		Button buttonHome = (Button)findViewById(R.id.buttonHome);
-		Button buttonRoom = (Button)findViewById(R.id.buttonRoom);
-		Button buttonConfig = (Button)findViewById(R.id.buttonConfig);
-		
-		buttonHome.setOnClickListener(new OnClickListener(){
+
+		Button buttonHome = (Button) findViewById(R.id.buttonHome);
+		Button buttonRoom = (Button) findViewById(R.id.buttonRoom);
+		Button buttonConfig = (Button) findViewById(R.id.buttonConfig);
+
+		buttonHome.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				replaceFragment(FRAGMENT_HOME);
 			}
 		});
-		
-		buttonRoom.setOnClickListener(new OnClickListener(){
+
+		buttonRoom.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				replaceFragment(FRAGMENT_ROOM);
 			}
 		});
-		
-		buttonConfig.setOnClickListener(new OnClickListener(){
+
+		buttonConfig.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				replaceFragment(FRAGMENT_CONFIG);
@@ -73,34 +83,38 @@ public class MainActivity extends FragmentActivity {
 	public void onStart() {
 		super.onStart();
 		Log.v("life", "main start");
-		UserLogic userLogic = new UserLogic(this);
-		
+
 		// 端末にユーザ情報あるかをチェック
 		if (!userLogic.checkRegister()) {
 			Intent intent = new Intent();
 			intent.setClass(this, SignupActivity.class);
 			startActivity(intent);
+		} else {
+
+			UserEntity userEntity = userLogic.getUser();
+			API.getUserInfo(userEntity.getUserId(),
+					new JsonHttpResponseHandler() {
+						@Override
+						public void onSuccess(JSONObject object) {
+							try {
+								JSONObject roomObject = object
+										.getJSONObject("room");
+								RoomEntity roomEntity = new RoomEntity(
+										roomObject);
+								if (roomEntity.getActive()) {
+									Intent intent = new Intent();
+									intent.setClass(MainActivity.this,
+											GameActivity.class);
+									startActivity(intent);
+									finish();
+								}
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					});
 		}
-		
-		UserEntity userEntity = userLogic.getUser();
-		API.getUserInfo(userEntity.getUserId(), new JsonHttpResponseHandler(){
-			@Override
-			public void onSuccess(JSONObject object) {
-				try {
-					JSONObject roomObject = object.getJSONObject("room");
-					RoomEntity roomEntity = new RoomEntity(roomObject);
-					if(roomEntity.getActive()){
-						Intent intent = new Intent();
-						intent.setClass(MainActivity.this, GameActivity.class);
-						startActivity(intent);
-						finish();
-					}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
 	}
 
 	@Override
@@ -108,15 +122,16 @@ public class MainActivity extends FragmentActivity {
 		super.onResume();
 		Log.v("life", "main resume");
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		Log.v("life", "main destroy");
 	}
-	
+
 	/**
 	 * フラグメントを切り替える
+	 * 
 	 * @param fragmentName
 	 */
 	private final void replaceFragment(int fragmentType) {
@@ -124,35 +139,35 @@ public class MainActivity extends FragmentActivity {
 		FragmentTransaction fragmentTransaction = manager.beginTransaction();
 		Fragment fragment;
 		String tag;
-		switch(fragmentType){
-			case FRAGMENT_HOME:
-			default:
-				tag = "home";
-				fragment = manager.findFragmentByTag(tag);
-				if(fragment==null){
-					fragment = new HomeFragment();
-					fragmentTransaction.replace(R.id.mainContent, fragment, tag);
-					fragmentTransaction.commit();
-				}
-				break;
-			case FRAGMENT_ROOM:
-				tag = "room";
-				fragment = manager.findFragmentByTag(tag);
-				if(fragment==null){
-					fragment = new RoomFragment();
-					fragmentTransaction.replace(R.id.mainContent, fragment, tag);
-					fragmentTransaction.commit();
-				}
-				break;
-			case FRAGMENT_CONFIG:
-				tag = "config";
-				fragment = manager.findFragmentByTag(tag);
-				if(fragment==null){
-					fragment = new ConfigFragment();
-					fragmentTransaction.replace(R.id.mainContent, fragment, tag);
-					fragmentTransaction.commit();
-				}
-				break;
+		switch (fragmentType) {
+		case FRAGMENT_HOME:
+		default:
+			tag = "home";
+			fragment = manager.findFragmentByTag(tag);
+			if (fragment == null) {
+				fragment = new HomeFragment();
+				fragmentTransaction.replace(R.id.mainContent, fragment, tag);
+				fragmentTransaction.commit();
+			}
+			break;
+		case FRAGMENT_ROOM:
+			tag = "room";
+			fragment = manager.findFragmentByTag(tag);
+			if (fragment == null) {
+				fragment = new RoomFragment();
+				fragmentTransaction.replace(R.id.mainContent, fragment, tag);
+				fragmentTransaction.commit();
+			}
+			break;
+		case FRAGMENT_CONFIG:
+			tag = "config";
+			fragment = manager.findFragmentByTag(tag);
+			if (fragment == null) {
+				fragment = new ConfigFragment();
+				fragmentTransaction.replace(R.id.mainContent, fragment, tag);
+				fragmentTransaction.commit();
+			}
+			break;
 		}
 	}
 }
