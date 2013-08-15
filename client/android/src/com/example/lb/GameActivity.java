@@ -28,6 +28,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -150,27 +151,35 @@ public class GameActivity extends FragmentActivity {
 			public void run() {
 				API.getRoomLocations(userEntity.getRoomId(), new JsonHttpResponseHandler(){
 					@Override
-					public void onSuccess(JSONArray jsonArray) {
-						
-						HashMap<Integer, JSONObject> userLocations = new HashMap<Integer, JSONObject>();
-						for(int i = 0; i < jsonArray.length(); i++){
-		    				try {		    					
-		    					JSONObject json = jsonArray.getJSONObject(i);
+					public void onSuccess(JSONObject ret) {
+						try {
+							JSONArray users = ret.getJSONArray("members");
+							SparseArray<JSONObject> userMap = new SparseArray<JSONObject>();
+							for (int i = 0; i < users.length(); i++) {
+								JSONObject userObj = users.getJSONObject(i);
+								userMap.put(userObj.getInt("id"), userObj);								
+							
+							}
+							
+							JSONArray locations = ret.getJSONArray("locations");
+							SparseArray<JSONObject> prevLocations = new SparseArray<JSONObject>();
+							for(int i = 0; i < locations.length(); i++){
+								JSONObject json = locations.getJSONObject(i);
 								double lat = json.getDouble("latitude");
 								double lng = json.getDouble("longitude");
-								UserEntity roomUserEntity = new UserEntity(json.getJSONObject("user"));
+								UserEntity roomUserEntity = new UserEntity(userMap.get(json.getInt("user_id")));
 								mapLogic.addMarker(lat, lng, roomUserEntity.getName());
-								if(userLocations.containsKey(roomUserEntity.getUserId())){
-									JSONObject preJson = userLocations.get(roomUserEntity.getUserId());
+								if(prevLocations.get(roomUserEntity.getUserId()) != null){
+									JSONObject preJson = prevLocations.get(roomUserEntity.getUserId());
 									double preLat = preJson.getDouble("latitude");
 									double preLng = preJson.getDouble("longitude");
 									mapLogic.drawLine(preLat, preLng, lat, lng);
 								}
-								userLocations.put(roomUserEntity.getUserId(), json);
-							} catch (JSONException e) {
-
+								prevLocations.put(roomUserEntity.getUserId(), json);
 							}
-		    			}
+						} catch (JSONException e) {
+							Log.e("game", e.toString());
+						}
 					}
 				});
 			}
