@@ -281,7 +281,7 @@ public class GameActivity extends FragmentActivity {
 			@Override
 			public void onMapClick(LatLng latlng) {
 				if(hitMarkerController != null) hitMarkerController.remove();
-				hitMarkerController = mapLogic.addHitMarker(latlng, 10000);
+				hitMarkerController = mapLogic.addHitMarker(latlng, 1000, 10000, 20000);
 				hitButton.setOnClickListener(new OnClickListener() {
 					
 					@Override
