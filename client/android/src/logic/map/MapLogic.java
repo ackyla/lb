@@ -122,6 +122,38 @@ public class MapLogic extends LogicBase {
 		}
 	}
 
+	public TerritoryController addTerritory(LatLng position, double radius) {
+		CircleOptions circleOptions = new CircleOptions();
+		
+		circleOptions.center(position);
+		circleOptions.strokeWidth(5);
+		circleOptions.radius(radius);
+		circleOptions.strokeColor(Color.argb(200, 0, 255, 0));
+		circleOptions.fillColor(Color.argb(50, 0, 255, 0));
+		Circle circle = map.addCircle(circleOptions);
+
+		return new TerritoryController(circle);
+	}
+	
+	public class TerritoryController {
+		private Circle circle;
+		
+		public TerritoryController(Circle circle) {
+			this.circle = circle;
+		}
+		
+		public void setPosition(LatLng position) {
+			circle.setCenter(position);
+		}
+		public LatLng getPosition() {
+			return circle.getCenter();
+		}
+		
+		public void remove() {
+			circle.remove();
+		}
+	}
+	
 	public void moveCamera(double lat, double lng, float zoom) {
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), zoom));
 		//CameraPosition camera = new CameraPosition.Builder().target(

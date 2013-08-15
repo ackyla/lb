@@ -245,6 +245,16 @@ public class GameActivity extends FragmentActivity {
 		mapLogic.init();
 		// 位置取り開始
 		locationLogic.start();
+		
+		// テリトリー作成
+		mapLogic.setOnClickListener(new OnMapClickListener(){
+			@Override
+			public void onMapClick(LatLng latlng) {
+				mapLogic.addTerritory(latlng, 10000);
+				
+				// TODO API
+			}
+		});
 	}
 	
 	@Override
