@@ -57,8 +57,18 @@ Server::App.controllers :users do
       hit.room = @user.room
     }
     hit.save
+
+    result = Result.new{|r|
+      r.score = 100
+      r.user = @user
+      r.room = @user.room
+      r.hit = hit
+    }
+    result.save
+
     @user.room = nil
     @user.save!
+
     hit.to_json
   end
 end
