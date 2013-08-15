@@ -22,6 +22,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import dao.room.RoomEntity;
 import dao.user.UserEntity;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -36,6 +37,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import api.API;
 
@@ -268,17 +270,34 @@ public class GameActivity extends FragmentActivity {
 	// ゲーム終了時の処理
 	private void onGameEnd() {
 		TextView leftTimeView = (TextView)findViewById(R.id.leftTimeView);
-		SeekBar hitAreaSlider = (SeekBar)findViewById(R.id.hitAreaSlider);
-		Button hitButton = (Button)findViewById(R.id.hitButton);
-		//final HitMarkerController hitMarkerController = null;
-		
+		final Button hitButton = (Button)findViewById(R.id.hitButton);
+
 		leftTimeView.setText("終了");
 		
-		mapLogic.setOnClickListener(new OnMapClickListener(){						
+		mapLogic.setOnClickListener(new OnMapClickListener(){
+			
+			private HitMarkerController hitMarkerController;
+			
 			@Override
 			public void onMapClick(LatLng latlng) {
-				//if(hitMarkerController != null) hitMarkerController.remove();
-				//hitMarkerController = mapLogic.addHitMarker(latlng, 10000);
+				if(hitMarkerController != null) hitMarkerController.remove();
+				hitMarkerController = mapLogic.addHitMarker(latlng, 10000);
+				hitButton.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						LatLng latlng = hitMarkerController.getPosition();
+						API.postHitLocation(userEntity, 0, latlng.latitude, latlng.longitude, 0, new JsonHttpResponseHandler() {
+							@Override
+							public void onSuccess(JSONObject json) {
+								Intent intent = new Intent();
+								intent.setClass(GameActivity.this, ResultActivity.class);
+								startActivity(intent);
+								finish();
+							}
+						});
+					}
+				});
 			}
 		});
 		

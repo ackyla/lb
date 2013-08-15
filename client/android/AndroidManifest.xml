@@ -46,6 +46,10 @@
             android:name="com.example.lb.MainActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity 
+            android:name="com.example.lb.ResultActivity"
+            android:label="@string/app_name">
+        </activity>
         <activity
             android:name="com.example.lb.TitleActivity"
             android:label="@string/app_name" >

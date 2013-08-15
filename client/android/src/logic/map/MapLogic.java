@@ -68,14 +68,27 @@ public class MapLogic extends LogicBase {
 		markerOptions.position(position);
 		markerOptions.draggable(true);
 		Marker marker = map.addMarker(markerOptions);
-		circleOptions.center(position);
-		circleOptions.radius(radius);
-		circleOptions.strokeColor(Color.argb(200, 0, 255, 255));
-		circleOptions.strokeWidth(10);
-		circleOptions.fillColor(Color.argb(50, 0, 255, 255));
-		Circle circle = map.addCircle(circleOptions);
 		
-		return new HitMarkerController(marker, circle);
+		circleOptions.center(position);
+		circleOptions.radius(1000);
+		circleOptions.strokeColor(Color.argb(200, 0, 255, 255));
+		circleOptions.strokeWidth(5);
+		circleOptions.fillColor(Color.argb(50, 0, 255, 255));
+		Circle circleBlue = map.addCircle(circleOptions);
+		circleOptions.center(position);
+		circleOptions.radius(10000);
+		circleOptions.strokeColor(Color.argb(200, 255, 255, 0));
+		circleOptions.strokeWidth(5);
+		circleOptions.fillColor(Color.argb(50, 255, 255, 0));
+		Circle circleYellow = map.addCircle(circleOptions);
+		circleOptions.center(position);
+		circleOptions.radius(50000);
+		circleOptions.strokeColor(Color.argb(200, 255, 0, 255));
+		circleOptions.strokeWidth(5);
+		circleOptions.fillColor(Color.argb(50, 255, 0, 255));
+		Circle circleRed = map.addCircle(circleOptions);
+		
+		return new HitMarkerController(marker, circleRed);
 	}
 	
 	public class HitMarkerController {
