@@ -31,30 +31,34 @@ Server::App.controllers :users do
   end
 
   post :enter, :provides => :json do
+    expire @user.cache_key
     find_room(params)
     @user.enter_room(@room)
-    expire @user.cache_key
+
     @room.to_json
   end
 
   post :exit, :provides => :json do
-    @user.exit_room
     expire @user.cache_key
+    @user.exit_room
     @user.to_json
   end
 
   post :start, :provides => :json do
-    @user.start_room
     expire @user.cache_key
+    @user.start_room
     @user.room.to_json
   end
 
   post :hit, :provides => :json do
+    expire @user.cache_key
     hit = Hit.new(:latitude => params[:latitude], :longitude => params[:longitude]){|hit|
       hit.user = @user
       hit.room = @user.room
     }
     hit.save
+    @user.room = nil
+    @user.save!
     hit.to_json
   end
 end
