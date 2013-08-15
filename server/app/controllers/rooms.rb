@@ -20,30 +20,26 @@ Server::App.controllers :rooms do
     room.to_json
   end
 
-  post :timeleft, :provides => :json, :cache => true do
-    expires_in 60
-    cache_key request.path_info + "?room_id=#{@params[:room_id]}"
-    second = (@room.termination_time.to_time - Time.now).to_i
-    if second < 0
-      @room.active = false
-      @room.save
-    end
-    {room: @room, second: second}.to_json
+  post :timeleft, :provides => :json  do
+    cache("room_timeleft=#{params[:room_id]}", expires_in: 20){
+      second = (@room.termination_time.to_time - Time.now).to_i
+      if second < 0
+        @room.active = false
+        @room.save
+      end
+      {room: @room, second: second}.to_json
+    }
   end
 
   get :show, :provides => :json do
-    expires_in 60
-    cache_key room_cache_key
     @room.to_json
   end
 
   get :list, :provides => :json do
-    Room.order('created_at desc').limit(20).to_json
+    Room.where(active: false, termination_time: nil).order('created_at desc').limit(20).to_json
   end
 
   get :users, :provides => :json do
-    expires_in 60
-    cache_key request.path_info + "?room_id=#{@params[:room_id]}"
     @room.users.to_json
   end
 

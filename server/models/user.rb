@@ -12,13 +12,19 @@ class User < ActiveRecord::Base
     self.token = token
   end
 
+  def cache_key
+    "user_cache_key=#{self.id}"
+  end
+
   def enter_room(room)
     self.room = room
+    room.save
     self.save
   end
 
   def exit_room(room)
     self.room = nil
+    room.save
     self.save
   end
 

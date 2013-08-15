@@ -23,28 +23,29 @@ Server::App.controllers :users do
     @user.to_json
   end
 
-  get :show, :provides => :json, :cache => true do
-    expires_in 60
-    cache_key user_cache_key
-    find_user(params).to_json(:methods => [:room], :except => [:token])
+  get :show, :provides => :json do
+    user = find_user(params)
+    cache(user.cache_key, expires_in: 10){
+      user.to_json(:methods => [:room], :except => [:token])
+    }
   end
 
   post :enter, :provides => :json do
     find_room(params)
     @user.enter_room(@room)
-    expire user_cache_key
+    expire @user.cache_key
     @room.to_json
   end
 
   post :exit, :provides => :json do
     @user.exit_room
-    expire user_cache_key
+    expire @user.cache_key
     @user.to_json
   end
 
   post :start, :provides => :json do
     @user.start_room
-    expire room_cache_key
+    expire @user.cache_key
     @user.room.to_json
   end
 
