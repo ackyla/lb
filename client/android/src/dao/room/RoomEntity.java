@@ -7,15 +7,25 @@ public class RoomEntity {
 	private String title;
 	private int numUser;
 	private boolean active;
+	private int ownerId;
+	
+	public int getOwnerId() {
+		return ownerId;
+	}
+	public void setOwnerId(int i) {
+		this.ownerId = i;
+	}
 	
 	public RoomEntity() {
 	}
+	
 	public RoomEntity(JSONObject json) {
 		try	{
 			setId(json.getInt("id"));
 			setTitle(json.getString("title"));
 			setNumUser(json.getInt("num_user"));
 			setActive(json.getBoolean("active"));
+			setOwnerId(json.getInt("owner_id"));
 		} catch(Exception e){
 			
 		}

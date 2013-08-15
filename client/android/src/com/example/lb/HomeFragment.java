@@ -70,7 +70,7 @@ public class HomeFragment extends Fragment {
         			// 開始ボタン
         			Button startButton = (Button)roomInfo.findViewById(R.id.startButton);
         			// ルームオーナーだったら表示する
-        			if(userEntity.getRoomId() == roomEntity.getId()){
+        			if(userEntity.getUserId() == roomEntity.getOwnerId()){
         				startButton.setVisibility(View.VISIBLE);
         				startButton.setOnClickListener(new OnClickListener() {
 							@Override
