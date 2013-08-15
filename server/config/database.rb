@@ -20,9 +20,14 @@ ActiveRecord::Base.configurations[:development] = {
 }
 
 ActiveRecord::Base.configurations[:production] = {
-  :adapter => 'sqlite3',
-  :database => Padrino.root('db', 'server_production.db')
-
+  :adapter => 'mysql2',
+  :encoding => 'utf8',
+  :reconnect => true,
+  :database => 'location_battle',
+  :username => 'root',
+  :password => '',
+  :host => 'localhost'
+  # :database => Padrino.root('db', 'server_production.db')
 }
 
 ActiveRecord::Base.configurations[:test] = {

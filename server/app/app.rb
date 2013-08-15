@@ -10,8 +10,8 @@ module Server
     ##
     # Caching support
     #
-    # register Padrino::Cache
-    # enable :caching
+    register Padrino::Cache
+    enable :caching
     #
     # You can customize caching store engines:
     #
@@ -47,13 +47,20 @@ module Server
     #   end
     #
     configure :development do
-      register Padrino::Cache
-      enable :caching
       set :raise_errors, true       # Raise exceptions (will stop application) (default for test)
       set :dump_errors, true        # Exception backtraces are written to STDERR (default for production/development)
       set :show_exceptions, true    # Shows a stack trace in browser (default for development)
       set :logging, true            # Logging in STDOUT for development and file for production (default only for development)
     end
+
+    configure :production do
+      set :cache, Padrino::Cache::Store::Memcache.new(::Memcached.new('127.0.0.1:11211', :exception_retry_limit => 1))
+      set :raise_errors, false
+      set :dump_errors, true
+      set :show_exceptions, false
+      set :logging, true
+    end
+
     ##
     # You can manage errors like:
     #
