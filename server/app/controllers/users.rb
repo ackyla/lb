@@ -50,9 +50,10 @@ Server::App.controllers :users do
   end
 
   post :hit, :provides => :json do
-    Hit.new(:latitude => params[:latitude], :longitude => params[:longitude]){|hit|
+    hit = Hit.new(:latitude => params[:latitude], :longitude => params[:longitude]){|hit|
       hit.user = @user
       hit.room = @user.room
-    }.save.to_json
+    }.save
+    hit.to_json
   end
 end
