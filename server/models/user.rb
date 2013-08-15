@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   belongs_to :room
   has_many :users
   has_many :locations
-  has_many :hit_locations
+  has_many :hits
 
   def generate_token
     token = SecureRandom.base64(16)
