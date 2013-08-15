@@ -54,6 +54,7 @@ public class API {
 		params.put("user_id", Integer.toString(user.getUserId()));
 		params.put("token", user.getToken());
 		params.put("title", title);
+		params.put("time_limit", "1");
 		post("rooms/create", params, handler);
 	}
 

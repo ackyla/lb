@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import logic.location.LocationLogic;
 import logic.map.MapLogic;
+import logic.map.MapLogic.HitMarkerController;
 import logic.timer.TimerLogic;
 import logic.user.UserLogic;
 
@@ -33,6 +34,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import api.API;
 
@@ -44,7 +46,9 @@ public class GameActivity extends FragmentActivity {
 	UserEntity userEntity;
 	RoomEntity roomEntity;
 	TimerTask getLocationTask;
+	TimerTask countLeftTimeTask;
 	TimerTask getLeftTimeTask;
+	Integer leftTime;
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -88,8 +92,8 @@ public class GameActivity extends FragmentActivity {
 		mapLogic = new MapLogic(this, mapFragment);
 		
 		// チャットを表示
-		final EditText editText = (EditText)findViewById(R.id.editText1);
-		Button button1 = (Button)findViewById(R.id.button1);
+		final EditText editText = (EditText)findViewById(R.id.chatInput);
+		Button button1 = (Button)findViewById(R.id.commentButton);
 		
 		button1.setOnClickListener(new OnClickListener() {
 			
@@ -101,7 +105,7 @@ public class GameActivity extends FragmentActivity {
 		
 		// ミッションを表示
 		final LinearLayout missionView = (LinearLayout)findViewById(R.id.missionView);
-		Button button2 = (Button)findViewById(R.id.button2);
+		Button button2 = (Button)findViewById(R.id.missionViewButton);
 		
 		button2.setOnClickListener(new OnClickListener() {
 
@@ -112,7 +116,7 @@ public class GameActivity extends FragmentActivity {
 			
 		});
 		
-		Button button3 = (Button)findViewById(R.id.button3);
+		Button button3 = (Button)findViewById(R.id.missionCloseButton);
 		
 		button3.setOnClickListener(new OnClickListener() {
 
@@ -155,12 +159,12 @@ public class GameActivity extends FragmentActivity {
 								double lat = json.getDouble("latitude");
 								double lng = json.getDouble("longitude");
 								UserEntity roomUserEntity = new UserEntity(json.getJSONObject("user"));
-								mapLogic.addMarker(lat, lng, roomUserEntity.getName(), roomUserEntity.getUserId());
+								mapLogic.addMarker(lat, lng, roomUserEntity.getName());
 								if(userLocations.containsKey(roomUserEntity.getUserId())){
 									JSONObject preJson = userLocations.get(roomUserEntity.getUserId());
 									double preLat = preJson.getDouble("latitude");
 									double preLng = preJson.getDouble("longitude");
-									mapLogic.drawLine(preLat, preLng, lat, lng, roomUserEntity.getUserId());
+									mapLogic.drawLine(preLat, preLng, lat, lng);
 								}
 								userLocations.put(roomUserEntity.getUserId(), json);
 							} catch (JSONException e) {
@@ -173,28 +177,45 @@ public class GameActivity extends FragmentActivity {
 		});
 		timerLogic.start(getLocationTask, 60000);
 		
-		// 一定間隔で残り時間を取りに行く
+		// 残り時間をカウントダウン
+		final TextView leftTimeView = (TextView)findViewById(R.id.leftTimeView);
+		countLeftTimeTask = timerLogic.create(new Runnable() {
+			@Override
+			public void run() {
+				if(leftTime == null){
+					// 残り時間が取れてない時はAPIで取りに行く
+					API.getTimeLeft(userEntity.getRoomId(), new JsonHttpResponseHandler(){
+						@Override
+						public void onSuccess(JSONObject json) {
+							try {
+								leftTime = json.getInt("second");
+							} catch (JSONException e) {
+							}
+						}
+					});
+				} else if (leftTime > 0){
+					int HH = leftTime / 3600;
+					int mm = leftTime % 3600 / 60;
+					int ss = leftTime % 60;
+					leftTimeView.setText("終了まで "+HH+":"+mm+":"+ss);
+					leftTime --;
+				} else {
+					onGameEnd();
+				}
+			}
+		});
+		timerLogic.start(countLeftTimeTask, 1000);
+		
+		// 一定間隔で残り時間を取りに行く		
 		getLeftTimeTask = timerLogic.create(new Runnable() {
-
+			
 			@Override
 			public void run() {
 				API.getTimeLeft(userEntity.getRoomId(), new JsonHttpResponseHandler(){
 					@Override
 					public void onSuccess(JSONObject json) {
-						Log.v("game", "time="+json.toString());
-						int leftTime;
 						try {
 							leftTime = json.getInt("second");
-							if(leftTime < 0) {
-								mapLogic.setOnClickListener(new OnMapClickListener(){
-
-									@Override
-									public void onMapClick(LatLng latlng) {
-										mapLogic.addMarker(latlng.latitude, latlng.longitude, "hit!!!!", 1);
-									}
-									
-								});
-							}
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -203,7 +224,7 @@ public class GameActivity extends FragmentActivity {
 			}
 			
 		});
-		timerLogic.start(getLeftTimeTask, 5000);
+		timerLogic.start(getLeftTimeTask, 30000);
 	}
 	
 	@Override
@@ -226,11 +247,38 @@ public class GameActivity extends FragmentActivity {
 		super.onDestroy();
 		Log.v("life", "game destroy");
 
-		// 位置取り終了
+		// ロケーション殺す
 		locationLogic.stop();
 		
 		// タイマー殺す
 		timerLogic.cancel(getLocationTask);
+		timerLogic.cancel(countLeftTimeTask);
+		timerLogic.cancel(getLeftTimeTask);
+	}
+	
+	// ゲーム終了時の処理
+	private void onGameEnd() {
+		TextView leftTimeView = (TextView)findViewById(R.id.leftTimeView);
+		SeekBar hitAreaSlider = (SeekBar)findViewById(R.id.hitAreaSlider);
+		Button hitButton = (Button)findViewById(R.id.hitButton);
+		//final HitMarkerController hitMarkerController = null;
+		
+		leftTimeView.setText("終了");
+		
+		mapLogic.setOnClickListener(new OnMapClickListener(){						
+			@Override
+			public void onMapClick(LatLng latlng) {
+				//if(hitMarkerController != null) hitMarkerController.remove();
+				//hitMarkerController = mapLogic.addHitMarker(latlng, 10000);
+			}
+		});
+		
+		// ロケーション殺す
+		locationLogic.stop();
+		
+		// タイマー殺す
+		timerLogic.cancel(getLocationTask);
+		timerLogic.cancel(countLeftTimeTask);
 		timerLogic.cancel(getLeftTimeTask);
 	}
 	

@@ -3,12 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <FrameLayout
-        android:id="@+id/mapLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </FrameLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -51,13 +45,59 @@
             </LinearLayout>
         </ScrollView>
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ミッション" />
+        <FrameLayout
+            android:id="@+id/mapLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="33dp" >
+
+        </FrameLayout>
 
     </LinearLayout>
+
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="33dp"
+        android:layout_marginRight="60dp" >
+
+    	<Button
+	        android:id="@+id/missionViewButton"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:text="ミッション" />
+
+    	<Button
+    	    android:id="@+id/hitButton"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="ヒット！" />
+
+    	<SeekBar
+    	    android:id="@+id/hitAreaSlider"
+    	    android:layout_width="match_parent"
+    	    android:layout_height="wrap_content"
+    	    android:layout_gravity="center_vertical" />
+    	
+	</LinearLayout>
+    
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:background="#EEDDDDDD"
+        android:padding="10dp" >
+
+        <TextView
+            android:id="@+id/leftTimeView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="残り時間"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </FrameLayout>
 
     <SlidingDrawer
         android:id="@+id/slidingDrawer1"
@@ -104,7 +144,7 @@
                     android:orientation="vertical" >
 
                     <EditText
-                        android:id="@+id/editText1"
+                        android:id="@+id/chatInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -114,14 +154,13 @@
                     </EditText>
 
                     <Button
-                        android:id="@+id/button1"
+                        android:id="@+id/commentButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="コメント" />
                 </LinearLayout>
-
             </LinearLayout>
-
         </LinearLayout>
     </SlidingDrawer>
 
@@ -142,7 +181,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/missionCloseButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="閉じる" />

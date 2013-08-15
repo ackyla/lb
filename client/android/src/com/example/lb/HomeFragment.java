@@ -88,6 +88,8 @@ public class HomeFragment extends Fragment {
 								});
 							}
 						});
+        			}else{
+        				startButton.setVisibility(View.GONE);
         			}
         			
         			roomInfoLayout.addView(roomInfo);

@@ -85,7 +85,7 @@ public class MainActivity extends FragmentActivity {
 				try {
 					JSONObject roomObject = object.getJSONObject("room");
 					RoomEntity roomEntity = new RoomEntity(roomObject);
-					if (roomEntity.getActive()) {
+					if (roomEntity.getId() != 0 && roomEntity.getActive()) {
 						Intent intent = new Intent();
 						intent.setClass(MainActivity.this, GameActivity.class);
 						startActivity(intent);
