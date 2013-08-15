@@ -51,18 +51,20 @@ public class HomeFragment extends Fragment {
     	// ユーザ情報と入室中の部屋を表示
     	API.getUserInfo(userEntity.getUserId(), new JsonHttpResponseHandler(){
     		@Override
-    		public void onSuccess(JSONObject object) {
+    		public void onSuccess(JSONObject object) {Log.v("home", object.toString());
     		   	View userInfo = getActivity().getLayoutInflater().inflate(R.layout.layout_user, null);
     	    	TextView userName = (TextView)userInfo.findViewById(R.id.name);
+    	    	View roomInfo = getActivity().getLayoutInflater().inflate(R.layout.layout_room, null);
+    	    	TextView roomTitle = (TextView)roomInfo.findViewById(R.id.title);
+    	    	TextView numUsers = (TextView)roomInfo.findViewById(R.id.numUsers);
     	    	userName.setText(userEntity.getName());
     	    	userInfoLayout.addView(userInfo);
     	    	
     	    	try {
     	    		JSONObject roomObject = object.getJSONObject("room");
     	    		roomEntity = new RoomEntity(roomObject);
-        			View roomInfo = getActivity().getLayoutInflater().inflate(R.layout.layout_room, null);
-        			TextView roomTitle = (TextView)roomInfo.findViewById(R.id.title);
         			roomTitle.setText(roomEntity.getTitle());
+        			numUsers.setText("人数: " + roomEntity.getNumUser());
         			Button exitButton = (Button)roomInfo.findViewById(R.id.button);
         			exitButton.setText("殺す");
         			// TODO 殺すボタン

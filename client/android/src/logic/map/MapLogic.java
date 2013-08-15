@@ -61,7 +61,7 @@ public class MapLogic extends LogicBase {
 		return map.addMarker(options);
 	}
 	
-	public HitMarkerController addHitMarker(LatLng position, double radius) {
+	public HitMarkerController addHitMarker(LatLng position, double radiusBlue, double radiusYellow, double radiusRed) {
 		MarkerOptions markerOptions = new MarkerOptions();
 		CircleOptions circleOptions = new CircleOptions();
 		
@@ -70,55 +70,53 @@ public class MapLogic extends LogicBase {
 		Marker marker = map.addMarker(markerOptions);
 		
 		circleOptions.center(position);
-		circleOptions.radius(1000);
+		circleOptions.strokeWidth(5);
+		circleOptions.fillColor(Color.argb(20, 255, 255, 255));
+		
+		circleOptions.radius(radiusBlue);
 		circleOptions.strokeColor(Color.argb(200, 0, 255, 255));
-		circleOptions.strokeWidth(5);
-		circleOptions.fillColor(Color.argb(50, 0, 255, 255));
 		Circle circleBlue = map.addCircle(circleOptions);
-		circleOptions.center(position);
-		circleOptions.radius(10000);
+		
+		circleOptions.radius(radiusYellow);
 		circleOptions.strokeColor(Color.argb(200, 255, 255, 0));
-		circleOptions.strokeWidth(5);
-		circleOptions.fillColor(Color.argb(50, 255, 255, 0));
 		Circle circleYellow = map.addCircle(circleOptions);
-		circleOptions.center(position);
-		circleOptions.radius(50000);
+		
+		circleOptions.radius(radiusRed);
 		circleOptions.strokeColor(Color.argb(200, 255, 0, 255));
-		circleOptions.strokeWidth(5);
-		circleOptions.fillColor(Color.argb(50, 255, 0, 255));
 		Circle circleRed = map.addCircle(circleOptions);
 		
-		return new HitMarkerController(marker, circleRed);
+		return new HitMarkerController(marker, circleBlue, circleYellow, circleRed);
 	}
 	
 	public class HitMarkerController {
 		
 		private Marker marker;
-		private Circle circle;
+		private Circle circleBlue;
+		private Circle circleYellow;
+		private Circle circleRed;
 		
-		public HitMarkerController(Marker marker, Circle circle) {
+		public HitMarkerController(Marker marker, Circle circleBlue, Circle circleYellow, Circle circleRed) {
 			this.marker = marker;
-			this.circle = circle;
+			this.circleBlue = circleBlue;
+			this.circleYellow = circleYellow;
+			this.circleRed = circleRed;
 		}
 		
 		public void setPosition(LatLng position) {
 			marker.setPosition(position);
-			circle.setCenter(position);
+			circleBlue.setCenter(position);
+			circleYellow.setCenter(position);
+			circleRed.setCenter(position);
 		}
 		public LatLng getPosition() {
 			return marker.getPosition();
 		}
 		
-		public void setRadius(double radius) {
-			circle.setRadius(radius);
-		}
-		public double getRadius() {
-			return circle.getRadius();
-		}
-		
 		public void remove() {
 			marker.remove();
-			circle.remove();
+			circleBlue.remove();
+			circleYellow.remove();
+			circleRed.remove();
 		}
 	}
 
