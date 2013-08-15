@@ -3,6 +3,7 @@ class Room < ActiveRecord::Base
   has_many :missions
   has_many :locations
   has_many :hits
+  has_many :results
   belongs_to :owner, :class_name => "User"
 
   before_save :count_member
