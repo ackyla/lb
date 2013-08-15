@@ -53,7 +53,8 @@ Server::App.controllers :users do
     hit = Hit.new(:latitude => params[:latitude], :longitude => params[:longitude]){|hit|
       hit.user = @user
       hit.room = @user.room
-    }.save
+    }
+    hit.save
     hit.to_json
   end
 end
