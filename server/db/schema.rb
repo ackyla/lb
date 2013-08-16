@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 15) do
+ActiveRecord::Schema.define(:version => 16) do
 
   create_table "hits", :force => true do |t|
     t.float    "latitude"
@@ -34,6 +34,15 @@ ActiveRecord::Schema.define(:version => 15) do
   create_table "missions", :force => true do |t|
     t.integer  "type"
     t.integer  "room_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "results", :force => true do |t|
+    t.integer  "score"
+    t.integer  "user_id"
+    t.integer  "room_id"
+    t.integer  "hit_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
