@@ -1,5 +1,8 @@
 package logic.map;
 
+import java.util.Iterator;
+import java.util.List;
+
 import com.example.lb.R;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -54,11 +57,24 @@ public class MapLogic extends LogicBase {
 		map.setOnMapClickListener(listener);
 	}
 	
-	public Marker addMarker(double lat, double lng, String title) {
+	public Marker addLocationMarker(double lat, double lng, String title, String time) {
 		MarkerOptions options = new MarkerOptions();
 		options.position(new LatLng(lat, lng));
-		options.title(title);
+		options.title(time + ", " + title);
 		return map.addMarker(options);
+	}
+	
+	public Polyline drawLine(List<Marker> markerList) {
+		Iterator<Marker> mi = markerList.iterator();
+		PolylineOptions options = new PolylineOptions();
+
+		while (mi.hasNext()) {
+			options.add(mi.next().getPosition());
+		}
+		options.color(0xccff00ff);
+		options.width(10);
+		options.geodesic(true);
+		return map.addPolyline(options);
 	}
 	
 	public HitMarkerController addHitMarker(LatLng position, double radiusBlue, double radiusYellow, double radiusRed) {
@@ -159,15 +175,5 @@ public class MapLogic extends LogicBase {
 		//CameraPosition camera = new CameraPosition.Builder().target(
         //.bearing(0).tilt(25).build();
 		//map.animateCamera(CameraUpdateFactory.newCameraPosition(camera));
-	}
-	
-	public Polyline drawLine(double latFrom, double lngFrom, double latTo, double lngTo) {
-		PolylineOptions options = new PolylineOptions();
-		options.add(new LatLng(latFrom, lngFrom));
-		options.add(new LatLng(latTo, lngTo));
-		options.color(0xccff00ff);
-		options.width(10);
-		options.geodesic(true);
-		return map.addPolyline(options);
 	}
 }

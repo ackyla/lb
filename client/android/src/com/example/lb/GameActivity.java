@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import logic.location.LocationLogic;
+import logic.map.LocationMarker;
 import logic.map.MapLogic;
 import logic.map.MapLogic.HitMarkerController;
 import logic.timer.TimerLogic;
@@ -17,6 +18,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import dao.room.RoomEntity;
@@ -149,6 +151,8 @@ public class GameActivity extends FragmentActivity {
 		// 一定間隔で位置情報を取得
 		timerLogic = new TimerLogic(this);
 		getLocationTask = timerLogic.create(new Runnable() {
+			SparseArray<LocationMarker> locationMarkers = new SparseArray<LocationMarker>();
+			
 			@Override
 			public void run() {
 				API.getRoomLocations(userEntity.getRoomId(), new JsonHttpResponseHandler(){
@@ -159,8 +163,11 @@ public class GameActivity extends FragmentActivity {
 							SparseArray<JSONObject> userMap = new SparseArray<JSONObject>();
 							for (int i = 0; i < users.length(); i++) {
 								JSONObject userObj = users.getJSONObject(i);
-								userMap.put(userObj.getInt("id"), userObj);								
-							
+								userMap.put(userObj.getInt("id"), userObj);
+								LocationMarker locationMarker = locationMarkers.get(userObj.getInt("id"));								
+								if(locationMarker != null){
+									locationMarker.remove();
+								}
 							}
 							
 							JSONArray locations = ret.getJSONArray("locations");
@@ -169,16 +176,23 @@ public class GameActivity extends FragmentActivity {
 								JSONObject json = locations.getJSONObject(i);
 								double lat = json.getDouble("latitude");
 								double lng = json.getDouble("longitude");
-								UserEntity roomUserEntity = new UserEntity(userMap.get(json.getInt("user_id")));
-								mapLogic.addMarker(lat, lng, roomUserEntity.getName());
-								if(prevLocations.get(roomUserEntity.getUserId()) != null){
-									JSONObject preJson = prevLocations.get(roomUserEntity.getUserId());
-									double preLat = preJson.getDouble("latitude");
-									double preLng = preJson.getDouble("longitude");
-									mapLogic.drawLine(preLat, preLng, lat, lng);
+								UserEntity roomUserEntity = new UserEntity(userMap.get(json.getInt("user_id")));								
+								LocationMarker locationMarker = locationMarkers.get(roomUserEntity.getUserId());
+								if(locationMarker == null){
+									locationMarker = new LocationMarker(); 
+									locationMarkers.put(roomUserEntity.getUserId(), locationMarker);
 								}
-								prevLocations.put(roomUserEntity.getUserId(), json);
+								Marker marker = mapLogic.addLocationMarker(lat, lng, roomUserEntity.getName(), "");
+								locationMarker.addMarker(marker);
 							}
+							
+							for(int i = 0; i < users.length(); i++){
+								JSONObject userObj = users.getJSONObject(i);
+								LocationMarker locationMarker = locationMarkers.get(userObj.getInt("id"));
+								if(locationMarker != null){
+									locationMarker.addLine(mapLogic.drawLine(locationMarker.getMarkers()));
+								}
+							}							
 						} catch (JSONException e) {
 							Log.e("game", e.toString());
 						}
@@ -186,7 +200,7 @@ public class GameActivity extends FragmentActivity {
 				});
 			}
 		});
-		timerLogic.start(getLocationTask, 60000);
+		timerLogic.start(getLocationTask, 5000);
 		
 		// 残り時間をカウントダウン
 		final TextView leftTimeView = (TextView)findViewById(R.id.leftTimeView);
@@ -202,6 +216,9 @@ public class GameActivity extends FragmentActivity {
 								leftTime = json.getInt("second");
 							} catch (JSONException e) {
 							}
+						}
+						@Override
+						public void onFailure(Throwable throwable) {
 						}
 					});
 				} else if (leftTime > 0){

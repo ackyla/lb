@@ -23,7 +23,7 @@ public class LocationLogic extends LogicBase {
 	
 	public LocationLogic(Context context) {
 		super(context);
-		setInterval(60000);
+		setInterval(10000);
 	}
 
 	public void setLocationListener(LocationListener _locationListener) {

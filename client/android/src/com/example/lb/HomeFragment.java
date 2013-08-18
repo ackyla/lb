@@ -51,6 +51,11 @@ public class HomeFragment extends Fragment {
     	// ユーザ情報と入室中の部屋を表示
     	API.getUserInfo(userEntity.getUserId(), new JsonHttpResponseHandler(){
     		@Override
+    		public void onFailure(Throwable thurowable) {
+    			Log.v("home", "failue="+thurowable);
+    		}
+    		
+    		@Override
     		public void onSuccess(JSONObject object) {
     			Log.v("home", object.toString());
     		   	View userInfo = getActivity().getLayoutInflater().inflate(R.layout.layout_user, null);
