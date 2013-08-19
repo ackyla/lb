@@ -54,6 +54,7 @@ public class GameActivity extends FragmentActivity {
 	TimerTask countLeftTimeTask;
 	TimerTask getLeftTimeTask;
 	Integer leftTime;
+	Integer leftTerritory;
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -252,6 +253,11 @@ public class GameActivity extends FragmentActivity {
 			
 		});
 		timerLogic.start(getLeftTimeTask, 30000);
+		
+		// 残り設置可能テリトリー数表示
+		leftTerritory = 5; // TODO 残りテリトリ数取得
+		TextView leftTerritoryView = (TextView)findViewById(R.id.leftTerritoryView);
+		leftTerritoryView.setText("残り "+leftTerritory);
 	}
 	
 	@Override
@@ -266,7 +272,12 @@ public class GameActivity extends FragmentActivity {
 		mapLogic.setOnLongClickListener(new OnMapLongClickListener(){
 			@Override
 			public void onMapLongClick(LatLng latlng) {
-				mapLogic.addTerritory(latlng, 10000);
+				if(leftTerritory > 0){
+					mapLogic.addTerritory(latlng, 10000);
+					leftTerritory --;
+					TextView leftTerritoryView = (TextView)findViewById(R.id.leftTerritoryView);
+					leftTerritoryView.setText("残り "+leftTerritory);
+				}
 				
 				// TODO API
 			}
@@ -300,6 +311,7 @@ public class GameActivity extends FragmentActivity {
 
 		leftTimeView.setText("終了");
 		
+		mapLogic.setOnLongClickListener(null);
 		mapLogic.setOnClickListener(new OnMapClickListener(){
 			
 			private HitMarker hitMarker;
