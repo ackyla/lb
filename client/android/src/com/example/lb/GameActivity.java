@@ -8,19 +8,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import logic.location.LocationLogic;
+import logic.map.HitMarker;
 import logic.map.LocationMarker;
 import logic.map.MapLogic;
-import logic.map.MapLogic.HitMarkerController;
 import logic.timer.TimerLogic;
 import logic.user.UserLogic;
 
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import dao.location.LocationEntity;
 import dao.room.RoomEntity;
 import dao.user.UserEntity;
 
@@ -38,8 +40,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import api.API;
 
@@ -158,7 +158,7 @@ public class GameActivity extends FragmentActivity {
 				API.getRoomLocations(userEntity.getRoomId(), new JsonHttpResponseHandler(){
 					@Override
 					public void onSuccess(JSONObject ret) {
-						try {
+						try {							
 							JSONArray users = ret.getJSONArray("members");
 							SparseArray<JSONObject> userMap = new SparseArray<JSONObject>();
 							for (int i = 0; i < users.length(); i++) {
@@ -171,18 +171,17 @@ public class GameActivity extends FragmentActivity {
 							}
 							
 							JSONArray locations = ret.getJSONArray("locations");
-							SparseArray<JSONObject> prevLocations = new SparseArray<JSONObject>();
 							for(int i = 0; i < locations.length(); i++){
-								JSONObject json = locations.getJSONObject(i);
-								double lat = json.getDouble("latitude");
-								double lng = json.getDouble("longitude");
-								UserEntity roomUserEntity = new UserEntity(userMap.get(json.getInt("user_id")));								
+								LocationEntity locationEntity = new LocationEntity(locations.getJSONObject(i));
+								double lat = locationEntity.getLatitude();
+								double lng = locationEntity.getLongitude();
+								UserEntity roomUserEntity = new UserEntity(userMap.get(locationEntity.getUserId()));								
 								LocationMarker locationMarker = locationMarkers.get(roomUserEntity.getUserId());
 								if(locationMarker == null){
 									locationMarker = new LocationMarker(); 
 									locationMarkers.put(roomUserEntity.getUserId(), locationMarker);
 								}
-								Marker marker = mapLogic.addLocationMarker(lat, lng, roomUserEntity.getName(), "");
+								Marker marker = mapLogic.addLocationMarker(lat, lng, roomUserEntity.getName(), locationEntity.getCreatedAt());
 								locationMarker.addMarker(marker);
 							}
 							
@@ -264,9 +263,9 @@ public class GameActivity extends FragmentActivity {
 		locationLogic.start();
 		
 		// テリトリー作成
-		mapLogic.setOnClickListener(new OnMapClickListener(){
+		mapLogic.setOnLongClickListener(new OnMapLongClickListener(){
 			@Override
-			public void onMapClick(LatLng latlng) {
+			public void onMapLongClick(LatLng latlng) {
 				mapLogic.addTerritory(latlng, 10000);
 				
 				// TODO API
@@ -303,17 +302,17 @@ public class GameActivity extends FragmentActivity {
 		
 		mapLogic.setOnClickListener(new OnMapClickListener(){
 			
-			private HitMarkerController hitMarkerController;
+			private HitMarker hitMarker;
 			
 			@Override
 			public void onMapClick(LatLng latlng) {
-				if(hitMarkerController != null) hitMarkerController.remove();
-				hitMarkerController = mapLogic.addHitMarker(latlng, 1000, 10000, 20000);
+				if(hitMarker != null) hitMarker.remove();
+				hitMarker = mapLogic.addHitMarker(latlng, 1000, 10000, 20000);
 				hitButton.setOnClickListener(new OnClickListener() {
 					
 					@Override
 					public void onClick(View v) {
-						LatLng latlng = hitMarkerController.getPosition();
+						LatLng latlng = hitMarker.getPosition();
 						API.postHitLocation(userEntity, 0, latlng.latitude, latlng.longitude, 0, new JsonHttpResponseHandler() {
 							@Override
 							public void onSuccess(JSONObject json) {

@@ -8,6 +8,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
@@ -57,10 +58,16 @@ public class MapLogic extends LogicBase {
 		map.setOnMapClickListener(listener);
 	}
 	
+	public void setOnLongClickListener(OnMapLongClickListener listener) {
+		map.setOnMapLongClickListener(listener);
+	}
+	
 	public Marker addLocationMarker(double lat, double lng, String title, String time) {
 		MarkerOptions options = new MarkerOptions();
 		options.position(new LatLng(lat, lng));
-		options.title(time + ", " + title);
+		options.title(title);
+		options.snippet(time);
+		options.draggable(false);
 		return map.addMarker(options);
 	}
 	
@@ -77,7 +84,7 @@ public class MapLogic extends LogicBase {
 		return map.addPolyline(options);
 	}
 	
-	public HitMarkerController addHitMarker(LatLng position, double radiusBlue, double radiusYellow, double radiusRed) {
+	public HitMarker addHitMarker(LatLng position, double radiusBlue, double radiusYellow, double radiusRed) {
 		MarkerOptions markerOptions = new MarkerOptions();
 		CircleOptions circleOptions = new CircleOptions();
 		
@@ -103,42 +110,10 @@ public class MapLogic extends LogicBase {
 		circleOptions.fillColor(Color.argb(80, 0, 255, 255));
 		Circle circleBlue = map.addCircle(circleOptions);
 		
-		return new HitMarkerController(marker, circleBlue, circleYellow, circleRed);
+		return new HitMarker(marker, circleBlue, circleYellow, circleRed);
 	}
 	
-	public class HitMarkerController {
-		
-		private Marker marker;
-		private Circle circleBlue;
-		private Circle circleYellow;
-		private Circle circleRed;
-		
-		public HitMarkerController(Marker marker, Circle circleBlue, Circle circleYellow, Circle circleRed) {
-			this.marker = marker;
-			this.circleBlue = circleBlue;
-			this.circleYellow = circleYellow;
-			this.circleRed = circleRed;
-		}
-		
-		public void setPosition(LatLng position) {
-			marker.setPosition(position);
-			circleBlue.setCenter(position);
-			circleYellow.setCenter(position);
-			circleRed.setCenter(position);
-		}
-		public LatLng getPosition() {
-			return marker.getPosition();
-		}
-		
-		public void remove() {
-			marker.remove();
-			circleBlue.remove();
-			circleYellow.remove();
-			circleRed.remove();
-		}
-	}
-
-	public TerritoryController addTerritory(LatLng position, double radius) {
+	public TerritoryMarker addTerritory(LatLng position, double radius) {
 		CircleOptions circleOptions = new CircleOptions();
 		
 		circleOptions.center(position);
@@ -148,26 +123,7 @@ public class MapLogic extends LogicBase {
 		circleOptions.fillColor(Color.argb(50, 0, 255, 0));
 		Circle circle = map.addCircle(circleOptions);
 
-		return new TerritoryController(circle);
-	}
-	
-	public class TerritoryController {
-		private Circle circle;
-		
-		public TerritoryController(Circle circle) {
-			this.circle = circle;
-		}
-		
-		public void setPosition(LatLng position) {
-			circle.setCenter(position);
-		}
-		public LatLng getPosition() {
-			return circle.getCenter();
-		}
-		
-		public void remove() {
-			circle.remove();
-		}
+		return new TerritoryMarker(circle);
 	}
 	
 	public void moveCamera(double lat, double lng, float zoom) {
