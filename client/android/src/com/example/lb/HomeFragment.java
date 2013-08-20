@@ -68,6 +68,7 @@ public class HomeFragment extends Fragment {
     	    	
     	    	try {
     	    		JSONObject roomObject = object.getJSONObject("room");
+    	    		Log.v("home", "room="+roomObject.toString());
     	    		roomEntity = new RoomEntity(roomObject);
         			roomTitle.setText(roomEntity.getTitle());
         			numUsers.setText("人数: " + roomEntity.getNumUser());

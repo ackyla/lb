@@ -164,6 +164,7 @@ public class GameActivity extends FragmentActivity {
 							SparseArray<JSONObject> userMap = new SparseArray<JSONObject>();
 							for (int i = 0; i < users.length(); i++) {
 								JSONObject userObj = users.getJSONObject(i);
+								
 								userMap.put(userObj.getInt("id"), userObj);
 								LocationMarker locationMarker = locationMarkers.get(userObj.getInt("id"));								
 								if(locationMarker != null){
@@ -176,6 +177,7 @@ public class GameActivity extends FragmentActivity {
 								LocationEntity locationEntity = new LocationEntity(locations.getJSONObject(i));
 								double lat = locationEntity.getLatitude();
 								double lng = locationEntity.getLongitude();
+							
 								UserEntity roomUserEntity = new UserEntity(userMap.get(locationEntity.getUserId()));								
 								LocationMarker locationMarker = locationMarkers.get(roomUserEntity.getUserId());
 								if(locationMarker == null){

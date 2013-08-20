@@ -88,6 +88,8 @@ public class RoomFragment extends Fragment {
     	
     	final LinearLayout roomListLayout = (LinearLayout)v.findViewById(R.id.roomListLayout);
     	final EditText titleInput = (EditText)v.findViewById(R.id.titlInput);
+    	final EditText timeLimitInput = (EditText)v.findViewById(R.id.timeLimitInput);
+    	
     	Button createButton = (Button)v.findViewById(R.id.createButton);
        	userLogic = new UserLogic(getActivity());
     	userEntity = userLogic.getUser();
@@ -118,7 +120,11 @@ public class RoomFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				String title = titleInput.getText().toString();
-				API.createRoom(userEntity, title, new JsonHttpResponseHandler() {
+				// TODO 開発用
+				int timeLimit = timeLimitInput.getText().toString().length() > 0 ? Integer.valueOf(timeLimitInput.getText().toString()) : 1;
+				if(timeLimit < 1) timeLimit = 1;
+				//
+				API.createRoom(userEntity, title, timeLimit, new JsonHttpResponseHandler() {
 					
 					private ProgressDialog progress = new ProgressDialog(getActivity());
 					

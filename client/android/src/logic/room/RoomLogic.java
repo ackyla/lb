@@ -25,10 +25,10 @@ public class RoomLogic extends LogicBase {
 		return null;
 	}
 	
-	public int create(String title) {
+	public int create(String title, int timeLimit) {
 		UserLogic userLogic = new UserLogic(context);
 		UserEntity userEntity = userLogic.getUser();
-		API.createRoom(userEntity, title, new JsonHttpResponseHandler() {
+		API.createRoom(userEntity, title, timeLimit, new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONObject json) {
 

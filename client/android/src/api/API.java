@@ -1,6 +1,7 @@
 package api;
 
 import android.location.Location;
+import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -48,13 +49,13 @@ public class API {
 		get("locations/list", params, handler);
 	}
 
-	public static void createRoom(UserEntity user, String title,
+	public static void createRoom(UserEntity user, String title, int timeLimit, 
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("user_id", Integer.toString(user.getUserId()));
 		params.put("token", user.getToken());
 		params.put("title", title);
-		params.put("time_limit", "1");
+		params.put("time_limit", Integer.toString(timeLimit));
 		post("rooms/create", params, handler);
 	}
 
