@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.lb"
+    package="com.lb"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -20,10 +20,10 @@
         android:required="true" />
 
     <permission
-        android:name="com.example.lb.permission.MAPS_RECEIVE"
+        android:name="com.lb.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.example.lb.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="com.lb.permission.MAPS_RECEIVE" />
 
     <application
         android:allowBackup="true"
@@ -35,23 +35,23 @@
             android:value="@string/google_map_api_key" />
 
         <activity
-            android:name="com.example.lb.SignupActivity"
+            android:name="com.lb.ui.SignupActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.example.lb.GameActivity"
+            android:name="com.lb.ui.GameActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.example.lb.MainActivity"
+            android:name="com.lb.ui.MainActivity"
             android:label="@string/app_name" >
         </activity>
         <activity 
-            android:name="com.example.lb.ResultActivity"
+            android:name="com.lb.ui.ResultActivity"
             android:label="@string/app_name">
         </activity>
         <activity
-            android:name="com.example.lb.TitleActivity"
+            android:name="com.lb.ui.TitleActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
