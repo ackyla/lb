@@ -3,6 +3,8 @@ package com.lb.dao;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 public class UserEntity {
 	private String name;
 	private int userId;
@@ -28,7 +30,7 @@ public class UserEntity {
 
 		}
 		try {
-			setRoomId(json.getInt("roomId"));
+			setRoomId(json.getInt("room_id"));
 		} catch (JSONException e) {
 
 		}

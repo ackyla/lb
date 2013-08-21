@@ -1,6 +1,5 @@
 package com.lb.ui;
 
-import java.util.HashMap;
 import java.util.TimerTask;
 
 import org.json.JSONArray;
@@ -73,13 +72,13 @@ public class GameActivity extends FragmentActivity {
 		API.getUserInfo(userEntity.getUserId(), new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONObject object) {
-				// TODO †phelrineがuserEntityを殺した†
 				try {
-					// TODO 殺す
+					// ユーザ情報をサーバから取得したもので上書き
+					userEntity = new UserEntity(object);
 					JSONObject roomObject = object.getJSONObject("room");
 					roomEntity = new RoomEntity(roomObject);
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
+					Log.v("game", "getUserInfoError="+e);
 				}
 			}
 		});

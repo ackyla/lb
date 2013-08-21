@@ -40,9 +40,9 @@ public class RoomFragment extends Fragment {
 		API.enterRoom(userEntity, roomId, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONObject json) {
-				Log.v("room", "enter");
 				RoomEntity roomEntity = new RoomEntity(json);
-				roomEntity.getId();
+				
+				// TODO いずれ殺す
 				userLogic.enterRoom(userEntity, roomEntity.getId());
 				
 				FragmentManager manager = getFragmentManager();
