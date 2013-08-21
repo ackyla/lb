@@ -6,18 +6,12 @@ import com.lb.dao.UserDAO;
 import com.lb.dao.UserEntity;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 public class UserLogic extends LogicBase {
 	
-	private SQLiteDatabase db;
-	
 	public UserLogic(Context context) {
 		super(context);
-		
-		DBLogic dbLogic = new DBLogic(super.context);
-		this.db = dbLogic.connect();
 	}
 	
 	/**
@@ -28,6 +22,7 @@ public class UserLogic extends LogicBase {
 		UserDAO userDAO = this.getDAO();
 		try	{
 			List<UserEntity> userList = userDAO.get();
+			Log.v("home", "userList="+userList.toString());
 			if(userList.size() == 1) {
 				UserEntity userEntity = userList.get(0);
 				return userEntity;
@@ -35,6 +30,7 @@ public class UserLogic extends LogicBase {
 				return null;
 			}
 		} catch(Exception e) {
+			Log.v("home", "error="+e.toString());
 			return null;
 		}
 	}
@@ -131,6 +127,6 @@ public class UserLogic extends LogicBase {
 	}
 	
 	private UserDAO getDAO() {
-		return new UserDAO(this.db);
+		return new UserDAO(context);
 	}
 }
