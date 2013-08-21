@@ -81,6 +81,11 @@ public class GameActivity extends FragmentActivity {
 					Log.v("game", "getUserInfoError="+e);
 				}
 			}
+			
+			@Override
+			public void onFailure(Throwable throwable) {
+				Log.v("game", "getUserInfoOnFailure="+throwable);
+			}
 		});
 		
 		// マップを表示
@@ -140,8 +145,13 @@ public class GameActivity extends FragmentActivity {
 				API.postLocation(userEntity, location, new JsonHttpResponseHandler(){ 
 					@Override
 					public void onSuccess(JSONObject json) {
-						
-					}	
+						Log.v("game", "location="+json.toString());
+					}
+					
+					@Override
+					public void onFailure(Throwable throwable) {
+						Log.v("game", "postLocationOnFailure="+throwable);
+					}
 				});
 			}
 			
@@ -197,6 +207,11 @@ public class GameActivity extends FragmentActivity {
 							Log.e("game", e.toString());
 						}
 					}
+					
+					@Override
+					public void onFailure(Throwable throwable) {
+						Log.v("game", "getRoomLocationsOnFailure="+throwable);
+					}
 				});
 			}
 		});
@@ -217,8 +232,10 @@ public class GameActivity extends FragmentActivity {
 							} catch (JSONException e) {
 							}
 						}
+						
 						@Override
 						public void onFailure(Throwable throwable) {
+							Log.v("game", "getTimeLeftOnFailure="+throwable);
 						}
 					});
 				} else if (leftTime > 0){
@@ -247,6 +264,11 @@ public class GameActivity extends FragmentActivity {
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
+					}
+					
+					@Override
+					public void onFailure(Throwable throwable) {
+						Log.v("game", "getTimeLeftOnFailure="+throwable);
 					}
 				});
 			}
@@ -332,6 +354,11 @@ public class GameActivity extends FragmentActivity {
 								intent.setClass(GameActivity.this, ResultActivity.class);
 								startActivity(intent);
 								finish();
+							}
+							
+							@Override
+							public void onFailure(Throwable throwable) {
+								Log.v("game", "postHitLocationOnFailure="+throwable);
 							}
 						});
 					}
