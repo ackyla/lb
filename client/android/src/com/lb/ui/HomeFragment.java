@@ -51,6 +51,7 @@ public class HomeFragment extends Fragment {
     	
     	// ユーザ情報と入室中の部屋を表示
     	API.getUserInfo(userEntity.getUserId(), new JsonHttpResponseHandler(){
+    		
     		@Override
     		public void onFailure(Throwable thurowable) {
     			Log.v("home", "failue="+thurowable);
@@ -58,7 +59,10 @@ public class HomeFragment extends Fragment {
     		
     		@Override
     		public void onSuccess(JSONObject object) {
-    			Log.v("home", object.toString());
+    			
+    			// 上書き
+    			userEntity = new UserEntity(object);
+    			
     		   	View userInfo = getActivity().getLayoutInflater().inflate(R.layout.layout_user, null);
     	    	TextView userName = (TextView)userInfo.findViewById(R.id.name);
     	    	View roomInfo = getActivity().getLayoutInflater().inflate(R.layout.layout_room, null);
@@ -69,7 +73,6 @@ public class HomeFragment extends Fragment {
     	    	
     	    	try {
     	    		JSONObject roomObject = object.getJSONObject("room");
-    	    		Log.v("home", "room="+roomObject.toString());
     	    		roomEntity = new RoomEntity(roomObject);
         			roomTitle.setText(roomEntity.getTitle());
         			numUsers.setText("人数: " + roomEntity.getNumUser());
@@ -85,6 +88,7 @@ public class HomeFragment extends Fragment {
         				startButton.setOnClickListener(new OnClickListener() {
 							@Override
 							public void onClick(View v) {
+								Log.v("home", "roomid="+userEntity.getRoomId());
 								API.startGame(userEntity, new JsonHttpResponseHandler(){
 									@Override
 									public void onSuccess(JSONObject json){
@@ -94,6 +98,11 @@ public class HomeFragment extends Fragment {
 										intent.setClass(getActivity(), GameActivity.class);
 										startActivity(intent);
 										getActivity().finish();
+									}
+									
+									@Override
+									public void onFailure(Throwable throwable) {
+										Log.v("home", "startGameOnFailure="+throwable.toString());
 									}
 								});
 							}

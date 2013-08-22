@@ -37,6 +37,7 @@ public class RoomFragment extends Fragment {
 	}
 	
 	private void enterRoom(int roomId) {
+		Log.v("room", "user="+userEntity.getUserId()+", roomId="+roomId);
 		API.enterRoom(userEntity, roomId, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONObject json) {
@@ -99,7 +100,6 @@ public class RoomFragment extends Fragment {
     		
     		@Override
     		public void onSuccess(JSONArray jsonArray) {
-    			Log.v("room", jsonArray.toString());
     			for(int i = 0; i < jsonArray.length(); i++){
     				try {
 						JSONObject json = jsonArray.getJSONObject(i);
