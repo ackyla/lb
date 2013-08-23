@@ -82,8 +82,8 @@ public class GameActivity extends FragmentActivity {
 			@Override
 			public void onSuccess(JSONObject object) {
 				try {
-					// ユーザ情報をサーバから取得したもので上書き
-					userEntity = new UserEntity(object);
+					// TODO 上書きしたいけど（ry
+					// userEntity = new UserEntity(object);
 					JSONObject roomObject = object.getJSONObject("room");
 					roomEntity = new RoomEntity(roomObject);
 				} catch (JSONException e) {

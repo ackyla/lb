@@ -59,9 +59,9 @@ public class HomeFragment extends Fragment {
     		
     		@Override
     		public void onSuccess(JSONObject object) {
-    			
-    			// 上書き
-    			userEntity = new UserEntity(object);
+
+    			// TODO 上書きしたいけどトークン消えるしあれ
+    			// userEntity = new UserEntity(object);
     			
     		   	View userInfo = getActivity().getLayoutInflater().inflate(R.layout.layout_user, null);
     	    	TextView userName = (TextView)userInfo.findViewById(R.id.name);
@@ -88,7 +88,6 @@ public class HomeFragment extends Fragment {
         				startButton.setOnClickListener(new OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								Log.v("home", "roomid="+userEntity.getRoomId());
 								API.startGame(userEntity, new JsonHttpResponseHandler(){
 									@Override
 									public void onSuccess(JSONObject json){
