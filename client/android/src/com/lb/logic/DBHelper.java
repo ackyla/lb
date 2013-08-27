@@ -24,8 +24,8 @@ public class DBHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		
-        if (oldVersion < 2) {
-        	String sql = this.context.getString(R.string.update_table_v2);
+        if (oldVersion < 3) {
+        	String sql = this.context.getString(R.string.update_table_v3);
         	db.execSQL(sql);
         }
 		

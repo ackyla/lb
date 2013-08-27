@@ -42,13 +42,14 @@ public class API {
 		post("locations/create", params, handler);
 	}
 
-	public static void getRoomLocations(int roomId, AsyncHttpResponseHandler handler) {
+	public static void getRoomLocations(int roomId,
+			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("room_id", Integer.toString(roomId));
 		get("locations/list", params, handler);
 	}
 
-	public static void createRoom(UserEntity user, String title, int timeLimit, 
+	public static void createRoom(UserEntity user, String title, int timeLimit,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("user_id", Integer.toString(user.getUserId()));
@@ -66,8 +67,7 @@ public class API {
 		post("users/start", params, handler);
 	}
 
-	public static void getRoomList(UserEntity user,
-			AsyncHttpResponseHandler handler) {
+	public static void getRoomList(AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		get("rooms/list", params, handler);
 	}
@@ -111,7 +111,7 @@ public class API {
 		params.put("user_id", Integer.toString(userId));
 		get("users/show", params, handler);
 	}
-	
+
 	public static void getTimeLeft(int roomId, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("room_id", Integer.toString(roomId));

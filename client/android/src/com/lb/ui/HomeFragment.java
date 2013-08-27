@@ -5,9 +5,10 @@ import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
+import com.lb.dao.AuthEntity;
 import com.lb.dao.RoomEntity;
 import com.lb.dao.UserEntity;
-import com.lb.logic.UserLogic;
+import com.lb.logic.AuthLogic;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
@@ -46,11 +47,10 @@ public class HomeFragment extends Fragment {
     	final LinearLayout userInfoLayout = (LinearLayout)v.findViewById(R.id.userInfoLayout);
     	final LinearLayout roomInfoLayout = (LinearLayout)v.findViewById(R.id.roomInfoLayout);
     	
-    	UserLogic userLogic = new UserLogic(getActivity());
-    	userEntity = userLogic.getUser();
-    	
     	// ユーザ情報と入室中の部屋を表示
-    	API.getUserInfo(userEntity.getUserId(), new JsonHttpResponseHandler(){
+    	AuthLogic authLogic = new AuthLogic(getActivity());
+    	final AuthEntity authEntity = authLogic.getAuth();
+    	API.getUserInfo(authEntity.getUserId(), new JsonHttpResponseHandler(){
     		
     		@Override
     		public void onFailure(Throwable thurowable) {
@@ -60,8 +60,8 @@ public class HomeFragment extends Fragment {
     		@Override
     		public void onSuccess(JSONObject object) {
 
-    			// TODO 上書きしたいけどトークン消えるしあれ
-    			// userEntity = new UserEntity(object);
+    			userEntity = new UserEntity(object);
+    			userEntity.setToken(authEntity.getToken());
     			
     		   	View userInfo = getActivity().getLayoutInflater().inflate(R.layout.layout_user, null);
     	    	TextView userName = (TextView)userInfo.findViewById(R.id.name);

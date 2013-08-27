@@ -11,15 +11,16 @@ import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
+import com.lb.dao.AuthEntity;
 import com.lb.dao.LocationEntity;
 import com.lb.dao.RoomEntity;
 import com.lb.dao.UserEntity;
+import com.lb.logic.AuthLogic;
 import com.lb.logic.HitMarker;
 import com.lb.logic.LocationLogic;
 import com.lb.logic.LocationMarker;
 import com.lb.logic.MapLogic;
 import com.lb.logic.TimerLogic;
-import com.lb.logic.UserLogic;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
@@ -76,14 +77,15 @@ public class GameActivity extends FragmentActivity {
 		double distance = geoCalc.calculateGeodeticCurve(ellipsoid, territoryPos, point).getEllipsoidalDistance();*/
 		
 		// ユーザ情報と部屋の情報を取得
-		UserLogic userLogic = new UserLogic(this);
-		userEntity = userLogic.getUser();
-		API.getUserInfo(userEntity.getUserId(), new JsonHttpResponseHandler() {
+		AuthLogic authLogic = new AuthLogic(this);
+		final AuthEntity authEntity = authLogic.getAuth();
+		
+		API.getUserInfo(authEntity.getUserId(), new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONObject object) {
 				try {
-					// TODO 上書きしたいけど（ry
-					// userEntity = new UserEntity(object);
+					userEntity = new UserEntity(object);
+					userEntity.setToken(authEntity.getToken());
 					JSONObject roomObject = object.getJSONObject("room");
 					roomEntity = new RoomEntity(roomObject);
 				} catch (JSONException e) {
@@ -151,8 +153,7 @@ public class GameActivity extends FragmentActivity {
 		locationLogic.setLocationListener(new LocationListener() {
 			@Override
 			public void onLocationChanged(Location location) {
-
-				if (userEntity.getRoomId() > 0) {
+				if (userEntity != null && userEntity.getRoomId() > 0) {
 					API.postLocation(userEntity, location,
 							new JsonHttpResponseHandler() {
 								@Override
@@ -178,7 +179,7 @@ public class GameActivity extends FragmentActivity {
 
 			@Override
 			public void run() {
-				if (userEntity.getRoomId() > 0) {
+				if (userEntity != null && userEntity.getRoomId() > 0) {
 					API.getRoomLocations(userEntity.getRoomId(),
 							new JsonHttpResponseHandler() {
 								@Override
@@ -263,7 +264,7 @@ public class GameActivity extends FragmentActivity {
 		countLeftTimeTask = timerLogic.create(new Runnable() {
 			@Override
 			public void run() {
-				if (leftTime == null && userEntity.getRoomId() > 0) {
+				if (leftTime == null && userEntity != null && userEntity.getRoomId() > 0) {
 					// 残り時間が取れてない時はAPIで取りに行く
 					API.getTimeLeft(userEntity.getRoomId(),
 							new JsonHttpResponseHandler() {
@@ -302,7 +303,7 @@ public class GameActivity extends FragmentActivity {
 
 			@Override
 			public void run() {
-				if (userEntity.getRoomId() > 0) {
+				if (userEntity != null && userEntity.getRoomId() > 0) {
 					API.getTimeLeft(userEntity.getRoomId(),
 							new JsonHttpResponseHandler() {
 								@Override
@@ -398,7 +399,7 @@ public class GameActivity extends FragmentActivity {
 					@Override
 					public void onClick(View v) {
 						LatLng latlng = hitMarker.getPosition();
-						if (userEntity.getRoomId() > 0) {
+						if (userEntity != null && userEntity.getRoomId() > 0) {
 							API.postHitLocation(userEntity, 0, latlng.latitude,
 									latlng.longitude, 0,
 									new JsonHttpResponseHandler() {

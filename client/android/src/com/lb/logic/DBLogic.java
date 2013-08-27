@@ -15,10 +15,8 @@ import android.util.Log;
 
 public class DBLogic extends LogicBase{
 	
-	private DBHelper helper;
-	
 	private static final String DB_NAME = "lb.db";
-	private static final int DB_VERSION = 2;
+	private static final int DB_VERSION = 3;
 	
 	public DBLogic(Context context) {
 		super(context);

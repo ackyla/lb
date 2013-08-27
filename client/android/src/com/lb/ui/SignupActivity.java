@@ -4,8 +4,8 @@ import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
-import com.lb.dao.UserEntity;
-import com.lb.logic.UserLogic;
+import com.lb.dao.AuthEntity;
+import com.lb.logic.AuthLogic;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
@@ -26,7 +26,7 @@ public class SignupActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_signup);
 		
-		final UserLogic userLogic = new UserLogic(this);
+		final AuthLogic authLogic = new AuthLogic(this);
 		final ProgressDialog progress = new ProgressDialog(this);
 		final EditText editText = (EditText)findViewById(R.id.editText1);
 		Button button = (Button)findViewById(R.id.buttonRegister);		
@@ -44,8 +44,8 @@ public class SignupActivity extends Activity {
 					
 					@Override
 					public void onSuccess(JSONObject json) {
-						UserEntity userEntity = new UserEntity(json);
-						userLogic.register(userEntity);
+						AuthEntity authEntity = new AuthEntity(json);
+						authLogic.register(authEntity);
 						progress.dismiss();
 						
 						Intent intent = new Intent();

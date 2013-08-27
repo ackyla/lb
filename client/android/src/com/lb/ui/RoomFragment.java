@@ -6,9 +6,10 @@ import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
+import com.lb.dao.AuthEntity;
 import com.lb.dao.RoomEntity;
 import com.lb.dao.UserEntity;
-import com.lb.logic.UserLogic;
+import com.lb.logic.AuthLogic;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
@@ -30,49 +31,9 @@ import android.widget.TextView;
 public class RoomFragment extends Fragment {
 	
 	private UserEntity userEntity;
-	private UserLogic userLogic;
-	
+
 	public RoomFragment() {
 		setRetainInstance(true);
-	}
-	
-	private void enterRoom(int roomId) {
-		Log.v("room", "user="+userEntity.getUserId()+", roomId="+roomId);
-		API.enterRoom(userEntity, roomId, new JsonHttpResponseHandler(){
-			@Override
-			public void onSuccess(JSONObject json) {
-				RoomEntity roomEntity = new RoomEntity(json);
-				
-				// TODO いずれ殺す
-				userLogic.enterRoom(userEntity, roomEntity.getId());
-				
-				FragmentManager manager = getFragmentManager();
-				FragmentTransaction fragmentTransaction = manager.beginTransaction();
-				Fragment fragment = manager.findFragmentByTag("home");
-				if(fragment==null){
-					fragment = new HomeFragment();
-					fragmentTransaction.replace(R.id.mainContent, fragment, "home");
-					fragmentTransaction.commit();
-				}
-			}
-		});
-	}
-	
-	private void addRoom(LinearLayout roomList, JSONObject json) {
-		final RoomEntity roomEntity = new RoomEntity(json);
-		View v = getActivity().getLayoutInflater().inflate(R.layout.layout_room, null);
-		TextView roomTitle = (TextView)v.findViewById(R.id.title);
-		roomTitle.setText(roomEntity.getId() + ": " + roomEntity.getTitle());
-		Button button = (Button)v.findViewById(R.id.button);
-		button.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				enterRoom(roomEntity.getId());
-			}
-			
-		});
-		roomList.addView(v);
 	}
 	
 	@Override
@@ -92,11 +53,20 @@ public class RoomFragment extends Fragment {
     	final EditText timeLimitInput = (EditText)v.findViewById(R.id.timeLimitInput);
     	
     	Button createButton = (Button)v.findViewById(R.id.createButton);
-       	userLogic = new UserLogic(getActivity());
-    	userEntity = userLogic.getUser();
+       	
+    	AuthLogic authLogic = new AuthLogic(getActivity());
+    	final AuthEntity authEntity = authLogic.getAuth();
     	
+    	API.getUserInfo(authEntity.getUserId(), new JsonHttpResponseHandler() {
+    		@Override
+    		public void onSuccess(JSONObject json) {
+    			userEntity = new UserEntity(json);
+    			userEntity.setToken(authEntity.getToken());
+    		}
+    	});
+
     	// 部屋一覧を取得
-    	API.getRoomList(userEntity, new JsonHttpResponseHandler() {
+    	API.getRoomList(new JsonHttpResponseHandler() {
     		
     		@Override
     		public void onSuccess(JSONArray jsonArray) {
@@ -111,7 +81,7 @@ public class RoomFragment extends Fragment {
     		
     		@Override
     		public void onFailure(Throwable e) {
-    			
+    			Log.v("room", "roomListError="+e.toString());
     		}
     	});
     	
@@ -141,13 +111,13 @@ public class RoomFragment extends Fragment {
 						Log.v("room", "success");
 						RoomEntity roomEntity = new RoomEntity(json);
 						addRoom(roomListLayout, json);
-						enterRoom(roomEntity.getId());
+						//enterRoom(roomEntity.getId());
 						progress.dismiss();
 					}
 					
 					public void onFailure(Throwable e) {
 						progress.dismiss();
-						Log.v("room", "fail");
+						Log.v("room", "createRoomError="+e.toString());
 					}
 					
 				});
@@ -174,5 +144,43 @@ public class RoomFragment extends Fragment {
 	public void onDestroy() {
 		super.onDestroy();
 		Log.v("life", "room destroy");
+	}
+	
+	private void enterRoom(int roomId) {
+		API.enterRoom(userEntity, roomId, new JsonHttpResponseHandler(){
+			@Override
+			public void onSuccess(JSONObject json) {
+				FragmentManager manager = getFragmentManager();
+				FragmentTransaction fragmentTransaction = manager.beginTransaction();
+				Fragment fragment = manager.findFragmentByTag("home");
+				if(fragment==null){
+					fragment = new HomeFragment();
+					fragmentTransaction.replace(R.id.mainContent, fragment, "home");
+					fragmentTransaction.commit();
+				}
+			}
+			
+    		@Override
+    		public void onFailure(Throwable e) {
+    			Log.v("room", "enterRoomError="+e.toString());
+    		}
+		});
+	}
+	
+	private void addRoom(LinearLayout roomList, JSONObject json) {
+		final RoomEntity roomEntity = new RoomEntity(json);
+		View v = getActivity().getLayoutInflater().inflate(R.layout.layout_room, null);
+		TextView roomTitle = (TextView)v.findViewById(R.id.title);
+		roomTitle.setText(roomEntity.getId() + ": " + roomEntity.getTitle());
+		Button button = (Button)v.findViewById(R.id.button);
+		button.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				enterRoom(roomEntity.getId());
+			}
+			
+		});
+		roomList.addView(v);
 	}
 }

@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="init_table">
+		create table auth(
+			user_id	integer not null,
+			token 	varchar(32)
+		);
+    </string>
+    <string name="update_table_v1">
 		create table user(
 			name	varchar(255),
 			user_id	integer not null,
-			token 	varchar(32),
-			room_id integer
+			token 	varchar(32)
 		);
     </string>
     <string name="update_table_v2">
         alter table user add column room_id integer;
     </string>
+    <string name="update_table_v3">
+        drop table user;
+        create table auth(
+        	user_id integer not null,
+        	token	varchar(32)
+        );
+   	</string>
 </resources>

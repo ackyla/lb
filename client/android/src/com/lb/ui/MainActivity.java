@@ -5,9 +5,9 @@ import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
+import com.lb.dao.AuthEntity;
 import com.lb.dao.RoomEntity;
-import com.lb.dao.UserEntity;
-import com.lb.logic.UserLogic;
+import com.lb.logic.AuthLogic;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.content.Intent;
@@ -27,7 +27,7 @@ public class MainActivity extends FragmentActivity {
 	private static final int FRAGMENT_HOME = 100;
 	private static final int FRAGMENT_ROOM = 101;
 	private static final int FRAGMENT_CONFIG = 102;
-	private UserLogic userLogic;
+	private AuthLogic authLogic;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -41,7 +41,7 @@ public class MainActivity extends FragmentActivity {
 		Log.v("life", "main create");
 		setContentView(R.layout.activity_main);
 
-		userLogic = new UserLogic(this);
+		authLogic = new AuthLogic(this);
 
 		if (savedInstanceState == null) {
 			replaceFragment(FRAGMENT_HOME);
@@ -79,8 +79,8 @@ public class MainActivity extends FragmentActivity {
 		super.onStart();
 		Log.v("life", "main start");
 
-		UserEntity userEntity = userLogic.getUser();
-		API.getUserInfo(userEntity.getUserId(), new JsonHttpResponseHandler() {
+		AuthEntity authEntity = authLogic.getAuth();
+		API.getUserInfo(authEntity.getUserId(), new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONObject object) {
 				try {

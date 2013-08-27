@@ -1,7 +1,7 @@
 package com.lb.ui;
 
 import com.lb.R;
-import com.lb.logic.UserLogic;
+import com.lb.logic.AuthLogic;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,9 +15,9 @@ public class TitleActivity extends Activity {
 		setContentView(R.layout.activity_title);
 		
 		// 端末にユーザ情報あるかをチェック
-		UserLogic userLogic = new UserLogic(this);
+		AuthLogic authLogic = new AuthLogic(this);
 		Intent intent = new Intent();
-		if (!userLogic.checkRegister()) {
+		if (!authLogic.checkRegister()) {
 			// サインアップ画面へ
 			intent.setClass(this, SignupActivity.class);
 		} else {

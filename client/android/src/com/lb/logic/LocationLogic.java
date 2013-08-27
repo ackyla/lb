@@ -72,15 +72,4 @@ public class LocationLogic extends LogicBase {
 		locationClient.removeLocationUpdates(locationListener);
 		locationClient.disconnect();
 	}
-	
-	public void post(Location location) {
-		UserLogic userLogic = new UserLogic(context);
-		UserEntity userEntity = userLogic.getUser();
-		
-		if(userEntity == null){
-			return;
-		}
-
-		// API.postLocation(userEntity, location, null);
-	}
 }
