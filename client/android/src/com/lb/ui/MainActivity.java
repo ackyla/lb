@@ -27,7 +27,6 @@ public class MainActivity extends FragmentActivity {
 	private static final int FRAGMENT_HOME = 100;
 	private static final int FRAGMENT_ROOM = 101;
 	private static final int FRAGMENT_CONFIG = 102;
-	private AuthLogic authLogic;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -40,8 +39,6 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		Log.v("life", "main create");
 		setContentView(R.layout.activity_main);
-
-		authLogic = new AuthLogic(this);
 
 		if (savedInstanceState == null) {
 			replaceFragment(FRAGMENT_HOME);
@@ -79,6 +76,7 @@ public class MainActivity extends FragmentActivity {
 		super.onStart();
 		Log.v("life", "main start");
 
+		AuthLogic authLogic = new AuthLogic(this);
 		AuthEntity authEntity = authLogic.getAuth();
 		API.getUserInfo(authEntity.getUserId(), new JsonHttpResponseHandler() {
 			@Override

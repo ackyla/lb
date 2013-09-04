@@ -1,5 +1,7 @@
 package com.lb.ui;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.TimerTask;
 
 import org.gavaghan.geodesy.Ellipsoid;
@@ -47,6 +49,11 @@ import android.widget.TextView;
 
 public class GameActivity extends FragmentActivity {
 
+	private static final int GET_LOCATION_INTERVAL = 5000; // msec
+	private static final int COUNT_LEFT_TIME_INTERVAL = 1000; // msec
+	private static final int GET_LEFT_TIME_INTERVAL = 30000; // msec
+	private static final double TERRITORY_RADIUS = 10000; // m
+	
 	LocationLogic locationLogic;
 	TimerLogic timerLogic;
 	MapLogic mapLogic;
@@ -57,6 +64,7 @@ public class GameActivity extends FragmentActivity {
 	TimerTask getLeftTimeTask;
 	Integer leftTime;
 	Integer leftTerritory;
+	List<LatLng> territoryList;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -69,12 +77,6 @@ public class GameActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		Log.v("life", "game create");
 		setContentView(R.layout.activity_game);
-
-		/*GeodeticCalculator geoCalc = new GeodeticCalculator();
-		Ellipsoid ellipsoid = Ellipsoid.WGS84;
-		GlobalPosition point = new GlobalPosition(lat,lng,0.0);
-		GlobalPosition territoryPos = new GlobalPosition(lat,lng,0.0);
-		double distance = geoCalc.calculateGeodeticCurve(ellipsoid, territoryPos, point).getEllipsoidalDistance();*/
 		
 		// ユーザ情報と部屋の情報を取得
 		AuthLogic authLogic = new AuthLogic(this);
@@ -88,6 +90,8 @@ public class GameActivity extends FragmentActivity {
 					userEntity.setToken(authEntity.getToken());
 					JSONObject roomObject = object.getJSONObject("room");
 					roomEntity = new RoomEntity(roomObject);
+					
+					
 				} catch (JSONException e) {
 					Log.v("game", "getUserInfoError=" + e);
 				}
@@ -127,7 +131,6 @@ public class GameActivity extends FragmentActivity {
 		// ミッションを表示
 		final LinearLayout missionView = (LinearLayout) findViewById(R.id.missionView);
 		Button button2 = (Button) findViewById(R.id.missionViewButton);
-
 		button2.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -136,9 +139,7 @@ public class GameActivity extends FragmentActivity {
 			}
 
 		});
-
 		Button button3 = (Button) findViewById(R.id.missionCloseButton);
-
 		button3.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -180,67 +181,70 @@ public class GameActivity extends FragmentActivity {
 			@Override
 			public void run() {
 				if (userEntity != null && userEntity.getRoomId() > 0) {
-					API.getRoomLocations(userEntity.getRoomId(),
-							new JsonHttpResponseHandler() {
+					API.getRoomLocations(userEntity.getRoomId(), new JsonHttpResponseHandler() {
 								@Override
 								public void onSuccess(JSONObject ret) {
 									try {
-										JSONArray users = ret
-												.getJSONArray("members");
-										SparseArray<JSONObject> userMap = new SparseArray<JSONObject>();
+										// ユーザとメンバーオブジェクトを分ける
+										Log.v("game", "ret="+ret.toString());
+										JSONArray users = ret.getJSONArray("members");
+										SparseArray<JSONObject> membersMap = new SparseArray<JSONObject>();
 										for (int i = 0; i < users.length(); i++) {
-											JSONObject userObj = users
-													.getJSONObject(i);
-
-											userMap.put(userObj.getInt("id"),
-													userObj);
-											LocationMarker locationMarker = locationMarkers
-													.get(userObj.getInt("id"));
+											JSONObject userObj = users.getJSONObject(i);
+											int id = userObj.getInt("id");
+											//if(id == userEntity.getUserId()){
+											//
+											//}else{
+											membersMap.put(userObj.getInt("id"), userObj);
+											//}
+											LocationMarker locationMarker = locationMarkers.get(id);
 											if (locationMarker != null) {
 												locationMarker.remove();
 											}
 										}
 
-										JSONArray locations = ret
-												.getJSONArray("locations");
+										// 位置マーカーを追加表示する
+										JSONArray locations = ret.getJSONArray("locations");
 										for (int i = 0; i < locations.length(); i++) {
-											LocationEntity locationEntity = new LocationEntity(
-													locations.getJSONObject(i));
-											double lat = locationEntity
-													.getLatitude();
-											double lng = locationEntity
-													.getLongitude();
+											LocationEntity locationEntity = new LocationEntity(locations.getJSONObject(i));
+											double lat = locationEntity.getLatitude();
+											double lng = locationEntity.getLongitude();
 
-											UserEntity roomUserEntity = new UserEntity(
-													userMap.get(locationEntity
-															.getUserId()));
-											LocationMarker locationMarker = locationMarkers
-													.get(roomUserEntity
-															.getUserId());
+											UserEntity roomUserEntity = new UserEntity(membersMap.get(locationEntity.getUserId()));
+											LocationMarker locationMarker = locationMarkers.get(roomUserEntity.getUserId());
+											
+											// ユーザの位置マーカーを保存するクラスがなかったら新しく作る
 											if (locationMarker == null) {
 												locationMarker = new LocationMarker();
-												locationMarkers.put(
-														roomUserEntity
-																.getUserId(),
-														locationMarker);
+												locationMarkers.put(roomUserEntity.getUserId(), locationMarker);
 											}
-											Marker marker = mapLogic.addLocationMarker(
-													lat, lng, roomUserEntity
-															.getName(),
-													locationEntity
-															.getCreatedAt());
-											locationMarker.addMarker(marker);
+											
+											// テリトリー内のマーカーだけ追加・表示する
+											if (territoryList == null){
+												territoryList = new ArrayList<LatLng>();
+											}
+											for (int j = 0; j < territoryList.size(); j ++){
+												LatLng latlng = territoryList.get(j);
+												GeodeticCalculator geoCalc = new GeodeticCalculator();
+												Ellipsoid ellipsoid = Ellipsoid.WGS84;
+												GlobalPosition point = new GlobalPosition(lat,lng,0.0);
+												GlobalPosition territoryPos = new GlobalPosition(latlng.latitude,latlng.longitude,0.0);
+												double distance = geoCalc.calculateGeodeticCurve(ellipsoid, territoryPos, point).getEllipsoidalDistance();
+												Log.v("game", "distance="+distance);
+												if(distance <= TERRITORY_RADIUS){
+													Marker marker = mapLogic.addLocationMarker(lat, lng, roomUserEntity.getName(), locationEntity.getCreatedAt());
+													locationMarker.addMarker(marker);
+													break;
+												}
+											}
 										}
 
+										// 位置マーカー間に線を引く
 										for (int i = 0; i < users.length(); i++) {
-											JSONObject userObj = users
-													.getJSONObject(i);
-											LocationMarker locationMarker = locationMarkers
-													.get(userObj.getInt("id"));
+											JSONObject userObj = users.getJSONObject(i);
+											LocationMarker locationMarker = locationMarkers.get(userObj.getInt("id"));
 											if (locationMarker != null) {
-												locationMarker.addLine(mapLogic
-														.drawLine(locationMarker
-																.getMarkers()));
+												locationMarker.addLine(mapLogic.drawLine(locationMarker.getMarkers()));
 											}
 										}
 									} catch (JSONException e) {
@@ -257,7 +261,7 @@ public class GameActivity extends FragmentActivity {
 				}
 			}
 		});
-		timerLogic.start(getLocationTask, 5000);
+		timerLogic.start(getLocationTask, GET_LOCATION_INTERVAL);
 
 		// 残り時間をカウントダウン
 		final TextView leftTimeView = (TextView) findViewById(R.id.leftTimeView);
@@ -296,7 +300,7 @@ public class GameActivity extends FragmentActivity {
 				}
 			}
 		});
-		timerLogic.start(countLeftTimeTask, 1000);
+		timerLogic.start(countLeftTimeTask, COUNT_LEFT_TIME_INTERVAL);
 
 		// 一定間隔で残り時間を取りに行く
 		getLeftTimeTask = timerLogic.create(new Runnable() {
@@ -325,7 +329,7 @@ public class GameActivity extends FragmentActivity {
 			}
 
 		});
-		timerLogic.start(getLeftTimeTask, 30000);
+		timerLogic.start(getLeftTimeTask, GET_LEFT_TIME_INTERVAL);
 
 		// 残り設置可能テリトリー数表示
 		leftTerritory = 5; // TODO 残りテリトリ数取得
@@ -346,6 +350,10 @@ public class GameActivity extends FragmentActivity {
 			@Override
 			public void onMapLongClick(LatLng latlng) {
 				if (leftTerritory > 0) {
+					if (territoryList == null){
+						territoryList = new ArrayList<LatLng>();
+					}
+					territoryList.add(latlng);
 					mapLogic.addTerritory(latlng, 10000);
 					leftTerritory--;
 					TextView leftTerritoryView = (TextView) findViewById(R.id.leftTerritoryView);
