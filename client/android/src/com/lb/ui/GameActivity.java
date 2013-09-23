@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.TimerTask;
 
+
 import org.gavaghan.geodesy.Ellipsoid;
 import org.gavaghan.geodesy.GeodeticCalculator;
 import org.gavaghan.geodesy.GlobalPosition;
@@ -13,16 +14,15 @@ import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
-import com.lb.dao.AuthEntity;
 import com.lb.dao.LocationEntity;
 import com.lb.dao.RoomEntity;
-import com.lb.dao.UserEntity;
 import com.lb.logic.AuthLogic;
 import com.lb.logic.HitMarker;
 import com.lb.logic.LocationLogic;
 import com.lb.logic.LocationMarker;
 import com.lb.logic.MapLogic;
 import com.lb.logic.TimerLogic;
+import com.lb.model.Player;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
@@ -53,11 +53,11 @@ public class GameActivity extends FragmentActivity {
 	private static final int COUNT_LEFT_TIME_INTERVAL = 1000; // msec
 	private static final int GET_LEFT_TIME_INTERVAL = 30000; // msec
 	private static final double TERRITORY_RADIUS = 10000; // m
-	
+
+	Player player;
 	LocationLogic locationLogic;
 	TimerLogic timerLogic;
 	MapLogic mapLogic;
-	UserEntity userEntity;
 	RoomEntity roomEntity;
 	TimerTask getLocationTask;
 	TimerTask countLeftTimeTask;
@@ -80,14 +80,12 @@ public class GameActivity extends FragmentActivity {
 		
 		// ユーザ情報と部屋の情報を取得
 		AuthLogic authLogic = new AuthLogic(this);
-		final AuthEntity authEntity = authLogic.getAuth();
-		
-		API.getUserInfo(authEntity.getUserId(), new JsonHttpResponseHandler() {
+
+		API.getUserInfo(authLogic.getUserId(), new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONObject object) {
 				try {
-					userEntity = new UserEntity(object);
-					userEntity.setToken(authEntity.getToken());
+					player = new Player(object);
 					JSONObject roomObject = object.getJSONObject("room");
 					roomEntity = new RoomEntity(roomObject);
 					
@@ -154,23 +152,18 @@ public class GameActivity extends FragmentActivity {
 		locationLogic.setLocationListener(new LocationListener() {
 			@Override
 			public void onLocationChanged(Location location) {
-				if (userEntity != null && userEntity.getRoomId() > 0) {
-					API.postLocation(userEntity, location,
-							new JsonHttpResponseHandler() {
-								@Override
-								public void onSuccess(JSONObject json) {
-									Log.v("game", "location=" + json.toString());
-								}
-
-								@Override
-								public void onFailure(Throwable throwable) {
-									Log.v("game", "postLocationOnFailure="
-											+ throwable);
-								}
-							});
-				}
+				AuthLogic authLogic = new AuthLogic(getApplicationContext());
+				API.postLocation(authLogic.getAuth(), location, new JsonHttpResponseHandler() {
+					@Override
+					public void onSuccess(JSONObject json) {
+						Log.v("game", "location=" + json.toString());
+					}
+					@Override
+					public void onFailure(Throwable throwable) {
+						Log.v("game", "postLocationOnFailure=" + throwable);
+					}
+				});
 			}
-
 		});
 
 		// 一定間隔で位置情報を取得
@@ -180,8 +173,8 @@ public class GameActivity extends FragmentActivity {
 
 			@Override
 			public void run() {
-				if (userEntity != null && userEntity.getRoomId() > 0) {
-					API.getRoomLocations(userEntity.getRoomId(), new JsonHttpResponseHandler() {
+				if (player != null && player.getRoomId() > 0) {
+					API.getRoomLocations(player.getRoomId(), new JsonHttpResponseHandler() {
 								@Override
 								public void onSuccess(JSONObject ret) {
 									try {
@@ -210,7 +203,7 @@ public class GameActivity extends FragmentActivity {
 											double lat = locationEntity.getLatitude();
 											double lng = locationEntity.getLongitude();
 
-											UserEntity roomUserEntity = new UserEntity(membersMap.get(locationEntity.getUserId()));
+											Player roomUserEntity = new Player(membersMap.get(locationEntity.getUserId()));
 											LocationMarker locationMarker = locationMarkers.get(roomUserEntity.getUserId());
 											
 											// ユーザの位置マーカーを保存するクラスがなかったら新しく作る
@@ -268,9 +261,9 @@ public class GameActivity extends FragmentActivity {
 		countLeftTimeTask = timerLogic.create(new Runnable() {
 			@Override
 			public void run() {
-				if (leftTime == null && userEntity != null && userEntity.getRoomId() > 0) {
+				if (leftTime == null && player != null && player.getRoomId() > 0) {
 					// 残り時間が取れてない時はAPIで取りに行く
-					API.getTimeLeft(userEntity.getRoomId(),
+					API.getTimeLeft(player.getRoomId(),
 							new JsonHttpResponseHandler() {
 								@Override
 								public void onSuccess(JSONObject json) {
@@ -307,8 +300,8 @@ public class GameActivity extends FragmentActivity {
 
 			@Override
 			public void run() {
-				if (userEntity != null && userEntity.getRoomId() > 0) {
-					API.getTimeLeft(userEntity.getRoomId(),
+				if (player != null && player.getRoomId() > 0) {
+					API.getTimeLeft(player.getRoomId(),
 							new JsonHttpResponseHandler() {
 								@Override
 								public void onSuccess(JSONObject json) {
@@ -407,8 +400,8 @@ public class GameActivity extends FragmentActivity {
 					@Override
 					public void onClick(View v) {
 						LatLng latlng = hitMarker.getPosition();
-						if (userEntity != null && userEntity.getRoomId() > 0) {
-							API.postHitLocation(userEntity, 0, latlng.latitude,
+						AuthLogic authLogic = new AuthLogic(getApplicationContext());
+							API.postHitLocation(authLogic.getAuth(), 0, latlng.latitude,
 									latlng.longitude, 0,
 									new JsonHttpResponseHandler() {
 										@Override
@@ -428,7 +421,7 @@ public class GameActivity extends FragmentActivity {
 															+ throwable);
 										}
 									});
-						}
+
 					}
 				});
 			}

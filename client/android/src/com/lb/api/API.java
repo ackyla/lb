@@ -3,7 +3,8 @@ package com.lb.api;
 import android.location.Location;
 import android.util.Log;
 
-import com.lb.dao.UserEntity;
+import com.lb.dao.AuthEntity;
+import com.lb.model.Player;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -32,11 +33,11 @@ public class API {
 		post("users/create", params, handler);
 	}
 
-	public static void postLocation(UserEntity user, Location loc,
+	public static void postLocation(AuthEntity auth, Location loc,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
-		params.put("user_id", Integer.toString(user.getUserId()));
-		params.put("token", user.getToken());
+		params.put("user_id", Integer.toString(auth.getUserId()));
+		params.put("token", auth.getToken());
 		params.put("latitude", Double.toString(loc.getLatitude()));
 		params.put("longitude", Double.toString(loc.getLongitude()));
 		post("locations/create", params, handler);
@@ -49,21 +50,21 @@ public class API {
 		get("locations/list", params, handler);
 	}
 
-	public static void createRoom(UserEntity user, String title, int timeLimit,
+	public static void createRoom(AuthEntity auth, String title, int timeLimit,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
-		params.put("user_id", Integer.toString(user.getUserId()));
-		params.put("token", user.getToken());
+		params.put("user_id", Integer.toString(auth.getUserId()));
+		params.put("token", auth.getToken());
 		params.put("title", title);
 		params.put("time_limit", Integer.toString(timeLimit));
 		post("rooms/create", params, handler);
 	}
 
-	public static void startGame(UserEntity user,
+	public static void startGame(AuthEntity auth,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
-		params.put("user_id", Integer.toString(user.getUserId()));
-		params.put("token", user.getToken());
+		params.put("user_id", Integer.toString(auth.getUserId()));
+		params.put("token", auth.getToken());
 		post("users/start", params, handler);
 	}
 
@@ -72,11 +73,11 @@ public class API {
 		get("rooms/list", params, handler);
 	}
 
-	public static void enterRoom(UserEntity user, int roomId,
+	public static void enterRoom(AuthEntity auth, int roomId,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
-		params.put("user_id", Integer.toString(user.getUserId()));
-		params.put("token", user.getToken());
+		params.put("user_id", Integer.toString(auth.getUserId()));
+		params.put("token", auth.getToken());
 		params.put("room_id", Integer.toString(roomId));
 		post("users/enter", params, handler);
 	}
@@ -87,12 +88,12 @@ public class API {
 		get("rooms/users", params, handler);
 	}
 
-	public static void postHitLocation(UserEntity user, int targetId,
+	public static void postHitLocation(AuthEntity auth, int targetId,
 			double latitude, double longitude, double radius,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
-		params.put("user_id", Integer.toString(user.getUserId()));
-		params.put("token", user.getToken());
+		params.put("user_id", Integer.toString(auth.getUserId()));
+		params.put("token", auth.getToken());
 		params.put("target_user_id", Integer.toString(targetId));
 		params.put("latitude", Double.toString(latitude));
 		params.put("longitude", Double.toString(longitude));

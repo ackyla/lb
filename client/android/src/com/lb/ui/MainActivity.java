@@ -5,7 +5,6 @@ import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
-import com.lb.dao.AuthEntity;
 import com.lb.dao.RoomEntity;
 import com.lb.logic.AuthLogic;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -77,8 +76,7 @@ public class MainActivity extends FragmentActivity {
 		Log.v("life", "main start");
 
 		AuthLogic authLogic = new AuthLogic(this);
-		AuthEntity authEntity = authLogic.getAuth();
-		API.getUserInfo(authEntity.getUserId(), new JsonHttpResponseHandler() {
+		API.getUserInfo(authLogic.getUserId(), new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONObject object) {
 				try {

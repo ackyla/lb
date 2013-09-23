@@ -1,14 +1,13 @@
 package com.lb.ui;
 
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
-import com.lb.dao.AuthEntity;
 import com.lb.dao.RoomEntity;
-import com.lb.dao.UserEntity;
 import com.lb.logic.AuthLogic;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -29,8 +28,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class RoomFragment extends Fragment {
-	
-	private UserEntity userEntity;
 
 	public RoomFragment() {
 		setRetainInstance(true);
@@ -53,17 +50,6 @@ public class RoomFragment extends Fragment {
     	final EditText timeLimitInput = (EditText)v.findViewById(R.id.timeLimitInput);
     	
     	Button createButton = (Button)v.findViewById(R.id.createButton);
-       	
-    	AuthLogic authLogic = new AuthLogic(getActivity());
-    	final AuthEntity authEntity = authLogic.getAuth();
-    	
-    	API.getUserInfo(authEntity.getUserId(), new JsonHttpResponseHandler() {
-    		@Override
-    		public void onSuccess(JSONObject json) {
-    			userEntity = new UserEntity(json);
-    			userEntity.setToken(authEntity.getToken());
-    		}
-    	});
 
     	// 部屋一覧を取得
     	API.getRoomList(new JsonHttpResponseHandler() {
@@ -95,7 +81,10 @@ public class RoomFragment extends Fragment {
 				int timeLimit = timeLimitInput.getText().toString().length() > 0 ? Integer.valueOf(timeLimitInput.getText().toString()) : 1;
 				if(timeLimit < 1) timeLimit = 1;
 				//
-				API.createRoom(userEntity, title, timeLimit, new JsonHttpResponseHandler() {
+				
+				AuthLogic authLogic = new AuthLogic(getActivity());
+		    					
+				API.createRoom(authLogic.getAuth(), title, timeLimit, new JsonHttpResponseHandler() {
 					
 					private ProgressDialog progress = new ProgressDialog(getActivity());
 					
@@ -147,7 +136,9 @@ public class RoomFragment extends Fragment {
 	}
 	
 	private void enterRoom(int roomId) {
-		API.enterRoom(userEntity, roomId, new JsonHttpResponseHandler(){
+		AuthLogic authLogic = new AuthLogic(getActivity());
+		
+		API.enterRoom(authLogic.getAuth(), roomId, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONObject json) {
 				FragmentManager manager = getFragmentManager();

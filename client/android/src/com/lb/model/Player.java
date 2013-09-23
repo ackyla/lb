@@ -1,19 +1,19 @@
-package com.lb.dao;
+package com.lb.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
 
-public class UserEntity {
+public class Player {
 	private String name;
 	private int userId;
 	private String token;
 	private int roomId;
 	
-	public UserEntity() {
+	public Player() {
 	}
-	public UserEntity(JSONObject json) {
+	public Player(JSONObject json) {
 		try	{			
 			setName(json.getString("name"));
 		} catch(Exception e){

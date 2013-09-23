@@ -1,14 +1,14 @@
 package com.lb.ui;
 
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
-import com.lb.dao.AuthEntity;
 import com.lb.dao.RoomEntity;
-import com.lb.dao.UserEntity;
 import com.lb.logic.AuthLogic;
+import com.lb.model.Player;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 public class HomeFragment extends Fragment {
 	
-	private UserEntity userEntity;
 	private RoomEntity roomEntity;
 	
     public HomeFragment(){  
@@ -49,8 +48,8 @@ public class HomeFragment extends Fragment {
     	
     	// ユーザ情報と入室中の部屋を表示
     	AuthLogic authLogic = new AuthLogic(getActivity());
-    	final AuthEntity authEntity = authLogic.getAuth();
-    	API.getUserInfo(authEntity.getUserId(), new JsonHttpResponseHandler(){
+
+    	API.getUserInfo(authLogic.getUserId(), new JsonHttpResponseHandler(){
     		
     		@Override
     		public void onFailure(Throwable thurowable) {
@@ -60,15 +59,14 @@ public class HomeFragment extends Fragment {
     		@Override
     		public void onSuccess(JSONObject object) {
 
-    			userEntity = new UserEntity(object);
-    			userEntity.setToken(authEntity.getToken());
-    			
+    			Player player = new Player(object);
+    			    			
     		   	View userInfo = getActivity().getLayoutInflater().inflate(R.layout.layout_user, null);
     	    	TextView userName = (TextView)userInfo.findViewById(R.id.name);
     	    	View roomInfo = getActivity().getLayoutInflater().inflate(R.layout.layout_room, null);
     	    	TextView roomTitle = (TextView)roomInfo.findViewById(R.id.title);
     	    	TextView numUsers = (TextView)roomInfo.findViewById(R.id.numUsers);
-    	    	userName.setText(userEntity.getName());
+    	    	userName.setText(player.getName());
     	    	userInfoLayout.addView(userInfo);
     	    	
     	    	try {
@@ -83,12 +81,14 @@ public class HomeFragment extends Fragment {
         			// 開始ボタン
         			Button startButton = (Button)roomInfo.findViewById(R.id.startButton);
         			// ルームオーナーだったら表示する
-        			if(userEntity.getUserId() == roomEntity.getOwnerId()){
+        			if(player.getUserId() == roomEntity.getOwnerId()){
         				startButton.setVisibility(View.VISIBLE);
         				startButton.setOnClickListener(new OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								API.startGame(userEntity, new JsonHttpResponseHandler(){
+								AuthLogic authLogic = new AuthLogic(getActivity());
+								
+								API.startGame(authLogic.getAuth(), new JsonHttpResponseHandler(){
 									@Override
 									public void onSuccess(JSONObject json){
 										RoomEntity roomEntity = new RoomEntity(json);

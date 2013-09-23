@@ -4,7 +4,6 @@ import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
-import com.lb.dao.AuthEntity;
 import com.lb.logic.AuthLogic;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -44,8 +43,7 @@ public class SignupActivity extends Activity {
 					
 					@Override
 					public void onSuccess(JSONObject json) {
-						AuthEntity authEntity = new AuthEntity(json);
-						authLogic.register(authEntity);
+						authLogic.register(json);
 						progress.dismiss();
 						
 						Intent intent = new Intent();

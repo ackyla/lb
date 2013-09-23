@@ -2,9 +2,10 @@ package com.lb.logic;
 
 import java.util.List;
 
+import org.json.JSONObject;
+
 import com.lb.dao.AuthDAO;
 import com.lb.dao.AuthEntity;
-import com.lb.dao.UserEntity;
 
 import android.content.Context;
 import android.util.Log;
@@ -36,6 +37,20 @@ public class AuthLogic extends LogicBase {
 	}
 	
 	/**
+	 * ユーザIDを取得する
+	 * @return
+	 */
+	public int getUserId() {
+		AuthEntity auth = this.getAuth();
+		
+		if(auth == null){
+			return 0;
+		}
+		
+		return auth.getUserId();
+	}
+	
+	/**
 	 * ユーザ登録しているかチェックする
 	 * @return boolean
 	 */
@@ -51,9 +66,10 @@ public class AuthLogic extends LogicBase {
 	 * @param name
 	 * @return boolean
 	 */
-	public boolean register(AuthEntity authEntity) {
+	public boolean register(JSONObject json) {
 		AuthDAO authDAO = getAuthDAO();
-
+		AuthEntity authEntity = new AuthEntity(json);
+		
 		try {
 			authDAO.insert(authEntity);
 		} catch (Exception e) {

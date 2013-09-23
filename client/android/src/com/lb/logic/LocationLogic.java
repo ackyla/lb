@@ -6,10 +6,8 @@ import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailed
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.lb.dao.UserEntity;
 
 import android.content.Context;
-import android.location.Location;
 import android.os.Bundle;
 
 public class LocationLogic extends LogicBase {
