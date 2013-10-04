@@ -4,12 +4,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
+import android.util.SparseArray;
 
 public class Player {
 	private String name;
 	private int userId;
-	private String token;
 	private int roomId;
+	
+	private SparseArray<PlayerLocation> locationList;
 	
 	public Player() {
 	}
@@ -21,11 +23,6 @@ public class Player {
 		}
 		try {
 			setUserId(json.getInt("id"));
-		} catch (JSONException e) {
-
-		}
-		try {
-			setToken(json.getString("token"));
 		} catch (JSONException e) {
 
 		}
@@ -50,17 +47,23 @@ public class Player {
 		this.userId = userId;
 	}
 	
-	public String getToken() {
-		return this.token;
-	}
-	public void setToken(String token) {
-		this.token = token;
-	}
-	
 	public int getRoomId() {
 		return this.roomId;
 	}
 	public void setRoomId(int roomId) {
 		this.roomId = roomId;
+	}
+	
+	public void addLocation(PlayerLocation location) {
+		
+		// 初期化されてない時は初期化
+		if(locationList == null){
+			locationList = new SparseArray<PlayerLocation>();
+		}
+		
+		// 新しい位置を登録
+		if(locationList.get(location.getId()) == null) {
+			locationList.append(location.getId(), location);
+		}		
 	}
 }

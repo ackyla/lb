@@ -14,7 +14,6 @@ import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
-import com.lb.dao.LocationEntity;
 import com.lb.dao.RoomEntity;
 import com.lb.logic.AuthLogic;
 import com.lb.logic.HitMarker;
@@ -23,6 +22,7 @@ import com.lb.logic.LocationMarker;
 import com.lb.logic.MapLogic;
 import com.lb.logic.TimerLogic;
 import com.lb.model.Player;
+import com.lb.model.PlayerLocation;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
@@ -178,56 +178,56 @@ public class GameActivity extends FragmentActivity {
 								@Override
 								public void onSuccess(JSONObject ret) {
 									try {
-										// ユーザとメンバーオブジェクトを分ける
+										// ロケーションに紐づくユーザ情報を取得
 										Log.v("game", "ret="+ret.toString());
 										JSONArray users = ret.getJSONArray("members");
 										SparseArray<JSONObject> membersMap = new SparseArray<JSONObject>();
 										for (int i = 0; i < users.length(); i++) {
 											JSONObject userObj = users.getJSONObject(i);
 											int id = userObj.getInt("id");
-											//if(id == userEntity.getUserId()){
-											//
-											//}else{
 											membersMap.put(userObj.getInt("id"), userObj);
-											//}
 											LocationMarker locationMarker = locationMarkers.get(id);
 											if (locationMarker != null) {
 												locationMarker.remove();
 											}
 										}
-
+										
 										// 位置マーカーを追加表示する
 										JSONArray locations = ret.getJSONArray("locations");
 										for (int i = 0; i < locations.length(); i++) {
-											LocationEntity locationEntity = new LocationEntity(locations.getJSONObject(i));
-											double lat = locationEntity.getLatitude();
-											double lng = locationEntity.getLongitude();
+											PlayerLocation playerLocation = new PlayerLocation(locations.getJSONObject(i));
+											double lat = playerLocation.getLatitude();
+											double lng = playerLocation.getLongitude();
 
-											Player roomUserEntity = new Player(membersMap.get(locationEntity.getUserId()));
-											LocationMarker locationMarker = locationMarkers.get(roomUserEntity.getUserId());
+											LocationMarker locationMarker = locationMarkers.get(playerLocation.getUserId());
 											
 											// ユーザの位置マーカーを保存するクラスがなかったら新しく作る
 											if (locationMarker == null) {
 												locationMarker = new LocationMarker();
-												locationMarkers.put(roomUserEntity.getUserId(), locationMarker);
+												locationMarkers.put(playerLocation.getUserId(), locationMarker);
 											}
 											
-											// テリトリー内のマーカーだけ追加・表示する
-											if (territoryList == null){
-												territoryList = new ArrayList<LatLng>();
-											}
-											for (int j = 0; j < territoryList.size(); j ++){
-												LatLng latlng = territoryList.get(j);
-												GeodeticCalculator geoCalc = new GeodeticCalculator();
-												Ellipsoid ellipsoid = Ellipsoid.WGS84;
-												GlobalPosition point = new GlobalPosition(lat,lng,0.0);
-												GlobalPosition territoryPos = new GlobalPosition(latlng.latitude,latlng.longitude,0.0);
-												double distance = geoCalc.calculateGeodeticCurve(ellipsoid, territoryPos, point).getEllipsoidalDistance();
-												Log.v("game", "distance="+distance);
-												if(distance <= TERRITORY_RADIUS){
-													Marker marker = mapLogic.addLocationMarker(lat, lng, roomUserEntity.getName(), locationEntity.getCreatedAt());
-													locationMarker.addMarker(marker);
-													break;
+											if(playerLocation.getUserId() == player.getUserId()){
+												// プレーヤーの場所は常に表示
+												Marker marker = mapLogic.addLocationMarker(lat, lng, player.getName(), playerLocation.getCreatedAt());
+												locationMarker.addMarker(marker);
+											}else{
+												// テリトリー内のマーカーだけ追加・表示する
+												if (territoryList == null){
+													territoryList = new ArrayList<LatLng>();
+												}
+												for (int j = 0; j < territoryList.size(); j ++){
+													LatLng latlng = territoryList.get(j);
+													GeodeticCalculator geoCalc = new GeodeticCalculator();
+													Ellipsoid ellipsoid = Ellipsoid.WGS84;
+													GlobalPosition point = new GlobalPosition(lat,lng,0.0);
+													GlobalPosition territoryPos = new GlobalPosition(latlng.latitude,latlng.longitude,0.0);
+													double distance = geoCalc.calculateGeodeticCurve(ellipsoid, territoryPos, point).getEllipsoidalDistance();
+													if(distance <= TERRITORY_RADIUS){
+														Marker marker = mapLogic.addLocationMarker(lat, lng, membersMap.get(playerLocation.getUserId()).getString("name"), playerLocation.getCreatedAt());
+														locationMarker.addMarker(marker);
+														break;
+													}
 												}
 											}
 										}

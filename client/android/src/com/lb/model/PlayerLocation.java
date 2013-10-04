@@ -1,4 +1,4 @@
-package com.lb.dao;
+package com.lb.model;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-public class LocationEntity {
+public class PlayerLocation {
 	private int id;
 	private int roomId;
 	private int userId;
@@ -17,10 +17,10 @@ public class LocationEntity {
 	private String createdAt;
 	private String updatedAt;
 
-	public LocationEntity() {
+	public PlayerLocation() {
 	}
 
-	public LocationEntity(JSONObject json) {
+	public PlayerLocation(JSONObject json) {
 		try {
 			setId(json.getInt("id"));
 		} catch (Exception e) {
