@@ -12,70 +12,93 @@ import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
 public class LocationUpdateService extends Service{
 	
 	private static int NOTIFICATION_ID = 921470102;
-	
-	public class LocationUpdateBinder extends Binder {
-		LocationUpdateService getService() {
-			return LocationUpdateService.this;
-		}
-	}
-	
 	private final IBinder mBinder = new LocationUpdateBinder();
+	private static ILocationUpdateServiceClient mainServiceClient;
+    
+	@Override
+	public IBinder onBind(Intent intent) {
+		Log.v("game", "bind service");
+		return mBinder;
+	}
 	
 	@Override
 	public void onCreate() {
-		Log.v("main", "create service");
-		startUpdate();
+		Log.v("game", "create service");
+	}
+	
+	@Override
+	public void onStart(Intent intent, int startId) {
+		Log.v("game", "start service");
+		HandleIntent(intent);
 	}
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.v("main", "startId="+startId);
+		Log.v("game", "startId="+startId);
 		HandleIntent(intent);
 		return START_REDELIVER_INTENT;
 	}
 	
 	@Override
-	public IBinder onBind(Intent intent) {
-		Log.v("main", "bind service");
-		return mBinder;
-	}
-
-	@Override
-	public void onRebind(Intent intent) {
-		Log.v("main", "rebind service");
-	}
-	
-	@Override
-	public boolean onUnbind(Intent intent) {
-		Log.v("main", "unbind service");
-		return true;
-	}
-	
-	@Override
 	public void onDestroy() {
-		Log.v("main", "destroy service");
-		stopUpdate();
+		Log.v("game", "destroy service");
+		mainServiceClient = null;
 		super.onDestroy();
 	}
 	
     @Override
     public void onLowMemory()
     {
-        Log.v("main", "low memory service");
+        Log.v("game", "low memory service");
         super.onLowMemory();
     }
-    
+	
     private void HandleIntent(Intent intent) {
+    	Log.v("game", "Null intent? " + String.valueOf(intent == null));
     	
+    	if (intent != null) {
+    		Bundle bundle = intent.getExtras();
+    		
+    		Log.v("game", "Null bundle? " + String.valueOf(bundle == null));
+    		if (bundle != null) {
+    			
+    		}    	
+    	}else{
+    		Log.v("game", "Service restarted with null intent. Start logging.");
+			startUpdate();
+    	}
     }
+
+	@Override
+	public void onRebind(Intent intent) {
+		Log.v("game", "rebind service");
+	}
+	
+	@Override
+	public boolean onUnbind(Intent intent) {
+		Log.v("game", "unbind service");
+		return true;
+	}
     
-    protected void startUpdate() {
+	public class LocationUpdateBinder extends Binder {
+		public LocationUpdateService getService() {
+			return LocationUpdateService.this;
+		}
+	}
+	
+    public static void setServiceClient(ILocationUpdateServiceClient mainForm)
+    {
+        mainServiceClient = mainForm;
+    }
+	
+    public void startUpdate() {
     	
     	// 既に位置情報アップデートが動いているときは何もしない
     	if(Session.getIsStarted()) {
@@ -88,10 +111,12 @@ public class LocationUpdateService extends Service{
     	}
     	
     	Session.setIsStarted(true);
+    	Log.v("game", "start update");
     }
     
-    protected void stopUpdate() {
+    public void stopUpdate() {
     	Session.setIsStarted(false);
     	stopForeground(true);
+    	Log.v("game", "stop update");
     }
 }

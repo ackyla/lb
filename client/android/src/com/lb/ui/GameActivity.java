@@ -1,57 +1,35 @@
 package com.lb.ui;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.TimerTask;
-
-
-import org.gavaghan.geodesy.Ellipsoid;
-import org.gavaghan.geodesy.GeodeticCalculator;
-import org.gavaghan.geodesy.GlobalPosition;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.lb.R;
-import com.lb.api.API;
-import com.lb.dao.RoomEntity;
-import com.lb.logic.AuthLogic;
-import com.lb.logic.HitMarker;
-import com.lb.logic.LocationLogic;
-import com.lb.logic.LocationMarker;
-import com.lb.logic.MapLogic;
-import com.lb.logic.TimerLogic;
-import com.lb.model.Player;
-import com.lb.model.PlayerLocation;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
+import com.lb.logic.ILocationUpdateServiceClient;
+import com.lb.logic.LocationUpdateService;
+import com.lb.model.Session;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.loopj.android.http.JsonHttpResponseHandler;
 
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ToggleButton;
 
-public class GameActivity extends FragmentActivity {
+public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, OnCheckedChangeListener {
 
+	private static Intent serviceIntent;
+	private LocationUpdateService updateService;
+	
+	/** 遺産
 	private static final int GET_LOCATION_INTERVAL = 5000; // msec
-	private static final int COUNT_LEFT_TIME_INTERVAL = 1000; // msec
-	private static final int GET_LEFT_TIME_INTERVAL = 30000; // msec
 	private static final double TERRITORY_RADIUS = 10000; // m
 
 	Player player;
@@ -64,8 +42,31 @@ public class GameActivity extends FragmentActivity {
 	TimerTask getLeftTimeTask;
 	Integer leftTime;
 	Integer leftTerritory;
-	List<LatLng> territoryList;
+	List<LatLng> territoryList;**/
 
+	private final ServiceConnection serviceConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			Log.v("game", "on service connected");
+            updateService = ((LocationUpdateService.LocationUpdateBinder) service).getService();
+            LocationUpdateService.setServiceClient(GameActivity.this);
+            
+            ToggleButton toggleButton = (ToggleButton)findViewById(R.id.toggleButton1);
+            toggleButton.setOnCheckedChangeListener(GameActivity.this);
+            if(Session.getIsStarted()) {
+            	toggleButton.setChecked(true);
+            }
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			Log.v("game", "on service disconnected");
+			updateService = null;
+		}
+		
+	};
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -75,31 +76,8 @@ public class GameActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.v("life", "game create");
+		Log.v("game", "life create");
 		setContentView(R.layout.activity_game);
-		
-		// ユーザ情報と部屋の情報を取得
-		AuthLogic authLogic = new AuthLogic(this);
-
-		API.getUserInfo(authLogic.getUserId(), new JsonHttpResponseHandler() {
-			@Override
-			public void onSuccess(JSONObject object) {
-				try {
-					player = new Player(object);
-					JSONObject roomObject = object.getJSONObject("room");
-					roomEntity = new RoomEntity(roomObject);
-					
-					
-				} catch (JSONException e) {
-					Log.v("game", "getUserInfoError=" + e);
-				}
-			}
-
-			@Override
-			public void onFailure(Throwable throwable) {
-				Log.v("game", "getUserInfoOnFailure=" + throwable);
-			}
-		});
 
 		// マップを表示
 		FragmentManager manager = getSupportFragmentManager();
@@ -112,40 +90,8 @@ public class GameActivity extends FragmentActivity {
 			fragmentTransaction.replace(R.id.mapLayout, mapFragment, "map");
 			fragmentTransaction.commit();
 		}
-		mapLogic = new MapLogic(this, mapFragment);
-
-		// チャットを表示
-		final EditText editText = (EditText) findViewById(R.id.chatInput);
-		Button button1 = (Button) findViewById(R.id.commentButton);
-
-		button1.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				displayChat(editText.getText().toString());
-			}
-		});
-
-		// ミッションを表示
-		final LinearLayout missionView = (LinearLayout) findViewById(R.id.missionView);
-		Button button2 = (Button) findViewById(R.id.missionViewButton);
-		button2.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				missionView.setVisibility(View.VISIBLE);
-			}
-
-		});
-		Button button3 = (Button) findViewById(R.id.missionCloseButton);
-		button3.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				missionView.setVisibility(View.GONE);
-			}
-
-		});
+		/** 遺産
+		 mapLogic = new MapLogic(this, mapFragment);
 
 		// ロケーション送信
 		locationLogic = new LocationLogic(this);
@@ -255,84 +201,14 @@ public class GameActivity extends FragmentActivity {
 			}
 		});
 		timerLogic.start(getLocationTask, GET_LOCATION_INTERVAL);
-
-		// 残り時間をカウントダウン
-		final TextView leftTimeView = (TextView) findViewById(R.id.leftTimeView);
-		countLeftTimeTask = timerLogic.create(new Runnable() {
-			@Override
-			public void run() {
-				if (leftTime == null && player != null && player.getRoomId() > 0) {
-					// 残り時間が取れてない時はAPIで取りに行く
-					API.getTimeLeft(player.getRoomId(),
-							new JsonHttpResponseHandler() {
-								@Override
-								public void onSuccess(JSONObject json) {
-									try {
-										leftTime = json.getInt("second");
-									} catch (JSONException e) {
-									}
-								}
-
-								@Override
-								public void onFailure(Throwable throwable) {
-									Log.v("game", "getTimeLeftOnFailure="
-											+ throwable);
-								}
-							});
-				} else if (leftTime != null){
-					if (leftTime > 0) {
-						int HH = leftTime / 3600;
-						int mm = leftTime % 3600 / 60;
-						int ss = leftTime % 60;
-						leftTimeView
-								.setText("終了まで " + HH + ":" + mm + ":" + ss);
-						leftTime--;
-					} else {
-						onGameEnd();
-					}
-				}
-			}
-		});
-		timerLogic.start(countLeftTimeTask, COUNT_LEFT_TIME_INTERVAL);
-
-		// 一定間隔で残り時間を取りに行く
-		getLeftTimeTask = timerLogic.create(new Runnable() {
-
-			@Override
-			public void run() {
-				if (player != null && player.getRoomId() > 0) {
-					API.getTimeLeft(player.getRoomId(),
-							new JsonHttpResponseHandler() {
-								@Override
-								public void onSuccess(JSONObject json) {
-									try {
-										leftTime = json.getInt("second");
-									} catch (JSONException e) {
-										e.printStackTrace();
-									}
-								}
-
-								@Override
-								public void onFailure(Throwable throwable) {
-									Log.v("game", "getTimeLeftOnFailure="
-											+ throwable);
-								}
-							});
-				}
-			}
-
-		});
-		timerLogic.start(getLeftTimeTask, GET_LEFT_TIME_INTERVAL);
-
-		// 残り設置可能テリトリー数表示
-		leftTerritory = 5; // TODO 残りテリトリ数取得
-		TextView leftTerritoryView = (TextView) findViewById(R.id.leftTerritoryView);
-		leftTerritoryView.setText("残り " + leftTerritory);
+		**/
+		startAndBindService();
 	}
-
+	
 	@Override
 	public void onStart() {
 		super.onStart();
+		/*
 		// マップ初期化
 		mapLogic.init();
 		// 位置取り開始
@@ -349,26 +225,33 @@ public class GameActivity extends FragmentActivity {
 					territoryList.add(latlng);
 					mapLogic.addTerritory(latlng, 10000);
 					leftTerritory--;
-					TextView leftTerritoryView = (TextView) findViewById(R.id.leftTerritoryView);
-					leftTerritoryView.setText("残り " + leftTerritory);
 				}
-
-				// TODO API
 			}
 		});
+		*/
+		startAndBindService();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		Log.v("life", "game resume");
+		Log.v("game", "life resume");
+		startAndBindService();
 	}
 
 	@Override
+	public void onPause() {
+		Log.v("game", "life pause");
+		stopAndUnBindService();
+		super.onPause();
+	}
+	
+	@Override
 	public void onDestroy() {
+		Log.v("game", "life destroy");
+		stopAndUnBindService();
 		super.onDestroy();
-		Log.v("life", "game destroy");
-
+/**
 		// ロケーション殺す
 		locationLogic.stop();
 
@@ -376,14 +259,13 @@ public class GameActivity extends FragmentActivity {
 		timerLogic.cancel(getLocationTask);
 		timerLogic.cancel(countLeftTimeTask);
 		timerLogic.cancel(getLeftTimeTask);
+		**/
+		
 	}
 
-	// ゲーム終了時の処理
+	/** ゲーム終了時の処理
 	private void onGameEnd() {
-		TextView leftTimeView = (TextView) findViewById(R.id.leftTimeView);
 		final Button hitButton = (Button) findViewById(R.id.hitButton);
-
-		leftTimeView.setText("終了");
 
 		mapLogic.setOnLongClickListener(null);
 		mapLogic.setOnClickListener(new OnMapClickListener() {
@@ -435,13 +317,51 @@ public class GameActivity extends FragmentActivity {
 		timerLogic.cancel(countLeftTimeTask);
 		timerLogic.cancel(getLeftTimeTask);
 	}
+	**/
 
-	private void displayChat(String text) {
-		View v = getLayoutInflater().inflate(R.layout.layout_chat, null);
-		TextView textView = (TextView) v.findViewById(R.id.textView1);
-		textView.setText(text);
+	private void startAndBindService() {
+		serviceIntent = new Intent(getActivity(), LocationUpdateService.class);
+		getActivity().startService(serviceIntent);
+        getActivity().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        Session.setIsBound(true);
+	}
+	
+	private void stopAndUnBindService() {
+        if (Session.getIsBound()) {
+    		Log.v("game", "unbind");
+    	    getActivity().unbindService(serviceConnection);
+            Session.setIsBound(false);
+        }
 
-		LinearLayout chatList = (LinearLayout) findViewById(R.id.chatList);
-		chatList.addView(v);
+        if(!Session.getIsStarted()) {
+    		Log.v("game", "stop");
+        	getActivity().stopService(serviceIntent);	
+        }
+	}
+	
+	@Override
+	public void onLocationUpdate(Location loc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStopLogging() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Activity getActivity() {
+		return this;
+	}
+
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked) {
+            updateService.startUpdate();
+        }else{
+            updateService.stopUpdate();
+        }
 	}
 }

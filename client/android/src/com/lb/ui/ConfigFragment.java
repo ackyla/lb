@@ -20,11 +20,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class ConfigFragment extends Fragment implements ILocationUpdateServiceClient {
 	
 	private static Intent serviceIntent;
+	private LocationUpdateService updateService;
+	private final ILocationUpdateServiceClient sc = this;
 	
 	private final ServiceConnection conn = new ServiceConnection() {
 
@@ -48,6 +53,7 @@ public class ConfigFragment extends Fragment implements ILocationUpdateServiceCl
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.v("life", "config create");
+		startAndBindService();
 	}
 	
 	@Override
@@ -55,20 +61,19 @@ public class ConfigFragment extends Fragment implements ILocationUpdateServiceCl
     	final View v = inflater.inflate(R.layout.fragment_config, container, false);
 		Log.v("life", "config createView");
 		
-		Button button1 = (Button)v.findViewById(R.id.button1);
-		button1.setOnClickListener(new OnClickListener() {
+		ToggleButton button = (ToggleButton)v.findViewById(R.id.toggleButton1);
+		button.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
 			@Override
-			public void onClick(View view) {
-				startAndBindService();
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				if (isChecked) {
+					
+				}else{
+					
+				}
 			}
-		});
-		
-		Button button2 = (Button)v.findViewById(R.id.button2);
-		button2.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				stopAndUnBindService();
-			}
+			
 		});
 		
 		TextView textView = (TextView)v.findViewById(R.id.textView1);
@@ -92,6 +97,7 @@ public class ConfigFragment extends Fragment implements ILocationUpdateServiceCl
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		stopAndUnBindService();
 		Log.v("life", "config destroy");
 	}
 
