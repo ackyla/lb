@@ -23,13 +23,7 @@ public class AuthLogic extends LogicBase {
 	public AuthEntity getAuth() {
 		AuthDAO authDAO = this.getAuthDAO();
 		try	{
-			List<AuthEntity> authList = authDAO.get();
-			if(authList.size() > 0) {
-				AuthEntity authEntity = authList.get(0);
-				return authEntity;
-			}else{
-				return null;
-			}
+			return authDAO.get();
 		} catch(Exception e) {
 			Log.v("home", "error="+e.toString());
 			return null;

@@ -25,10 +25,10 @@ public class AuthDAO {
 	}
 
 	/**
-	 * 全データの取得
-	 * @return List<AuthEntity>
+	 * 認証情報の取得
+	 * @return AuthEntity
 	 */
-	public List<AuthEntity> get() {
+	public AuthEntity get() {
 		List<AuthEntity> entityList = new ArrayList<AuthEntity>();
 
 		List<ContentValues> res = dbLogic.query(TABLE_NAME, COLUMNS, null, null, null,
@@ -43,7 +43,7 @@ public class AuthDAO {
 			entityList.add(entity);
 		}
 
-		return entityList;
+		return entityList.get(0);
 	}
 
 	/**

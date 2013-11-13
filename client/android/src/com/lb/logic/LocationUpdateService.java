@@ -1,12 +1,16 @@
 package com.lb.logic;
 
+import org.json.JSONObject;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.lb.api.API;
 import com.lb.model.Session;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Notification;
 import android.app.Service;
@@ -132,6 +136,17 @@ public class LocationUpdateService extends Service{
 			@Override
 			public void onLocationChanged(Location location) {
 				Log.v("game", "location="+location.toString());
+				AuthLogic authLogic = new AuthLogic(getApplicationContext());
+				API.postLocation(authLogic.getAuth(), location, new JsonHttpResponseHandler() {
+					@Override
+					public void onSuccess(JSONObject json) {
+						Log.v("game", "location=" + json.toString());
+					}
+					@Override
+					public void onFailure(Throwable throwable) {
+						Log.v("game", "postLocationOnFailure=" + throwable);
+					}
+				});
 			}
     	};
     	

@@ -47,7 +47,7 @@ public class SignupActivity extends Activity {
 						progress.dismiss();
 						
 						Intent intent = new Intent();
-						intent.setClass(SignupActivity.this, MainActivity.class);
+						intent.setClass(SignupActivity.this, GameActivity.class);
 						startActivity(intent);
 						finish();
 					}

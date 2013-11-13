@@ -21,9 +21,8 @@ public class TitleActivity extends Activity {
 			// サインアップ画面へ
 			intent.setClass(this, SignupActivity.class);
 		} else {
-			// ゲーム or ホーム
-			// TODO ゲームかホームかの分岐
-			intent.setClass(this, MainActivity.class);
+			// ゲーム画面へ
+			intent.setClass(this, GameActivity.class);
 		}
 		startActivity(intent);
 		finish();
