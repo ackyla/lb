@@ -1,14 +1,16 @@
 package com.lb.logic;
 
-import org.json.JSONObject;
-
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
+import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
-import com.lb.api.API;
+import com.google.android.gms.location.LocationRequest;
 import com.lb.model.Session;
-import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Binder;
@@ -22,6 +24,9 @@ public class LocationUpdateService extends Service{
 	private final IBinder mBinder = new LocationUpdateBinder();
 	private static ILocationUpdateServiceClient mainServiceClient;
     
+	private LocationListener locationListener;
+	private LocationClient locationClient;
+	
 	@Override
 	public IBinder onBind(Intent intent) {
 		Log.v("game", "bind service");
@@ -112,11 +117,60 @@ public class LocationUpdateService extends Service{
     	
     	Session.setIsStarted(true);
     	Log.v("game", "start update");
+    	startGpsManager();
     }
     
     public void stopUpdate() {
     	Session.setIsStarted(false);
     	stopForeground(true);
     	Log.v("game", "stop update");
+    	stopGpsManager();
+    }
+    
+    private void startGpsManager() {
+    	locationListener = new LocationListener() {
+			@Override
+			public void onLocationChanged(Location location) {
+				Log.v("game", "location="+location.toString());
+			}
+    	};
+    	
+    	locationClient = new LocationClient(getApplicationContext(), new ConnectionCallbacks() {
+
+			@Override
+			public void onConnected(Bundle bundle) {
+				Log.v("game", "gps connect");
+				LocationRequest request = LocationRequest.create();
+				request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+				request.setInterval(60000);
+				locationClient.requestLocationUpdates(request, locationListener);
+			}
+
+			@Override
+			public void onDisconnected() {
+				locationClient = null;
+			}
+    		
+    	}, new OnConnectionFailedListener() {
+
+			@Override
+			public void onConnectionFailed(ConnectionResult result) {
+				// TODO 位置を取れなかった時の処理
+				
+			}
+			
+		});
+    	
+    	locationClient.connect();
+    }
+    
+    private void stopGpsManager() {
+		if(locationClient == null || !locationClient.isConnected()){
+			return;
+		}
+		
+		Log.v("game", "gps disconnect");
+		locationClient.removeLocationUpdates(locationListener);
+		locationClient.disconnect();
     }
 }
