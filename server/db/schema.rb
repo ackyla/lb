@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 16) do
+ActiveRecord::Schema.define(:version => 17) do
 
   create_table "hits", :force => true do |t|
     t.float    "latitude"
@@ -56,6 +56,15 @@ ActiveRecord::Schema.define(:version => 16) do
     t.datetime "termination_time"
     t.boolean  "active",           :default => false
     t.integer  "num_user"
+  end
+
+  create_table "territories", :force => true do |t|
+    t.float    "latitude"
+    t.float    "longitude"
+    t.float    "radius"
+    t.integer  "user_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "users", :force => true do |t|

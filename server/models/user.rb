@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   belongs_to :room
   has_many :users
   has_many :locations
+  has_many :territories
   has_many :hits
 
   def generate_token
