@@ -71,4 +71,19 @@ Server::App.controllers :users do
 
     hit.to_json
   end
+
+  get :territory_list, :map => '/users/territories/list', :provides => :json do
+    expire @user.cache_key
+    @user.territories.to_json
+  end
+
+  post :create_territory, ;map => '/users/territories/create', :provides => :json do
+    expire @user.cache_key
+    territory = Territory.new(:latitude => params[:latitude], :longitude => params[:longitude], :radius => params[:radius]){|territory
+      territory.user = @user
+    }
+    territory.save
+
+    territory.to_json
+  end
 end
