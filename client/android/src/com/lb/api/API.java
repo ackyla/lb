@@ -4,7 +4,6 @@ import android.location.Location;
 import android.util.Log;
 
 import com.lb.dao.AuthEntity;
-import com.lb.model.Player;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;

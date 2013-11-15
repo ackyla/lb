@@ -8,7 +8,6 @@ import com.lb.R;
 import com.lb.api.API;
 import com.lb.dao.RoomEntity;
 import com.lb.logic.AuthLogic;
-import com.lb.model.Player;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
