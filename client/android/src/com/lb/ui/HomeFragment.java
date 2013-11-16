@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
-import com.lb.dao.RoomEntity;
+import com.lb.dao.OldRoomEntity;
 import com.lb.logic.AuthLogic;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -25,7 +25,7 @@ import android.widget.TextView;
 
 public class HomeFragment extends Fragment {
 	
-	private RoomEntity roomEntity;
+	private OldRoomEntity roomEntity;
 	
     public HomeFragment(){  
         setRetainInstance(true);  

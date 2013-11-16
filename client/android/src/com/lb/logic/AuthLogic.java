@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-import com.lb.dao.AuthDAO;
-import com.lb.dao.AuthEntity;
+import com.lb.dao.OldAuthDAO;
+import com.lb.dao.OldAuthEntity;
 
 import android.content.Context;
 import android.util.Log;
@@ -20,8 +20,8 @@ public class AuthLogic extends LogicBase {
 	 * ユーザを取得する
 	 * @return AuthEntity
 	 */
-	public AuthEntity getAuth() {
-		AuthDAO authDAO = this.getAuthDAO();
+	public OldAuthEntity getAuth() {
+		OldAuthDAO authDAO = this.getAuthDAO();
 		try	{
 			return authDAO.get();
 		} catch(Exception e) {
@@ -35,7 +35,7 @@ public class AuthLogic extends LogicBase {
 	 * @return
 	 */
 	public int getUserId() {
-		AuthEntity auth = this.getAuth();
+		OldAuthEntity auth = this.getAuth();
 		
 		if(auth == null){
 			return 0;
@@ -61,8 +61,8 @@ public class AuthLogic extends LogicBase {
 	 * @return boolean
 	 */
 	public boolean register(JSONObject json) {
-		AuthDAO authDAO = getAuthDAO();
-		AuthEntity authEntity = new AuthEntity(json);
+		OldAuthDAO authDAO = getAuthDAO();
+		OldAuthEntity authEntity = new OldAuthEntity(json);
 		
 		try {
 			authDAO.insert(authEntity);
@@ -96,7 +96,7 @@ public class AuthLogic extends LogicBase {
 		return true;
 	}
 	
-	private AuthDAO getAuthDAO() {
-		return new AuthDAO(context);
+	private OldAuthDAO getAuthDAO() {
+		return new OldAuthDAO(context);
 	}
 }

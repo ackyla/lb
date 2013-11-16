@@ -3,13 +3,13 @@ package com.lb.dao;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AuthEntity {
+public class OldAuthEntity {
 	private int userId;
 	private String token;
 	
-	public AuthEntity() {
+	public OldAuthEntity() {
 	}
-	public AuthEntity(JSONObject json) {
+	public OldAuthEntity(JSONObject json) {
 		try {
 			setUserId(json.getInt("id"));
 		} catch (JSONException e) {

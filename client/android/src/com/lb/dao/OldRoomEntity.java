@@ -3,7 +3,7 @@ package com.lb.dao;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class RoomEntity {
+public class OldRoomEntity {
 	private int id;
 	private String title;
 	private int numUser;
@@ -18,10 +18,10 @@ public class RoomEntity {
 		this.ownerId = i;
 	}
 
-	public RoomEntity() {
+	public OldRoomEntity() {
 	}
 
-	public RoomEntity(JSONObject json) {
+	public OldRoomEntity(JSONObject json) {
 		try {
 			setId(json.getInt("id"));
 		} catch (Exception e) {

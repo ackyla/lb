@@ -1,5 +1,9 @@
 package com.lb.ui;
 
+import com.lb.Auth;
+import com.lb.AuthDao;
+import com.lb.AuthDao.Properties;
+import com.lb.DaoSession;
 import com.lb.R;
 import com.lb.logic.ILocationUpdateServiceClient;
 import com.lb.logic.LocationUpdateService;
@@ -90,6 +94,13 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			fragmentTransaction.replace(R.id.mapLayout, mapFragment, "map");
 			fragmentTransaction.commit();
 		}
+		
+		Session session = (Session) getApplication();
+		DaoSession daoSession = session.getDaoSession();
+		AuthDao authDao = daoSession.getAuthDao();
+		Auth auth = new Auth(null, 1, "hoge");
+		Log.v("game", "query="+authDao.queryBuilder().where(Properties.User_id.eq(1)).build().list());
+		
 		/** 遺産
 		 mapLogic = new MapLogic(this, mapFragment);
 

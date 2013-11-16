@@ -3,7 +3,7 @@ package com.lb.api;
 import android.location.Location;
 import android.util.Log;
 
-import com.lb.dao.AuthEntity;
+import com.lb.dao.OldAuthEntity;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -32,7 +32,7 @@ public class API {
 		post("users/create", params, handler);
 	}
 
-	public static void postLocation(AuthEntity auth, Location loc,
+	public static void postLocation(OldAuthEntity auth, Location loc,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("user_id", Integer.toString(auth.getUserId()));
@@ -49,7 +49,7 @@ public class API {
 		get("locations/list", params, handler);
 	}
 
-	public static void createRoom(AuthEntity auth, String title, int timeLimit,
+	public static void createRoom(OldAuthEntity auth, String title, int timeLimit,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("user_id", Integer.toString(auth.getUserId()));
@@ -59,7 +59,7 @@ public class API {
 		post("rooms/create", params, handler);
 	}
 
-	public static void startGame(AuthEntity auth,
+	public static void startGame(OldAuthEntity auth,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("user_id", Integer.toString(auth.getUserId()));
@@ -72,7 +72,7 @@ public class API {
 		get("rooms/list", params, handler);
 	}
 
-	public static void enterRoom(AuthEntity auth, int roomId,
+	public static void enterRoom(OldAuthEntity auth, int roomId,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("user_id", Integer.toString(auth.getUserId()));
@@ -87,7 +87,7 @@ public class API {
 		get("rooms/users", params, handler);
 	}
 
-	public static void postHitLocation(AuthEntity auth, int targetId,
+	public static void postHitLocation(OldAuthEntity auth, int targetId,
 			double latitude, double longitude, double radius,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();

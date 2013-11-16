@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
-import com.lb.dao.RoomEntity;
+import com.lb.dao.OldRoomEntity;
 import com.lb.logic.AuthLogic;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -81,7 +81,7 @@ public class MainActivity extends FragmentActivity {
 			public void onSuccess(JSONObject object) {
 				try {
 					JSONObject roomObject = object.getJSONObject("room");
-					RoomEntity roomEntity = new RoomEntity(roomObject);
+					OldRoomEntity roomEntity = new OldRoomEntity(roomObject);
 					if (roomEntity.getId() != 0 && roomEntity.getActive()) {
 						Intent intent = new Intent();
 						intent.setClass(MainActivity.this, GameActivity.class);

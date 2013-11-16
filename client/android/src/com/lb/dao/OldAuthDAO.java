@@ -9,7 +9,7 @@ import com.lb.logic.DBLogic;
 import android.content.ContentValues;
 import android.content.Context;
 
-public class AuthDAO {
+public class OldAuthDAO {
 	private static final String TABLE_NAME = "auth";
 	private static final String COLUMN_USER_ID = "user_id";
 	private static final String COLUMN_TOKEN = "token";
@@ -20,7 +20,7 @@ public class AuthDAO {
 	/**
 	 * コンストラクタ
 	 */
-	public AuthDAO(Context context) {
+	public OldAuthDAO(Context context) {
 		this.dbLogic = new DBLogic(context);
 	}
 
@@ -28,8 +28,8 @@ public class AuthDAO {
 	 * 認証情報の取得
 	 * @return AuthEntity
 	 */
-	public AuthEntity get() {
-		List<AuthEntity> entityList = new ArrayList<AuthEntity>();
+	public OldAuthEntity get() {
+		List<OldAuthEntity> entityList = new ArrayList<OldAuthEntity>();
 
 		List<ContentValues> res = dbLogic.query(TABLE_NAME, COLUMNS, null, null, null,
 				null, null);
@@ -37,7 +37,7 @@ public class AuthDAO {
 		Iterator<ContentValues> i = res.iterator();
 		while (i.hasNext()) {
 			ContentValues values = i.next();
-			AuthEntity entity = new AuthEntity();
+			OldAuthEntity entity = new OldAuthEntity();
 			entity.setUserId(values.getAsInteger("user_id"));
 			entity.setToken(values.getAsString("token"));
 			entityList.add(entity);
@@ -52,7 +52,7 @@ public class AuthDAO {
 	 * @param data
 	 * @return
 	 */
-	public long insert(AuthEntity entity) {
+	public long insert(OldAuthEntity entity) {
 		ContentValues values = new ContentValues();
 		values.put(COLUMN_USER_ID, entity.getUserId());
 		values.put(COLUMN_TOKEN, entity.getToken());
@@ -66,7 +66,7 @@ public class AuthDAO {
 	 * @param date
 	 * @return
 	 */
-	public int update(AuthEntity entity) {
+	public int update(OldAuthEntity entity) {
 		ContentValues values = new ContentValues();
 		values.put(COLUMN_USER_ID, entity.getUserId());
 		values.put(COLUMN_TOKEN, entity.getToken());

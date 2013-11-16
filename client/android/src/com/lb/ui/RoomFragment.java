@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 import com.lb.R;
 import com.lb.api.API;
-import com.lb.dao.RoomEntity;
+import com.lb.dao.OldRoomEntity;
 import com.lb.logic.AuthLogic;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -98,7 +98,7 @@ public class RoomFragment extends Fragment {
 					@Override
 					public void onSuccess(JSONObject json) {
 						Log.v("room", "success");
-						RoomEntity roomEntity = new RoomEntity(json);
+						OldRoomEntity roomEntity = new OldRoomEntity(json);
 						addRoom(roomListLayout, json);
 						//enterRoom(roomEntity.getId());
 						progress.dismiss();
@@ -159,7 +159,7 @@ public class RoomFragment extends Fragment {
 	}
 	
 	private void addRoom(LinearLayout roomList, JSONObject json) {
-		final RoomEntity roomEntity = new RoomEntity(json);
+		final OldRoomEntity roomEntity = new OldRoomEntity(json);
 		View v = getActivity().getLayoutInflater().inflate(R.layout.layout_room, null);
 		TextView roomTitle = (TextView)v.findViewById(R.id.title);
 		roomTitle.setText(roomEntity.getId() + ": " + roomEntity.getTitle());
