@@ -10,6 +10,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.lb.api.API;
 import com.lb.model.Session;
+import com.lb.model.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Notification;
@@ -136,8 +137,7 @@ public class LocationUpdateService extends Service{
 			@Override
 			public void onLocationChanged(Location location) {
 				Log.v("game", "location="+location.toString());
-				AuthLogic authLogic = new AuthLogic(getApplicationContext());
-				API.postLocation(authLogic.getAuth(), location, new JsonHttpResponseHandler() {
+				API.postLocation(Session.getUser(), location, new JsonHttpResponseHandler() {
 					@Override
 					public void onSuccess(JSONObject json) {
 						Log.v("game", "location=" + json.toString());

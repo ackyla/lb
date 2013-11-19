@@ -4,6 +4,7 @@ import android.location.Location;
 import android.util.Log;
 
 import com.lb.dao.OldAuthEntity;
+import com.lb.model.User;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -32,11 +33,11 @@ public class API {
 		post("users/create", params, handler);
 	}
 
-	public static void postLocation(OldAuthEntity auth, Location loc,
+	public static void postLocation(User user, Location loc,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
-		params.put("user_id", Integer.toString(auth.getUserId()));
-		params.put("token", auth.getToken());
+		params.put("user_id", Integer.toString(user.getId()));
+		params.put("token", user.getToken());
 		params.put("latitude", Double.toString(loc.getLatitude()));
 		params.put("longitude", Double.toString(loc.getLongitude()));
 		post("locations/create", params, handler);

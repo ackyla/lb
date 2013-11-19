@@ -4,6 +4,7 @@ import com.lb.R;
 import com.lb.logic.ILocationUpdateServiceClient;
 import com.lb.logic.LocationUpdateService;
 import com.lb.model.Session;
+import com.lb.model.User;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import android.app.Activity;
@@ -27,6 +28,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 
 	private static Intent serviceIntent;
 	private LocationUpdateService updateService;
+	private User user;
 	
 	/** 遺産
 	private static final int GET_LOCATION_INTERVAL = 5000; // msec
@@ -203,6 +205,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		});
 		timerLogic.start(getLocationTask, GET_LOCATION_INTERVAL);
 		**/
+		getUser();
 		startAndBindService();
 	}
 	
@@ -230,6 +233,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			}
 		});
 		*/
+		getUser();
 		startAndBindService();
 	}
 
@@ -237,6 +241,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	public void onResume() {
 		super.onResume();
 		Log.v("game", "life resume");
+		getUser();
 		startAndBindService();
 	}
 
@@ -338,6 +343,16 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
     		Log.v("game", "stop");
         	getActivity().stopService(serviceIntent);	
         }
+	}
+	
+	private void getUser() {
+		user = Session.getUser();
+		if(user == null) {
+			Intent intent = new Intent();
+			intent.setClass(this, SignupActivity.class);
+			startActivity(intent);
+			finish();
+		}
 	}
 	
 	@Override

@@ -8,7 +8,7 @@ import android.app.Application;
 public class Session extends Application {
 
 	private static LbDbOpenHelper dbHelper;
-	
+	private static User user;
     private static boolean towerEnabled;
     private static boolean gpsEnabled;
     private static boolean isStarted;
@@ -20,6 +20,13 @@ public class Session extends Application {
     	super.onCreate();
     	
     	this.dbHelper = new LbDbOpenHelper(this, null);
+    }
+    
+    public static User getUser() {
+    	return user;
+    }
+    public static void setUser(User user) {
+    	Session.user = user;
     }
     
     public DaoSession getDaoSession() {
