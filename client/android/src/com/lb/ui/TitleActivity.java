@@ -1,7 +1,10 @@
 package com.lb.ui;
 
+import com.lb.AuthDao;
+import com.lb.DaoSession;
 import com.lb.R;
 import com.lb.logic.AuthLogic;
+import com.lb.model.Session;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,16 +17,18 @@ public class TitleActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_title);
 		
-		// 端末にユーザ情報あるかをチェック
-		AuthLogic authLogic = new AuthLogic(this);
 		Intent intent = new Intent();
-		if (!authLogic.checkRegister()) {
-			// サインアップ画面へ
-			intent.setClass(this, SignupActivity.class);
-		} else {
-			// ゲーム画面へ
+		
+		// 端末にユーザ情報あるかをチェック
+		Session session = (Session) getApplication();
+		DaoSession daoSession = session.getDaoSession();
+		AuthDao authDao = daoSession.getAuthDao();
+		if(authDao.count() > 0) {
 			intent.setClass(this, GameActivity.class);
+		} else {
+			intent.setClass(this, SignupActivity.class);
 		}
+		
 		startActivity(intent);
 		finish();
 	}

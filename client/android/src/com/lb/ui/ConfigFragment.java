@@ -25,11 +25,10 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-public class ConfigFragment extends Fragment implements ILocationUpdateServiceClient {
+public class ConfigFragment extends Fragment {
 	
 	private static Intent serviceIntent;
 	private LocationUpdateService updateService;
-	private final ILocationUpdateServiceClient sc = this;
 	
 	private final ServiceConnection conn = new ServiceConnection() {
 
@@ -120,17 +119,5 @@ public class ConfigFragment extends Fragment implements ILocationUpdateServiceCl
     		Log.v("main", "stop service");
         	getActivity().stopService(serviceIntent);	
         }
-	}
-
-	@Override
-	public void onLocationUpdate(Location loc) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onStopLogging() {
-		// TODO Auto-generated method stub
-		
 	}
 }

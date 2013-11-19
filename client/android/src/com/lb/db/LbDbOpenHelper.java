@@ -3,12 +3,13 @@ package com.lb.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.util.Log;
 
 import com.lb.DaoMaster;
-import com.lb.DaoMaster.OpenHelper;
+import com.lb.DaoMaster.DevOpenHelper;
 import com.lb.DaoSession;
 
-public class LbDbOpenHelper extends OpenHelper {
+public class LbDbOpenHelper extends DevOpenHelper {
 
 	private static final String DB_NAME = "lb.db";
 	
@@ -28,13 +29,10 @@ public class LbDbOpenHelper extends OpenHelper {
 		
 		DaoMaster daoMaster = new DaoMaster(db);
 		DaoSession daoSession = daoMaster.newSession();
-		
-		
 	}
 	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
 	}
 	
 	public SQLiteDatabase getDatabase() {
