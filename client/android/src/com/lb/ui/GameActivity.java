@@ -1,17 +1,30 @@
 package com.lb.ui;
 
+import org.json.JSONObject;
+
 import com.lb.R;
+import com.lb.api.API;
 import com.lb.logic.ILocationUpdateServiceClient;
 import com.lb.logic.LocationUpdateService;
 import com.lb.model.Session;
 import com.lb.model.User;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
 
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -29,6 +42,8 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	private static Intent serviceIntent;
 	private LocationUpdateService updateService;
 	private User user;
+	private static SupportMapFragment mapFragment;
+	private static GoogleMap gMap;
 	
 	/** 遺産
 	private static final int GET_LOCATION_INTERVAL = 5000; // msec
@@ -80,11 +95,11 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		super.onCreate(savedInstanceState);
 		Log.v("game", "life create");
 		setContentView(R.layout.activity_game);
-
+		
 		// マップを表示
 		FragmentManager manager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = manager.beginTransaction();
-		SupportMapFragment mapFragment = (SupportMapFragment) manager
+		mapFragment = (SupportMapFragment) manager
 				.findFragmentByTag("map");
 		if (mapFragment == null) {
 			mapFragment = SupportMapFragment.newInstance();
@@ -92,7 +107,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			fragmentTransaction.replace(R.id.mapLayout, mapFragment, "map");
 			fragmentTransaction.commit();
 		}
-
+		
 		/** 遺産
 		 mapLogic = new MapLogic(this, mapFragment);
 
@@ -212,29 +227,49 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	@Override
 	public void onStart() {
 		super.onStart();
-		/*
-		// マップ初期化
-		mapLogic.init();
-		// 位置取り開始
-		locationLogic.start();
-
-		// テリトリー作成
-		mapLogic.setOnLongClickListener(new OnMapLongClickListener() {
-			@Override
-			public void onMapLongClick(LatLng latlng) {
-				if (leftTerritory > 0) {
-					if (territoryList == null){
-						territoryList = new ArrayList<LatLng>();
-					}
-					territoryList.add(latlng);
-					mapLogic.addTerritory(latlng, 10000);
-					leftTerritory--;
-				}
-			}
-		});
-		*/
+		
 		getUser();
 		startAndBindService();
+		
+		gMap = mapFragment.getMap();
+		gMap.setMyLocationEnabled(true);
+		UiSettings settings = gMap.getUiSettings();
+		settings.setMyLocationButtonEnabled(true);
+
+		// カメラを現在位置にフォーカスする
+		gMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener(){
+		      @Override
+		      public void onMyLocationChange(Location location) {
+		    	  gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
+		    	  gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す
+		      }
+		});
+
+		// テリトリー作成
+		gMap.setOnMapLongClickListener(new OnMapLongClickListener() {
+			@Override
+			public void onMapLongClick(LatLng latlng) {
+				double radius = 10000;
+				API.postTerritoryLocation(user, latlng.latitude, latlng.longitude, radius, new JsonHttpResponseHandler() {
+					@Override
+					public void onSuccess(JSONObject json) {
+						Log.v("game", "territory = "+ json.toString());
+					}
+
+					@Override
+					public void onFailure(Throwable throwable) {
+						Log.v("game","postHitLocationOnFailure="+ throwable);
+					}
+				});
+				CircleOptions circleOptions = new CircleOptions();
+				circleOptions.center(latlng);
+				circleOptions.strokeWidth(5);
+				circleOptions.radius(radius);
+				circleOptions.strokeColor(Color.argb(200, 0, 255, 0));
+				circleOptions.fillColor(Color.argb(50, 0, 255, 0));
+				Circle circle = gMap.addCircle(circleOptions);
+			}
+		});
 	}
 
 	@Override

@@ -118,4 +118,21 @@ public class API {
 		params.put("room_id", Integer.toString(roomId));
 		post("rooms/timeleft", params, handler);
 	}
+	
+	public static void postTerritoryLocation(User user, double latitude, double longitude, double radius, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		params.put("user_id", Integer.toString(user.getId()));
+		params.put("token", user.getToken());
+		params.put("latitude", Double.toString(latitude));
+		params.put("longitude", Double.toString(longitude));
+		params.put("radius", Double.toString(radius));
+		post("users/territories/create", params, handler);
+	}
+	
+	public static void getUserTerritoryList(User user, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		params.put("user_id", Integer.toString(user.getId()));
+		params.put("token", user.getToken());
+		get("users/territories/list", params, handler);
+	}
 }

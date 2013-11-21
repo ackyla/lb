@@ -8,7 +8,7 @@ Server::App.controllers :users do
     end
   end
 
-  before :enter, :exit, :start, :hit do
+  before :enter, :exit, :start, :hit, :territory_list, :create_territory do
     login(params)
   end
 
