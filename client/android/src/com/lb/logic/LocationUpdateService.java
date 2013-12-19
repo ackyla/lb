@@ -171,7 +171,7 @@ public class LocationUpdateService extends Service{
 			@Override
 			public void onConnectionFailed(ConnectionResult result) {
 				// TODO 位置を取れなかった時の処理
-				
+				Log.v("game", "gps connection failed, "+result.toString());
 			}
 			
 		});

@@ -231,45 +231,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		getUser();
 		startAndBindService();
 		
-		gMap = mapFragment.getMap();
-		gMap.setMyLocationEnabled(true);
-		UiSettings settings = gMap.getUiSettings();
-		settings.setMyLocationButtonEnabled(true);
-
-		// カメラを現在位置にフォーカスする
-		gMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener(){
-		      @Override
-		      public void onMyLocationChange(Location location) {
-		    	  gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
-		    	  gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す
-		      }
-		});
-
-		// テリトリー作成
-		gMap.setOnMapLongClickListener(new OnMapLongClickListener() {
-			@Override
-			public void onMapLongClick(LatLng latlng) {
-				double radius = 10000;
-				API.postTerritoryLocation(user, latlng.latitude, latlng.longitude, radius, new JsonHttpResponseHandler() {
-					@Override
-					public void onSuccess(JSONObject json) {
-						Log.v("game", "territory = "+ json.toString());
-					}
-
-					@Override
-					public void onFailure(Throwable throwable) {
-						Log.v("game","postHitLocationOnFailure="+ throwable);
-					}
-				});
-				CircleOptions circleOptions = new CircleOptions();
-				circleOptions.center(latlng);
-				circleOptions.strokeWidth(5);
-				circleOptions.radius(radius);
-				circleOptions.strokeColor(Color.argb(200, 0, 255, 0));
-				circleOptions.fillColor(Color.argb(50, 0, 255, 0));
-				Circle circle = gMap.addCircle(circleOptions);
-			}
-		});
+		initMap();
 	}
 
 	@Override
@@ -360,6 +322,50 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	}
 	**/
 
+	private void initMap() {
+		gMap = mapFragment.getMap();
+		if (gMap != null) {
+			gMap.setMyLocationEnabled(true);
+			UiSettings settings = gMap.getUiSettings();
+			settings.setMyLocationButtonEnabled(true);
+
+			// カメラを現在位置にフォーカスする
+			gMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener(){
+				@Override
+				public void onMyLocationChange(Location location) {
+					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
+					gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す
+				}
+			});
+
+			// テリトリー作成
+			gMap.setOnMapLongClickListener(new OnMapLongClickListener() {
+				@Override
+				public void onMapLongClick(LatLng latlng) {
+					double radius = 10000;
+					API.postTerritoryLocation(user, latlng.latitude, latlng.longitude, radius, new JsonHttpResponseHandler() {
+						@Override
+						public void onSuccess(JSONObject json) {
+							Log.v("game", "territory = "+ json.toString());
+						}
+
+						@Override
+						public void onFailure(Throwable throwable) {
+							Log.v("game","postHitLocationOnFailure="+ throwable);
+						}
+					});
+					CircleOptions circleOptions = new CircleOptions();
+					circleOptions.center(latlng);
+					circleOptions.strokeWidth(5);
+					circleOptions.radius(radius);
+					circleOptions.strokeColor(Color.argb(200, 0, 255, 0));
+					circleOptions.fillColor(Color.argb(50, 0, 255, 0));
+					Circle circle = gMap.addCircle(circleOptions);
+				}
+			});
+		}
+	}
+	
 	private void startAndBindService() {
 		serviceIntent = new Intent(getActivity(), LocationUpdateService.class);
 		getActivity().startService(serviceIntent);
