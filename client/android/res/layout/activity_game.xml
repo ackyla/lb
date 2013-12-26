@@ -1,41 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-	
-    <FrameLayout
-        android:id="@+id/mapLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
+    <FrameLayout
+        android:id="@+id/mainLayout"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_weight="1.00" >
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="#00FF00"
-        android:orientation="vertical" >
-
-        <ToggleButton
-            android:id="@+id/toggleButton1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ToggleButton" />
+        android:orientation="horizontal" >
 
         <Button
             android:id="@+id/button1"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="設定" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="テリトリー" />
 
     </LinearLayout>
 
-    <fragment
-        android:id="@+id/territoryListFragment"
-        android:layout_width="139dp"
-        android:layout_height="156dp"
-        android:layout_margin="20dp"
-        class="com.lb.ui.TerritoryListFragment" />
-
-</FrameLayout>
+</LinearLayout>

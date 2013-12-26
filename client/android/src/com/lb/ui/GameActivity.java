@@ -8,6 +8,7 @@ import com.lb.logic.ILocationUpdateServiceClient;
 import com.lb.logic.LocationUpdateService;
 import com.lb.model.Session;
 import com.lb.model.User;
+import com.lb.ui.TerritoryListFragment.onTerritoryListItemClickListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,11 +39,8 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ToggleButton;
 
-public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, OnCheckedChangeListener {
+public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, onTerritoryListItemClickListener {
 
 	private static Intent serviceIntent;
 	private LocationUpdateService updateService;
@@ -80,12 +78,6 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
             }else{
             	updateService.stopUpdate();
             }
-            
-            ToggleButton toggleButton = (ToggleButton)findViewById(R.id.toggleButton1);
-            toggleButton.setOnCheckedChangeListener(GameActivity.this);
-            if(Session.getIsStarted()) {
-            	toggleButton.setChecked(true);
-            }
 		}
 
 		@Override
@@ -116,18 +108,34 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		if (mapFragment == null) {
 			mapFragment = SupportMapFragment.newInstance();
 			mapFragment.setRetainInstance(true);
-			fragmentTransaction.replace(R.id.mapLayout, mapFragment, "map");
+			fragmentTransaction.replace(R.id.mainLayout, mapFragment, "map");
 			fragmentTransaction.commit();
 		}
 		
-		Button button = (Button)findViewById(R.id.button1);
-		button.setOnClickListener(new OnClickListener() {
+		Button button1 = (Button)findViewById(R.id.button1);
+		button1.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent();
 				intent.setClass(GameActivity.this,
 						PreferenceScreenActivity.class);
 				startActivity(intent);
+			}
+		});
+		
+		Button button2 = (Button)findViewById(R.id.button2);
+		button2.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {				
+				FragmentManager manager = getSupportFragmentManager();
+				TerritoryListFragment territoryListFragment = (TerritoryListFragment) manager.findFragmentByTag("territoryList");
+				if(territoryListFragment == null){
+					territoryListFragment = new TerritoryListFragment();
+					FragmentTransaction fragmentTransaction = manager.beginTransaction();
+					fragmentTransaction.replace(R.id.mainLayout, territoryListFragment, "territoryList");
+					fragmentTransaction.addToBackStack(null);
+					fragmentTransaction.commit();
+				}
 			}
 		});
 		
@@ -437,11 +445,9 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	}
 
 	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (isChecked) {
-            updateService.startUpdate();
-        }else{
-            updateService.stopUpdate();
-        }
+	public void onTerritoryListItemClickListener(long latitude, long longitude) {
+		Log.i("game", "latitude="+latitude+", longitude="+longitude);
 	}
+
+	
 }
