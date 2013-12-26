@@ -24,15 +24,20 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ToggleButton;
@@ -66,8 +71,15 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			Log.v("game", "on service connected");
-            updateService = ((LocationUpdateService.LocationUpdateBinder) service).getService();
+			updateService = ((LocationUpdateService.LocationUpdateBinder) service).getService();
             LocationUpdateService.setServiceClient(GameActivity.this);
+            
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(GameActivity.this);
+            if (prefs.getBoolean(PreferenceScreenActivity.PREF_KEY_BACKGROUND, true)) {
+            	updateService.startUpdate();
+            }else{
+            	updateService.stopUpdate();
+            }
             
             ToggleButton toggleButton = (ToggleButton)findViewById(R.id.toggleButton1);
             toggleButton.setOnCheckedChangeListener(GameActivity.this);
@@ -107,6 +119,17 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			fragmentTransaction.replace(R.id.mapLayout, mapFragment, "map");
 			fragmentTransaction.commit();
 		}
+		
+		Button button = (Button)findViewById(R.id.button1);
+		button.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClass(GameActivity.this,
+						PreferenceScreenActivity.class);
+				startActivity(intent);
+			}
+		});
 		
 		/** 遺産
 		 mapLogic = new MapLogic(this, mapFragment);

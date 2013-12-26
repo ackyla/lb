@@ -10,7 +10,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 public class API {
-	private static final String URL = "http://192.168.11.9:3000/";
+	private static final String URL = "http://192.168.11.6:3000/";
 	private static AsyncHttpClient client = new AsyncHttpClient();
 
 	public static void get(String url, RequestParams params,

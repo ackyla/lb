@@ -23,12 +23,18 @@
             android:layout_height="wrap_content"
             android:text="ToggleButton" />
 
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+
     </LinearLayout>
 
     <fragment
         android:id="@+id/territoryListFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="139dp"
+        android:layout_height="156dp"
         android:layout_margin="20dp"
         class="com.lb.ui.TerritoryListFragment" />
 
