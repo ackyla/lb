@@ -52,7 +52,7 @@ public class RoomFragment extends Fragment {
     	Button createButton = (Button)v.findViewById(R.id.createButton);
 
     	// 部屋一覧を取得
-    	API.getRoomList(new JsonHttpResponseHandler() {
+    	/*API.getRoomList(new JsonHttpResponseHandler() {
     		
     		@Override
     		public void onSuccess(JSONArray jsonArray) {
@@ -69,7 +69,7 @@ public class RoomFragment extends Fragment {
     		public void onFailure(Throwable e) {
     			Log.v("room", "roomListError="+e.toString());
     		}
-    	});
+    	});*/
     	
     	// 新しく部屋を作成
     	createButton.setOnClickListener(new OnClickListener(){
@@ -84,7 +84,7 @@ public class RoomFragment extends Fragment {
 				
 				AuthLogic authLogic = new AuthLogic(getActivity());
 		    					
-				API.createRoom(authLogic.getAuth(), title, timeLimit, new JsonHttpResponseHandler() {
+/*				API.createRoom(authLogic.getAuth(), title, timeLimit, new JsonHttpResponseHandler() {
 					
 					private ProgressDialog progress = new ProgressDialog(getActivity());
 					
@@ -109,7 +109,7 @@ public class RoomFragment extends Fragment {
 						Log.v("room", "createRoomError="+e.toString());
 					}
 					
-				});
+				});*/
 			}
     		
     	});
@@ -138,7 +138,7 @@ public class RoomFragment extends Fragment {
 	private void enterRoom(int roomId) {
 		AuthLogic authLogic = new AuthLogic(getActivity());
 		
-		API.enterRoom(authLogic.getAuth(), roomId, new JsonHttpResponseHandler(){
+	/*	API.enterRoom(authLogic.getAuth(), roomId, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONObject json) {
 				FragmentManager manager = getFragmentManager();
@@ -155,7 +155,7 @@ public class RoomFragment extends Fragment {
     		public void onFailure(Throwable e) {
     			Log.v("room", "enterRoomError="+e.toString());
     		}
-		});
+		});*/
 	}
 	
 	private void addRoom(LinearLayout roomList, JSONObject json) {

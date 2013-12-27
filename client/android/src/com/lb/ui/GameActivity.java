@@ -96,17 +96,6 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.action_territories:
-			FragmentManager manager = getSupportFragmentManager();
-			TerritoryListFragment territoryListFragment = (TerritoryListFragment) manager.findFragmentByTag("territoryList");
-			if(territoryListFragment == null){
-				territoryListFragment = new TerritoryListFragment();
-				FragmentTransaction fragmentTransaction = manager.beginTransaction();
-				fragmentTransaction.replace(R.id.content, territoryListFragment, "territoryList");
-				fragmentTransaction.addToBackStack("map");
-				fragmentTransaction.commit();
-			}
-			break;
 		case R.id.action_settings:
 			Intent intent = new Intent();
 			intent.setClass(GameActivity.this,

@@ -1,9 +1,7 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <item android:id="@+id/action_territories" android:title="テリトリー" android:icon="@android:drawable/ic_menu_compass" android:showAsAction="ifRoom|withText" android:orderInCategory="10"></item><item
+<menu xmlns:android="http://schemas.android.com/apk/res/android" ><item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="never"
         android:title="設定" android:icon="@android:drawable/ic_menu_preferences"/>
     
 
