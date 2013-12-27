@@ -36,9 +36,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, onTerritoryListItemClickListener {
 
@@ -95,6 +97,32 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	}
 
 	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_territories:
+			FragmentManager manager = getSupportFragmentManager();
+			TerritoryListFragment territoryListFragment = (TerritoryListFragment) manager.findFragmentByTag("territoryList");
+			if(territoryListFragment == null){
+				territoryListFragment = new TerritoryListFragment();
+				FragmentTransaction fragmentTransaction = manager.beginTransaction();
+				fragmentTransaction.replace(R.id.mainLayout, territoryListFragment, "territoryList");
+				fragmentTransaction.addToBackStack(null);
+				fragmentTransaction.commit();
+			}
+			break;
+		case R.id.action_settings:
+			Intent intent = new Intent();
+			intent.setClass(GameActivity.this,
+					PreferenceScreenActivity.class);
+			startActivity(intent);
+			break;
+		default:
+			break;
+		}
+		return false;
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.v("game", "life create");
@@ -111,34 +139,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			fragmentTransaction.replace(R.id.mainLayout, mapFragment, "map");
 			fragmentTransaction.commit();
 		}
-		
-		Button button1 = (Button)findViewById(R.id.button1);
-		button1.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent();
-				intent.setClass(GameActivity.this,
-						PreferenceScreenActivity.class);
-				startActivity(intent);
-			}
-		});
-		
-		Button button2 = (Button)findViewById(R.id.button2);
-		button2.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {				
-				FragmentManager manager = getSupportFragmentManager();
-				TerritoryListFragment territoryListFragment = (TerritoryListFragment) manager.findFragmentByTag("territoryList");
-				if(territoryListFragment == null){
-					territoryListFragment = new TerritoryListFragment();
-					FragmentTransaction fragmentTransaction = manager.beginTransaction();
-					fragmentTransaction.replace(R.id.mainLayout, territoryListFragment, "territoryList");
-					fragmentTransaction.addToBackStack(null);
-					fragmentTransaction.commit();
-				}
-			}
-		});
-		
+
 		/** 遺産
 		 mapLogic = new MapLogic(this, mapFragment);
 
