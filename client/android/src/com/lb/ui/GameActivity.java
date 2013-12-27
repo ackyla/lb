@@ -37,10 +37,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.Toast;
 
 public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, onTerritoryListItemClickListener {
 
@@ -106,7 +102,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 				territoryListFragment = new TerritoryListFragment();
 				FragmentTransaction fragmentTransaction = manager.beginTransaction();
 				fragmentTransaction.replace(R.id.mainLayout, territoryListFragment, "territoryList");
-				fragmentTransaction.addToBackStack(null);
+				fragmentTransaction.addToBackStack("map");
 				fragmentTransaction.commit();
 			}
 			break;
@@ -447,6 +443,8 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 
 	@Override
 	public void onTerritoryListItemClickListener(long latitude, long longitude) {
+		FragmentManager manager = getSupportFragmentManager();
+		manager.popBackStack("map", FragmentManager.POP_BACK_STACK_INCLUSIVE);
 		Log.i("game", "latitude="+latitude+", longitude="+longitude);
 	}
 
