@@ -1,4 +1,8 @@
 Server::App.controllers :territories do
+  before :create, :destroy, :locations do
+    login(params)
+  end
+
   post :create, :provides => :json do
     territory = Territory.new(
       :latitude => params[:latitude],
