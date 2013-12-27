@@ -11,16 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 18) do
-
-  create_table "hits", :force => true do |t|
-    t.float    "latitude"
-    t.float    "longitude"
-    t.integer  "user_id"
-    t.integer  "room_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
+ActiveRecord::Schema.define(:version => 20) do
 
   create_table "locations", :force => true do |t|
     t.float    "latitude"
@@ -28,23 +19,6 @@ ActiveRecord::Schema.define(:version => 18) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.integer  "user_id"
-    t.integer  "room_id"
-  end
-
-  create_table "missions", :force => true do |t|
-    t.integer  "type"
-    t.integer  "room_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  create_table "results", :force => true do |t|
-    t.integer  "score"
-    t.integer  "user_id"
-    t.integer  "room_id"
-    t.integer  "hit_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
   end
 
   create_table "territories", :force => true do |t|
@@ -61,10 +35,8 @@ ActiveRecord::Schema.define(:version => 18) do
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
-    t.integer  "room_id"
   end
 
-  add_index "users", ["id", "room_id"], :name => "index_users_on_id_and_room_id", :unique => true
   add_index "users", ["id", "token"], :name => "index_users_on_id_and_token", :unique => true
 
 end
