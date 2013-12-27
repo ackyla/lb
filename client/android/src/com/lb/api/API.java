@@ -28,6 +28,11 @@ public class API {
 		return URL + relativeUrl;
 	}
 
+	private static void setUserParams(User user, RequestParams params) {
+		params.put("user_id", Integer.toString(user.getId()));
+		params.put("token", user.getToken());
+	}
+	
 	public static void register(String name, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("name", name);
@@ -37,8 +42,7 @@ public class API {
 	public static void postLocation(User user, Location loc,
 			AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
-		params.put("user_id", Integer.toString(user.getId()));
-		params.put("token", user.getToken());
+		setUserParams(user, params);
 		params.put("latitude", Double.toString(loc.getLatitude()));
 		params.put("longitude", Double.toString(loc.getLongitude()));
 		post("locations/create", params, handler);
@@ -50,20 +54,26 @@ public class API {
 		get("users/show", params, handler);
 	}
 
-	public static void postTerritoryLocation(User user, double latitude, double longitude, double radius, AsyncHttpResponseHandler handler) {
+	public static void createTerritory(User user, double latitude, double longitude, double radius, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
-		params.put("user_id", Integer.toString(user.getId()));
-		params.put("token", user.getToken());
+		setUserParams(user, params);
 		params.put("latitude", Double.toString(latitude));
 		params.put("longitude", Double.toString(longitude));
 		params.put("radius", Double.toString(radius));
-		post("users/territories/create", params, handler);
+		post("territories/create", params, handler);
 	}
 	
-	public static void getUserTerritoryList(User user, AsyncHttpResponseHandler handler) {
+	public static void destroyTerritory(User user, int territory_id, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		setUserParams(user, params);
+		params.put("id", Integer.toString(territory_id));
+		post("territories/destroy", params, handler);
+	}
+	
+	public static void getUserTerritories(User user, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		params.put("user_id", Integer.toString(user.getId()));
 		params.put("token", user.getToken());
-		get("users/territories/list", params, handler);
+		get("users/territories", params, handler);
 	}
 }
