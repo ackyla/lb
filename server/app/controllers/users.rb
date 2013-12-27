@@ -8,7 +8,7 @@ Server::App.controllers :users do
     end
   end
 
-  before :territory_list, :create_territory do
+  before :territories do
     login(params)
   end
 
@@ -28,18 +28,7 @@ Server::App.controllers :users do
     user.to_json
   end
 
-  get :territory_list, :map => '/users/territories/list', :provides => :json do
-    expire @user.cache_key
+  get :territories, :provides => :json do
     @user.territories.to_json
-  end
-
-  post :create_territory, :map => '/users/territories/create', :provides => :json do
-    expire @user.cache_key
-    territory = Territory.new(:latitude => params[:latitude], :longitude => params[:longitude], :radius => params[:radius]){|territory|
-      territory.user = @user
-    }
-    territory.save
-
-    territory.to_json
   end
 end

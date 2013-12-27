@@ -26,7 +26,7 @@ public class TerritoryListFragment extends ListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);		
-		API.getUserTerritoryList(Session.getUser(), new JsonHttpResponseHandler() {
+		API.getUserTerritories(Session.getUser(), new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONArray jsonArray) {
 				List<TerritoryData> objects = new ArrayList<TerritoryData>();
