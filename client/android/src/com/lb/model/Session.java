@@ -4,6 +4,7 @@ import com.lb.DaoSession;
 import com.lb.db.LbDbOpenHelper;
 
 import android.app.Application;
+import android.content.Context;
 
 public class Session extends Application {
 
@@ -14,11 +15,12 @@ public class Session extends Application {
     private static boolean isStarted;
     private static boolean isUsingGps;
     private static boolean isBound;
+    private static Context mContext;
 	
     @Override
     public void onCreate() {
     	super.onCreate();
-    	
+    	mContext = this;
     	this.dbHelper = new LbDbOpenHelper(this, null);
     }
     
@@ -45,5 +47,9 @@ public class Session extends Application {
     }
     public static boolean getIsBound() {
         return isBound;
+    }
+    
+    public static Context getContext() {
+    	return mContext;
     }
 }
