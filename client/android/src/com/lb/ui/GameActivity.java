@@ -2,23 +2,23 @@ package com.lb.ui;
 
 import org.json.JSONObject;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
 import com.lb.R;
 import com.lb.api.API;
 import com.lb.logic.ILocationUpdateServiceClient;
 import com.lb.logic.LocationUpdateService;
 import com.lb.model.Session;
 import com.lb.model.User;
+import com.lb.ui.MapFragment.OnGoogleMapFragmentListener;
 import com.lb.ui.TerritoryListFragment.onTerritoryListItemClickListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -42,11 +42,12 @@ import android.widget.Button;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 
-public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, onTerritoryListItemClickListener {
+public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, onTerritoryListItemClickListener, OnGoogleMapFragmentListener {
 
 	private static Intent serviceIntent;
 	private LocationUpdateService updateService;
 	private User user;
+	private GoogleMap gMap;
 	
 	/** 遺産
 	private static final int GET_LOCATION_INTERVAL = 5000; // msec
@@ -396,12 +397,55 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	}
 
 	@Override
-	public void onTerritoryListItemClickListener(long latitude, long longitude) {
+	public void onTerritoryListItemClickListener(Double latitude, Double longitude) {
 		FragmentTabHost host = (FragmentTabHost) findViewById(android.R.id.tabhost);
 		host.setCurrentTabByTag("tab1");
-		//FragmentTransactionFragmentManager manager = getSupportFragmentManager();
-		//manager.popBackStack("map", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-		//Log.i("game", "latitude="+latitude+", longitude="+longitude);
+		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 11));
+	}
+
+	@Override
+	public void onMapReady(GoogleMap map) {
+		if(gMap == null) {
+			gMap = map;
+			gMap.setMyLocationEnabled(true);
+			UiSettings settings = gMap.getUiSettings();
+			settings.setMyLocationButtonEnabled(true);
+			
+			// カメラを現在位置にフォーカスする
+			gMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener(){
+				@Override
+				public void onMyLocationChange(Location location) {
+					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
+					gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す
+				}
+			});	
+
+			// テリトリー作成
+			gMap.setOnMapLongClickListener(new OnMapLongClickListener() {
+				@Override
+				public void onMapLongClick(LatLng latlng) {
+					double radius = 10000;
+					API.createTerritory(user, latlng.latitude, latlng.longitude, radius, new JsonHttpResponseHandler() {
+						@Override
+						public void onSuccess(JSONObject json) {
+							Log.v("game", "territory = "+ json.toString());
+						}
+
+						@Override
+						public void onFailure(Throwable throwable) {
+							Log.v("game","postHitLocationOnFailure="+ throwable);
+						}
+					});
+					CircleOptions circleOptions = new CircleOptions();
+					circleOptions.center(latlng);
+					circleOptions.strokeWidth(5);
+					circleOptions.radius(radius);
+					circleOptions.strokeColor(Color.argb(200, 0, 255, 0));
+					circleOptions.fillColor(Color.argb(50, 0, 255, 0));
+					Circle circle = gMap.addCircle(circleOptions);
+				}
+			});
+		}
 	}
 
 	

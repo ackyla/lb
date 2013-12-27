@@ -35,8 +35,8 @@ public class TerritoryListFragment extends ListFragment {
 					try {
 						JSONObject json = jsonArray.getJSONObject(i);
 						Integer id = json.getInt("id");
-						long latitude = json.getLong("latitude");
-						long longitude = json.getLong("longitude");
+						Double latitude = json.getDouble("latitude");
+						Double longitude = json.getDouble("longitude");
 						TerritoryData item = new TerritoryData();
 						item.setTextData("テリトリー_" + id);
 						item.setLatitude(latitude);
@@ -66,7 +66,7 @@ public class TerritoryListFragment extends ListFragment {
 	}
 	
 	public interface onTerritoryListItemClickListener {
-		public void onTerritoryListItemClickListener(long latitude, long longitude);
+		public void onTerritoryListItemClickListener(Double latitude, Double longitude);
 	}
 	
 	@Override
