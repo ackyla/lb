@@ -11,14 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 21) do
+ActiveRecord::Schema.define(:version => 23) do
 
   create_table "locations", :force => true do |t|
     t.float    "latitude"
     t.float    "longitude"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
     t.integer  "user_id"
+    t.integer  "territories_id"
   end
 
   create_table "territories", :force => true do |t|
@@ -26,9 +27,10 @@ ActiveRecord::Schema.define(:version => 21) do
     t.float    "longitude"
     t.float    "radius"
     t.integer  "user_id"
-    t.datetime "created_at",                   :null => false
-    t.datetime "updated_at",                   :null => false
-    t.boolean  "valid",      :default => true
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+    t.boolean  "valid",        :default => true
+    t.integer  "locations_id"
   end
 
   create_table "users", :force => true do |t|

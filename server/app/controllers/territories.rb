@@ -12,7 +12,12 @@ Server::App.controllers :territories do
   end
 
   post :destroy, :provides => :json do
-    territory = Territory.find_by_id(params[:id])
+    territory =
     territory.valid = false
+  end
+
+  get :locations, :provides => :json do
+    territory = Territory.find_by_id(params[:id])
+    territory.locations.to_json
   end
 end
