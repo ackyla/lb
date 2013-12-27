@@ -39,6 +39,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 
 public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, onTerritoryListItemClickListener {
@@ -114,25 +115,27 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		Log.v("game", "life create");
 		setContentView(R.layout.activity_game);
 
-        FragmentTabHost host = (FragmentTabHost) findViewById(android.R.id.tabhost);
+		FragmentTabHost host = (FragmentTabHost) findViewById(android.R.id.tabhost);
         host.setup(this, getSupportFragmentManager(), R.id.content);
 
         TabSpec tabSpec1 = host.newTabSpec("tab1");
-        Button button1 = new Button(this);
-        button1.setBackgroundResource(android.R.drawable.ic_menu_mapmode);
-        tabSpec1.setIndicator(button1);
+        tabSpec1.setIndicator("マップ");
         Bundle bundle1 = new Bundle();
         bundle1.putString("name", "Tab1");
         host.addTab(tabSpec1, MapFragment.class, bundle1);
          
 	    TabSpec tabSpec2 = host.newTabSpec("tab2");
-        Button button2 = new Button(this);
-        button2.setBackgroundResource(android.R.drawable.ic_menu_compass);
-        tabSpec2.setIndicator(button2);
+        tabSpec2.setIndicator("テリトリー");
         Bundle bundle2 = new Bundle();
         bundle2.putString("name", "Tab2");
         host.addTab(tabSpec2, TerritoryListFragment.class, bundle2);
-		
+        
+        host.setOnTabChangedListener(new OnTabChangeListener() {
+			@Override
+			public void onTabChanged(String tabId) {
+				
+			}
+        });
 		/** 遺産
 		 mapLogic = new MapLogic(this, mapFragment);
 
@@ -394,9 +397,11 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 
 	@Override
 	public void onTerritoryListItemClickListener(long latitude, long longitude) {
-		FragmentManager manager = getSupportFragmentManager();
-		manager.popBackStack("map", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-		Log.i("game", "latitude="+latitude+", longitude="+longitude);
+		FragmentTabHost host = (FragmentTabHost) findViewById(android.R.id.tabhost);
+		host.setCurrentTabByTag("tab1");
+		//FragmentTransactionFragmentManager manager = getSupportFragmentManager();
+		//manager.popBackStack("map", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		//Log.i("game", "latitude="+latitude+", longitude="+longitude);
 	}
 
 	
