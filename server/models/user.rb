@@ -6,6 +6,10 @@ class User < ActiveRecord::Base
   has_many :locations
   has_many :territories
 
+  def valid_territories
+    territories.where :expired_time => nil
+  end
+
   def generate_token
     token = SecureRandom.base64(16)
     self.token = token

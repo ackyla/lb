@@ -16,6 +16,15 @@ FactoryGirl.define do
   end
 
   factory :territory do
+    id 1
+    latitude 35.0
+    longitude 135.8
+    radius 10
+    user
+  end
+
+  factory :expired_territory do
+    id 2
     latitude 35.0
     longitude 135.8
     radius 10

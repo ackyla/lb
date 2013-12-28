@@ -29,6 +29,6 @@ Server::App.controllers :users do
   end
 
   get :territories, :provides => :json do
-    @user.territories.to_json
+    @user.valid_territories.to_json
   end
 end

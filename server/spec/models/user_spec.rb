@@ -2,11 +2,11 @@
 require 'spec_helper'
 
 describe User do
-  describe "User生成" do
-    before do
-      @user = build(:user)
-    end
+  before do
+    @user = build(:user)
+  end
 
+  describe "User生成" do
     it "saveできる" do
       @user.save.should be_true
     end
@@ -21,12 +21,16 @@ describe User do
   end
 
   describe "Location" do
-    before do
-      @user = create(:user)
-    end
-
     it "location数" do
       @user.locations.size == 1
+    end
+  end
+
+  describe "Territory" do
+    it "get valid territories" do
+      ters = @user.valid_territories
+      ter = ters.first
+      ters.size == 1 and first.id == 1
     end
   end
 end
