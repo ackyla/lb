@@ -17,7 +17,7 @@ import com.lb.logic.LocationUpdateService;
 import com.lb.model.Session;
 import com.lb.model.User;
 import com.lb.ui.MapFragment.OnGoogleMapFragmentListener;
-import com.lb.ui.TerritoryListFragment.onTerritoryListItemClickListener;
+import com.lb.ui.TerritoryDetailFragment.OnTerritoryDetailFragmentListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
@@ -43,7 +43,7 @@ import android.widget.Button;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 
-public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, onTerritoryListItemClickListener, OnGoogleMapFragmentListener {
+public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, OnGoogleMapFragmentListener, OnTerritoryDetailFragmentListener {
 
 	private static Intent serviceIntent;
 	private LocationUpdateService updateService;
@@ -401,14 +401,6 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	}
 
 	@Override
-	public void onTerritoryListItemClickListener(Double latitude, Double longitude) {
-		
-		//FragmentTabHost host = (FragmentTabHost) findViewById(android.R.id.tabhost);
-		//host.setCurrentTabByTag("tab1");
-		//gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 11));
-	}
-
-	@Override
 	public void onMapReady(GoogleMap map) {
 		if(gMap == null) {
 			gMap = map;
@@ -486,6 +478,12 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
     private TabRootFragment getCurrentFragment() {
         return (TabRootFragment) getSupportFragmentManager().findFragmentById(R.id.content);
     }
+
+	@Override
+	public void onClickShowTerritoryButton(Double latitude, Double longitude) {
+		mTabHost.setCurrentTabByTag("tab1");
+		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 11));
+	}
 
 	
 }
