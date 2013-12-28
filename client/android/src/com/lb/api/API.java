@@ -76,4 +76,12 @@ public class API {
 		params.put("token", user.getToken());
 		get("users/territories", params, handler);
 	}
+	
+	// TODO ノーティフィケーション取ってくるようにする
+	public static void getUserNotifications(User user, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		params.put("user_id", Integer.toString(user.getId()));
+		params.put("token", user.getToken());
+		get("users/territories", params, handler);
+	}
 }

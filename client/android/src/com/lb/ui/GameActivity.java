@@ -131,18 +131,8 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
         mTabHost.setup(this, getSupportFragmentManager(), R.id.content);
 
         addTab("tab1", "マップ", MapFragment.class);
-        //TabSpec tabSpec1 = mTabHost.newTabSpec("tab1");
-        //tabSpec1.setIndicator("マップ");
-        //Bundle bundle1 = new Bundle();
-        //bundle1.putString("name", "Tab1");
-        //mTabHost.addTab(tabSpec1, MapFragment.class, bundle1);
-         
         addTab("tab2", "テリトリー", TerritoryListFragment.class);
-	    //TabSpec tabSpec2 = mTabHost.newTabSpec("tab2");
-        //tabSpec2.setIndicator("テリトリー");
-        //Bundle bundle2 = new Bundle();
-        //bundle2.putString("name", "Tab2");
-        //mTabHost.addTab(tabSpec2, TerritoryListFragment.class, bundle2);
+        addTab("tab3", "通知", NotificationListFragment.class);
         
         mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			@Override
