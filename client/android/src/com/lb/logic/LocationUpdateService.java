@@ -8,12 +8,14 @@ import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailed
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.lb.R;
 import com.lb.api.API;
 import com.lb.model.Session;
 import com.lb.model.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -136,10 +138,18 @@ public class LocationUpdateService extends Service{
     	locationListener = new LocationListener() {
 			@Override
 			public void onLocationChanged(Location location) {
-				Log.v("game", "location="+location.toString());
 				API.postLocation(Session.getUser(), location, new JsonHttpResponseHandler() {
 					@Override
 					public void onSuccess(JSONObject json) {
+						// TODO ノーチフィケーションちゃんと書く
+					    Notification.Builder builder = new Notification.Builder(getApplicationContext());
+					    builder.setTicker("ほげさんのテリトリーに入りました" + System.currentTimeMillis());
+					    builder.setContentTitle("ほげさんのテリトリーに入りました" + System.currentTimeMillis());
+					    builder.setContentText("タップして詳細を見ます。");
+					    builder.setSmallIcon(R.drawable.ic_launcher);
+						Notification notification = builder.getNotification();
+						NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+						manager.notify(NOTIFICATION_ID, notification);
 						Log.v("game", "location=" + json.toString());
 					}
 					@Override
@@ -157,7 +167,9 @@ public class LocationUpdateService extends Service{
 				Log.v("game", "gps connect");
 				LocationRequest request = LocationRequest.create();
 				request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-				request.setInterval(60000);
+				request.setInterval(10000);
+				request.setFastestInterval(10000);
+				//request.setSmallestDisplacement(5);
 				locationClient.requestLocationUpdates(request, locationListener);
 			}
 
