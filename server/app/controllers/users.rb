@@ -19,7 +19,6 @@ Server::App.controllers :users do
 
   post :create, :provides => :json do
     @user = User.create(:name => params[:name])
-    content_type :json
     @user.to_json
   end
 

@@ -24,6 +24,12 @@ describe User do
     it "location数" do
       @user.locations.size == 1
     end
+
+    it "locationを追加" do
+      size = @user.locations.size
+      loc = @user.add_location(35.0, 135.8)
+      loc != nil and (@user.locations.size == size+1)
+    end
   end
 
   describe "Territory" do
