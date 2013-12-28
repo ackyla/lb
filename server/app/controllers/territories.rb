@@ -16,7 +16,7 @@ Server::App.controllers :territories do
   end
 
   post :destroy, :provides => :json do
-    territory = Territory.find_by_id(params[;id])
+    territory = Territory.find_by_id(params[:id])
     @territory.expire
     @territory.to_json
   end
