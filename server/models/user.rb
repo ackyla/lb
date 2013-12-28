@@ -18,4 +18,10 @@ class User < ActiveRecord::Base
   def cache_key
     "user_cache_key=#{self.id}"
   end
+
+  def add_location(latitude, longitude)
+    Location.new(latitude: latitude, longitude: longitude){|loc|
+      loc.user = self
+    }
+  end
 end

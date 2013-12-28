@@ -3,6 +3,10 @@ Server::App.controllers :territories do
     login(params)
   end
 
+  before :destroy, :locations do
+    @territory = Territory.find_by_id(params[:id])
+  end
+
   post :create, :provides => :json do
     territory = Territory.new(
       :latitude => params[:latitude],
@@ -16,14 +20,12 @@ Server::App.controllers :territories do
   end
 
   post :destroy, :provides => :json do
-    @territory = Territory.find_by_id(params[:id])
     @territory.expire
     @territory.save
     @territory.to_json
   end
 
   get :locations, :provides => :json do
-    territory = Territory.find_by_id(params[:id])
-    territory.locations.to_json
+    @territory.locations.to_json
   end
 end
