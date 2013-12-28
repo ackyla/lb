@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.lb.R;
 import com.lb.api.API;
 import com.lb.model.Session;
 import com.lb.model.User;
@@ -14,6 +15,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
@@ -63,6 +65,11 @@ public class TerritoryListFragment extends ListFragment {
 		super.onListItemClick(l, v, position, id);
 		TerritoryData item = (TerritoryData) l.getItemAtPosition(position);
 		listener.onTerritoryListItemClickListener(item.getLatitude(), item.getLongitude());
+		
+		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();		
+		fragmentTransaction.replace(R.id.fragment, new TerritoryDetailFragment());
+		fragmentTransaction.addToBackStack(null);
+		fragmentTransaction.commit(); 
 	}
 	
 	public interface onTerritoryListItemClickListener {
