@@ -14,6 +14,7 @@ import com.lb.R;
 import com.lb.api.API;
 import com.lb.model.Session;
 import com.lb.model.User;
+import com.lb.model.Utils;
 import com.lb.ui.MapFragment.OnGoogleMapFragmentListener;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -21,6 +22,7 @@ import com.loopj.android.http.RequestParams;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.location.Address;
 import android.location.Geocoder;
@@ -39,6 +41,7 @@ import android.widget.Toast;
 
 public class TerritoryDetailFragment extends Fragment {
 	
+	private ProgressDialog mProgressDialog;
 	private OnTerritoryDetailFragmentListener listener;
 	private Integer mId;
 	private Double mLatitude;
@@ -97,7 +100,14 @@ public class TerritoryDetailFragment extends Fragment {
 					builder.setPositiveButton("する", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
+							
 							API.destroyTerritory(Session.getUser(), mId, new JsonHttpResponseHandler() {
+								@Override
+								public void onStart() {
+									if (mProgressDialog == null) mProgressDialog = Utils.createProgressDialog(getActivity());
+									mProgressDialog.show();
+								}
+								
 								@Override
 								public void onSuccess(JSONObject json) {
 									getFragmentManager().popBackStack();
@@ -107,6 +117,11 @@ public class TerritoryDetailFragment extends Fragment {
 								@Override
 								public void onFailure(Throwable throwable) {
 									Log.i("game","getUserTerritoryListOnFailure="+ throwable);
+								}
+								
+								@Override
+								public void onFinish() {
+									mProgressDialog.dismiss();
 								}
 							});
 						}
