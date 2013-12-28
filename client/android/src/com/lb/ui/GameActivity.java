@@ -9,12 +9,14 @@ import org.json.JSONObject;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.lb.R;
 import com.lb.api.API;
 import com.lb.logic.ILocationUpdateServiceClient;
@@ -26,8 +28,10 @@ import com.lb.ui.TerritoryDetailFragment.OnTerritoryDetailFragmentListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -452,6 +456,16 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 				}
 			});
 			
+			gMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+
+				@Override
+				public boolean onMarkerClick(Marker marker) {
+					Log.i("game", "marker = "+marker);
+					return true;
+				}
+				
+			});
+			
 			// テリトリー作成
 			gMap.setOnMapLongClickListener(new OnMapLongClickListener() {
 				@Override
@@ -513,6 +527,4 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		mTabHost.setCurrentTabByTag("tab1");
 		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 11));
 	}
-
-	
 }

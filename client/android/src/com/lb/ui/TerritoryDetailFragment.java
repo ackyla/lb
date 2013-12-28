@@ -20,10 +20,13 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,6 +35,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class TerritoryDetailFragment extends Fragment {
 	
@@ -85,21 +89,35 @@ public class TerritoryDetailFragment extends Fragment {
     		
     	});
     	
-    	destroyButton.setOnClickListener(new OnClickListener() {
-
+    	destroyButton.setOnClickListener(new OnClickListener() {    		
 			@Override
 			public void onClick(View v) {
-				API.destroyTerritory(Session.getUser(), mId, new JsonHttpResponseHandler() {
-					@Override
-					public void onSuccess(JSONObject json) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+					builder.setTitle("削除するの？");
+					builder.setPositiveButton("する", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							API.destroyTerritory(Session.getUser(), mId, new JsonHttpResponseHandler() {
+								@Override
+								public void onSuccess(JSONObject json) {
+									getFragmentManager().popBackStack();
+									Toast.makeText(getActivity(), "テリトリーを削除しました", Toast.LENGTH_LONG).show();
+								}
 
-					}
+								@Override
+								public void onFailure(Throwable throwable) {
+									Log.i("game","getUserTerritoryListOnFailure="+ throwable);
+								}
+							});
+						}
+					});
 
-					@Override
-					public void onFailure(Throwable throwable) {
-						Log.i("game","getUserTerritoryListOnFailure="+ throwable);
-					}
-				});
+					builder.setNegativeButton("しない", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+						}
+					});
+					builder.create().show();
 			}
     		
     	});
