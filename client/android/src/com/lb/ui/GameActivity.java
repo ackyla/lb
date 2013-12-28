@@ -1,5 +1,10 @@
 package com.lb.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -400,6 +405,16 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		return this;
 	}
 
+	public void addTerritory(LatLng latlng, Double radius) {
+		CircleOptions circleOptions = new CircleOptions();
+		circleOptions.center(latlng);
+		circleOptions.strokeWidth(5);
+		circleOptions.radius(radius);
+		circleOptions.strokeColor(Color.argb(200, 0, 255, 0));
+		circleOptions.fillColor(Color.argb(50, 0, 255, 0));
+		Circle circle = gMap.addCircle(circleOptions);
+	}
+	
 	@Override
 	public void onMapReady(GoogleMap map) {
 		if(gMap == null) {
@@ -417,6 +432,26 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 				}
 			});	
 
+			// テリトリーを表示
+			API.getUserTerritories(Session.getUser(), new JsonHttpResponseHandler() {
+				@Override
+				public void onSuccess(JSONArray jsonArray) {
+					for(int i = 0; i < jsonArray.length(); i ++) {
+						try {
+							JSONObject json = jsonArray.getJSONObject(i);
+							addTerritory(new LatLng(json.getDouble("latitude"), json.getDouble("longitude")), json.getDouble("radius"));
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+
+				@Override
+				public void onFailure(Throwable throwable) {
+					Log.i("game","getUserTerritoryListOnFailure="+ throwable);
+				}
+			});
+			
 			// テリトリー作成
 			gMap.setOnMapLongClickListener(new OnMapLongClickListener() {
 				@Override
@@ -433,13 +468,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 							Log.v("game","postHitLocationOnFailure="+ throwable);
 						}
 					});
-					CircleOptions circleOptions = new CircleOptions();
-					circleOptions.center(latlng);
-					circleOptions.strokeWidth(5);
-					circleOptions.radius(radius);
-					circleOptions.strokeColor(Color.argb(200, 0, 255, 0));
-					circleOptions.fillColor(Color.argb(50, 0, 255, 0));
-					Circle circle = gMap.addCircle(circleOptions);
+					addTerritory(latlng, radius);
 				}
 			});
 		}
