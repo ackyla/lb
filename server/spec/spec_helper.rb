@@ -11,6 +11,7 @@ FactoryGirl.find_definitions
 
 RSpec.configure do |conf|
   conf.include Rack::Test::Methods
+  conf.include FactoryGirl::Syntax::Methods
   conf.before(:suite) do
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
