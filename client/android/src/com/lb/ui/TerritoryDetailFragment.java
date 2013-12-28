@@ -1,7 +1,9 @@
 package com.lb.ui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +20,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import android.app.Activity;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -27,6 +31,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class TerritoryDetailFragment extends Fragment {
 	
@@ -47,7 +52,26 @@ public class TerritoryDetailFragment extends Fragment {
     	
     	mId = getArguments().getInt("id");
     	mLatitude = getArguments().getDouble("latitude");
-    	mLongitude = getArguments().getDouble("longitude");    	
+    	mLongitude = getArguments().getDouble("longitude");
+    	
+    	String addressString = new String();
+    	Geocoder geocoder = new Geocoder(getActivity(), Locale.JAPAN);
+    	if(geocoder.isPresent()) {
+    		try {
+    			List<Address> listAddress = geocoder.getFromLocation(mLatitude, mLongitude, 2);
+    			if(listAddress.isEmpty()) {
+    				addressString = "住所を特定できませんでした";
+    			}else{
+    				addressString = listAddress.get(1).getAddressLine(1) + "付近";
+    			}
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
+    	}else{
+    		addressString = "住所を特定できませんでした";
+    	}
+    	TextView nearbyText = (TextView) v.findViewById(R.id.territory_nearby_text);
+    	nearbyText.setText(addressString);
     	
     	Button showButton = (Button) v.findViewById(R.id.territory_show_button);
     	Button destroyButton = (Button) v.findViewById(R.id.territory_destroy_button);

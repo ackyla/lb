@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <TextView
+        android:id="@+id/territory_nearby_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="住所"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
     <Button
         android:id="@+id/territory_show_button"
         android:layout_width="wrap_content"
