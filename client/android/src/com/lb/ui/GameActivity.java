@@ -17,7 +17,7 @@ import com.lb.logic.LocationUpdateService;
 import com.lb.model.Session;
 import com.lb.model.User;
 import com.lb.ui.MapFragment.OnGoogleMapFragmentListener;
-import com.lb.ui.TerritoryListFragment.onTerritoryListItemClickListener;
+import com.lb.ui.TerritoryDetailFragment.OnTerritoryDetailFragmentListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
@@ -31,6 +31,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
@@ -42,12 +43,13 @@ import android.widget.Button;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 
-public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, onTerritoryListItemClickListener, OnGoogleMapFragmentListener {
+public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, OnGoogleMapFragmentListener, OnTerritoryDetailFragmentListener {
 
 	private static Intent serviceIntent;
 	private LocationUpdateService updateService;
 	private User user;
 	private GoogleMap gMap;
+    private FragmentTabHost mTabHost;
 	
 	/** 遺産
 	private static final int GET_LOCATION_INTERVAL = 5000; // msec
@@ -116,25 +118,27 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		Log.v("game", "life create");
 		setContentView(R.layout.activity_game);
 
-		FragmentTabHost host = (FragmentTabHost) findViewById(android.R.id.tabhost);
-        host.setup(this, getSupportFragmentManager(), R.id.content);
+		mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        mTabHost.setup(this, getSupportFragmentManager(), R.id.content);
 
-        TabSpec tabSpec1 = host.newTabSpec("tab1");
-        tabSpec1.setIndicator("マップ");
-        Bundle bundle1 = new Bundle();
-        bundle1.putString("name", "Tab1");
-        host.addTab(tabSpec1, MapFragment.class, bundle1);
+        addTab("tab1", "マップ", MapFragment.class);
+        //TabSpec tabSpec1 = mTabHost.newTabSpec("tab1");
+        //tabSpec1.setIndicator("マップ");
+        //Bundle bundle1 = new Bundle();
+        //bundle1.putString("name", "Tab1");
+        //mTabHost.addTab(tabSpec1, MapFragment.class, bundle1);
          
-	    TabSpec tabSpec2 = host.newTabSpec("tab2");
-        tabSpec2.setIndicator("テリトリー");
-        Bundle bundle2 = new Bundle();
-        bundle2.putString("name", "Tab2");
-        host.addTab(tabSpec2, TerritoryListFragment.class, bundle2);
+        addTab("tab2", "テリトリー", TerritoryListFragment.class);
+	    //TabSpec tabSpec2 = mTabHost.newTabSpec("tab2");
+        //tabSpec2.setIndicator("テリトリー");
+        //Bundle bundle2 = new Bundle();
+        //bundle2.putString("name", "Tab2");
+        //mTabHost.addTab(tabSpec2, TerritoryListFragment.class, bundle2);
         
-        host.setOnTabChangedListener(new OnTabChangeListener() {
+        mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			@Override
 			public void onTabChanged(String tabId) {
-				
+				 getCurrentFragment().clearBackStack();
 			}
         });
 		/** 遺産
@@ -397,13 +401,6 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	}
 
 	@Override
-	public void onTerritoryListItemClickListener(Double latitude, Double longitude) {
-		FragmentTabHost host = (FragmentTabHost) findViewById(android.R.id.tabhost);
-		host.setCurrentTabByTag("tab1");
-		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 11));
-	}
-
-	@Override
 	public void onMapReady(GoogleMap map) {
 		if(gMap == null) {
 			gMap = map;
@@ -446,6 +443,46 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 				}
 			});
 		}
+	}
+	
+    @Override
+    public void onBackPressed() {
+        if (!getCurrentFragment().popBackStack()) {
+            // タブ内FragmentのBackStackがない場合は終了
+            super.onBackPressed();
+        }
+    }
+	
+    /**
+     * タブ追加.
+     * @param tag タグ
+     * @param indector タブウィジェット表示ラベル
+     * @param clazz Fragmentクラス
+     */
+    private void addTab(String tag, String indector, Class<? extends Fragment> clazz) {
+
+        TabSpec tabSpec = mTabHost.newTabSpec(tag).setIndicator(indector);
+
+        // TabRootFragmentに渡すことでクラス名から初期Fragmentを決定
+        Bundle args = new Bundle();
+        args.putString("root", clazz.getName());
+
+        mTabHost.addTab(tabSpec, TabRootFragment.class, args);
+
+    }
+
+    /**
+     * カレントFragment取得.
+     * @return TabRootFragment
+     */
+    private TabRootFragment getCurrentFragment() {
+        return (TabRootFragment) getSupportFragmentManager().findFragmentById(R.id.content);
+    }
+
+	@Override
+	public void onClickShowTerritoryButton(Double latitude, Double longitude) {
+		mTabHost.setCurrentTabByTag("tab1");
+		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 11));
 	}
 
 	

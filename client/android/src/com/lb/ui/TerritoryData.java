@@ -3,6 +3,7 @@ package com.lb.ui;
 class TerritoryData {
 
 	private String mTextData;
+	private Integer mId;
 	private Double mLatitude;
 	private Double mLongitude;
 	
@@ -11,6 +12,13 @@ class TerritoryData {
 	}
 	public String getTextData() {
 		return mTextData;
+	}
+	
+	public void setId(Integer id) {
+		mId = id;
+	}
+	public Integer getId() {
+		return mId;
 	}
 	
 	public void setLatitude(Double latitude) {
