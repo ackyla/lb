@@ -1,6 +1,15 @@
 class Territory < ActiveRecord::Base
   belongs_to :user
-  has_and_belongs_to_many :locations
+  has_many :detections
+  has_many :locations, :through => :detections
+
+  def expire
+    self.expired_time = DateTime.now
+  end
+
+  def add_location(loc)
+    locations << loc if self.include? loc
+  end
 
   def include?(loc)
     dist = distance(loc)
