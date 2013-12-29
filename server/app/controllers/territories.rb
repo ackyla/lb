@@ -13,7 +13,7 @@ Server::App.controllers :territories do
       :longitude => params[:longitude],
       :radius => params[:radius]
       ){|territory|
-      territory.user = @user
+      territory.owner = @user
     }
     territory.save
     territory.to_json
