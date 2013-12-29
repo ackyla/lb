@@ -14,6 +14,7 @@ import com.lb.model.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
@@ -23,7 +24,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class TerritoryListFragment extends ListFragment {
-	private onTerritoryListItemClickListener listener;
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -50,8 +50,14 @@ public class TerritoryListFragment extends ListFragment {
 					}
 				}
 				
-				TerritoryAdapter territoryAdapter = new TerritoryAdapter(getActivity(), 0, objects);
-				setListAdapter(territoryAdapter);
+				Context context = getActivity();
+				if(context != null) {
+					TerritoryAdapter territoryAdapter = new TerritoryAdapter(context, 0, objects);
+					setListAdapter(territoryAdapter);
+				}else{
+					setListAdapter(null);
+				}
+
 			}
 
 			@Override
@@ -65,7 +71,6 @@ public class TerritoryListFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		TerritoryData item = (TerritoryData) l.getItemAtPosition(position);
-		//listener.onTerritoryListItemClickListener(item.getLatitude(), item.getLongitude());
 		
 		TerritoryDetailFragment fragment = new TerritoryDetailFragment();
 		Bundle bundle = new Bundle();
@@ -76,17 +81,8 @@ public class TerritoryListFragment extends ListFragment {
 		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();		
 		fragmentTransaction.replace(R.id.fragment, fragment);
 		fragmentTransaction.addToBackStack(null);
-		fragmentTransaction.commit(); 
+		fragmentTransaction.commit();
 	}
-	
-	public interface onTerritoryListItemClickListener {
-		public void onTerritoryListItemClickListener(Double latitude, Double longitude);
-	}
-	
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		//listener = (onTerritoryListItemClickListener) activity;
-	}
+
 }
 

@@ -15,7 +15,6 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.lb.api.API;
 import com.lb.model.Session;
-import com.lb.ui.TerritoryListFragment.onTerritoryListItemClickListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;

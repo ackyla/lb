@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -38,8 +39,14 @@ public class NotificationListFragment extends ListFragment {
 					}
 				}
 				
-				NotificationAdapter notificationAdapter = new NotificationAdapter(getActivity(), 0, objects);
-				setListAdapter(notificationAdapter);
+				Context context = getActivity();
+				if(context != null) {
+					NotificationAdapter notificationAdapter = new NotificationAdapter(context, 0, objects);
+					setListAdapter(notificationAdapter);
+				}else{
+					setListAdapter(null);
+				}
+
 			}
 
 			@Override
