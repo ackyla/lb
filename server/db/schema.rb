@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 26) do
+ActiveRecord::Schema.define(:version => 1) do
 
   create_table "detections", :force => true do |t|
     t.integer  "location_id"
@@ -20,23 +20,28 @@ ActiveRecord::Schema.define(:version => 26) do
     t.datetime "updated_at",   :null => false
   end
 
+  create_table "invasions", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "territory_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
   create_table "locations", :force => true do |t|
     t.float    "latitude"
     t.float    "longitude"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
     t.integer  "user_id"
-    t.integer  "territories_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "territories", :force => true do |t|
     t.float    "latitude"
     t.float    "longitude"
     t.float    "radius"
-    t.integer  "user_id"
+    t.integer  "owner_id"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
-    t.integer  "locations_id"
     t.datetime "expired_time"
   end
 
