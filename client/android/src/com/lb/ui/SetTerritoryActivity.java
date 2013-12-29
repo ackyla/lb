@@ -34,7 +34,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -50,7 +52,8 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_set_territory);
-
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		FragmentManager manager = getSupportFragmentManager();
 		FragmentTransaction tran = manager.beginTransaction();
 		Fragment fragment = manager.findFragmentByTag("map");
@@ -58,6 +61,17 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 		fragment.setRetainInstance(false);
 		tran.replace(R.id.map, fragment, "map");
 		tran.commit();
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    // Respond to the action bar's Up/Home button
+	    case android.R.id.home:
+	        NavUtils.navigateUpFromSameTask(this);
+	        return true;
+	    }
+	    return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
