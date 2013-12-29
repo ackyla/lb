@@ -73,16 +73,41 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 				@Override
 				public void onMyLocationChange(Location location) {
 					// てりとりー
-					CircleOptions circleOptions = new CircleOptions();
-					circleOptions.center(new LatLng(location.getLatitude(), location.getLongitude()));
-					circleOptions.strokeWidth(5);
-					circleOptions.radius(5000);
-					circleOptions.strokeColor(Color.argb(200, 0, 255, 0));
-					circleOptions.fillColor(Color.argb(50, 0, 255, 0));
-					mCircle = gMap.addCircle(circleOptions);
-					
+					Double radius = 5000.0;
+					addTerritory(new LatLng(location.getLatitude(), location.getLongitude()), radius);
 					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
 					gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す
+				}
+			});
+			
+			// テリトリーを表示
+			API.getUserTerritories(Session.getUser(), new JsonHttpResponseHandler() {
+				@Override
+				public void onStart() {
+					if (mProgressDialog == null) mProgressDialog = Utils.createProgressDialog(SetTerritoryActivity.this);
+					mProgressDialog.show();
+				}
+				
+				@Override
+				public void onSuccess(JSONArray jsonArray) {
+					for(int i = 0; i < jsonArray.length(); i ++) {
+						try {
+							JSONObject json = jsonArray.getJSONObject(i);
+							addTerritory(new LatLng(json.getDouble("latitude"), json.getDouble("longitude")), json.getDouble("radius"));
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+
+				@Override
+				public void onFailure(Throwable throwable) {
+					Log.i("game","getUserTerritoryListOnFailure="+ throwable);
+				}
+				
+				@Override
+				public void onFinish() {
+					mProgressDialog.dismiss();
 				}
 			});
 			
@@ -117,6 +142,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 								
 								@Override
 								public void onSuccess(JSONObject json) {
+									addTerritory(mCircle.getCenter(), mCircle.getRadius());
 									Toast.makeText(SetTerritoryActivity.this, "テリトリーを設置しました", Toast.LENGTH_LONG).show();
 								}
 
@@ -145,5 +171,15 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 				
 			});
 		}
+	}
+	
+	public void addTerritory(LatLng latlng, Double radius) {
+		CircleOptions circleOptions = new CircleOptions();
+		circleOptions.center(latlng);
+		circleOptions.strokeWidth(5);
+		circleOptions.radius(radius);
+		circleOptions.strokeColor(Color.argb(200, 0, 255, 0));
+		circleOptions.fillColor(Color.argb(50, 0, 255, 0));
+		mCircle = gMap.addCircle(circleOptions);
 	}
 }
