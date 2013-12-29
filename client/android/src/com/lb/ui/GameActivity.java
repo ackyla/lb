@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
@@ -23,6 +24,7 @@ import com.lb.logic.ILocationUpdateServiceClient;
 import com.lb.logic.LocationUpdateService;
 import com.lb.model.Session;
 import com.lb.model.User;
+import com.lb.model.Utils;
 import com.lb.ui.MapFragment.OnGoogleMapFragmentListener;
 import com.lb.ui.TerritoryDetailFragment.OnTerritoryDetailFragmentListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -32,6 +34,7 @@ import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -62,6 +65,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	private User user;
 	private GoogleMap gMap;
     private FragmentTabHost mTabHost;
+    private ProgressDialog mProgressDialog;
 	
 	/** 遺産
 	private static final int GET_LOCATION_INTERVAL = 5000; // msec
@@ -117,6 +121,9 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			intent.setClass(GameActivity.this,
 					PreferenceScreenActivity.class);
 			startActivity(intent);
+			break;
+		case R.id.action_reload:
+			refreshMap();
 			break;
 		default:
 			break;
@@ -402,6 +409,44 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		return this;
 	}
 
+	public void refreshMap() {
+		if(gMap != null) {
+			gMap.clear();
+			
+			// テリトリーを表示
+			API.getUserTerritories(Session.getUser(), new JsonHttpResponseHandler() {
+				
+				@Override
+				public void onStart() {
+					if (mProgressDialog == null) mProgressDialog = Utils.createProgressDialog(GameActivity.this);
+					mProgressDialog.show();
+				}
+				
+				@Override
+				public void onSuccess(JSONArray jsonArray) {
+					for(int i = 0; i < jsonArray.length(); i ++) {
+						try {
+							JSONObject json = jsonArray.getJSONObject(i);
+							addTerritory(new LatLng(json.getDouble("latitude"), json.getDouble("longitude")), json.getDouble("radius"));
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+
+				@Override
+				public void onFailure(Throwable throwable) {
+					Log.i("game","getUserTerritoryListOnFailure="+ throwable);
+				}
+				
+				@Override
+				public void onFinish() {
+					mProgressDialog.dismiss();
+				}
+			});
+		}
+	}
+	
 	public void addTerritory(LatLng latlng, Double radius) {
 		CircleOptions circleOptions = new CircleOptions();
 		circleOptions.center(latlng);
@@ -427,27 +472,9 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
 					gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す
 				}
-			});	
-
-			// テリトリーを表示
-			API.getUserTerritories(Session.getUser(), new JsonHttpResponseHandler() {
-				@Override
-				public void onSuccess(JSONArray jsonArray) {
-					for(int i = 0; i < jsonArray.length(); i ++) {
-						try {
-							JSONObject json = jsonArray.getJSONObject(i);
-							addTerritory(new LatLng(json.getDouble("latitude"), json.getDouble("longitude")), json.getDouble("radius"));
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-
-				@Override
-				public void onFailure(Throwable throwable) {
-					Log.i("game","getUserTerritoryListOnFailure="+ throwable);
-				}
 			});
+			
+			refreshMap();
 		}
 	}
 	
