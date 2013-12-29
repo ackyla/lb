@@ -13,6 +13,7 @@ import com.lb.model.Session;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -39,6 +40,9 @@ public class TerritoryTopFragment extends DialogFragment {
 
 			@Override
 			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClass(getActivity(), SetTerritoryActivity.class);
+				startActivity(intent);
 			}
     		
     	});

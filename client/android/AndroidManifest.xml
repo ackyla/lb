@@ -46,6 +46,10 @@
             android:label="@string/app_name" >
         </activity>
         <activity
+            android:name="com.lb.ui.SetTerritoryActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
             android:name="com.lb.ui.MainActivity"
             android:label="@string/app_name" >
         </activity>

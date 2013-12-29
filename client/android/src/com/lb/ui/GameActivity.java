@@ -448,36 +448,6 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 					Log.i("game","getUserTerritoryListOnFailure="+ throwable);
 				}
 			});
-			
-			gMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-
-				@Override
-				public boolean onMarkerClick(Marker marker) {
-					Log.i("game", "marker = "+marker);
-					return true;
-				}
-				
-			});
-			
-			// テリトリー作成
-			gMap.setOnMapLongClickListener(new OnMapLongClickListener() {
-				@Override
-				public void onMapLongClick(LatLng latlng) {
-					double radius = 10000;
-					API.createTerritory(user, latlng.latitude, latlng.longitude, radius, new JsonHttpResponseHandler() {
-						@Override
-						public void onSuccess(JSONObject json) {
-							Log.v("game", "territory = "+ json.toString());
-						}
-
-						@Override
-						public void onFailure(Throwable throwable) {
-							Log.v("game","postHitLocationOnFailure="+ throwable);
-						}
-					});
-					addTerritory(latlng, radius);
-				}
-			});
 		}
 	}
 	
