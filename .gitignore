@@ -24,3 +24,5 @@ local.properties
 
 client/android/res/values/local_values.xml
 /client/android/.settings/org.eclipse.jdt.core.prefs
+
+.factorypath

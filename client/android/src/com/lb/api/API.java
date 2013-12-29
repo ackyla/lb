@@ -3,7 +3,6 @@ package com.lb.api;
 import android.location.Location;
 
 import com.lb.R;
-import com.lb.dao.OldAuthEntity;
 import com.lb.model.Session;
 import com.lb.model.User;
 import com.loopj.android.http.AsyncHttpClient;
@@ -13,7 +12,7 @@ import com.loopj.android.http.RequestParams;
 public class API {
 	private static final String URL = Session.getContext().getString(R.string.server_url);
 	private static AsyncHttpClient client = new AsyncHttpClient();
-
+	
 	public static void get(String url, RequestParams params,
 			AsyncHttpResponseHandler responseHandler) {
 		client.get(getAbsoluteUrl(url), params, responseHandler);

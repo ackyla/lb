@@ -15,6 +15,7 @@ import com.lb.api.API;
 import com.lb.model.Session;
 import com.lb.model.User;
 import com.lb.model.UserGen;
+import com.lb.model.Utils;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
@@ -30,7 +31,7 @@ import android.widget.Toast;
 
 public class SignupActivity extends Activity implements OnClickListener {
 
-	private ProgressDialog progress;
+	private ProgressDialog mProgressDialog;
 	private EditText userNameInput;
 	private AuthDao authDao;
 	private Auth auth;
@@ -43,15 +44,14 @@ public class SignupActivity extends Activity implements OnClickListener {
 		Session session = (Session) getApplication();
 		DaoSession daoSession = session.getDaoSession();
 		authDao = daoSession.getAuthDao();
+
+		if (mProgressDialog == null) mProgressDialog = Utils.createProgressDialog(this);
 		
 		if(authDao.count() > 0) {
 			auth = authDao.loadAll().get(0);
 			startGame();
 		}
-
-		//Log.v("game", "query="+authDao.queryBuilder().where(Properties.User_id.eq(9)).build().list());
 		
-		progress = new ProgressDialog(this);
 		userNameInput = (EditText)findViewById(R.id.editText1);
 		Button button = (Button)findViewById(R.id.buttonRegister);
 		button.setOnClickListener(this);
@@ -61,13 +61,12 @@ public class SignupActivity extends Activity implements OnClickListener {
 		API.getUserInfo(auth.getUser_id(), new JsonHttpResponseHandler() {
 			@Override
 			public void onStart() {
-				progress.setMessage("通信中…");
-				progress.show();
+				mProgressDialog.show();
 			}
 			
 			@Override
 			public void onSuccess(JSONObject json) {
-				progress.dismiss();
+				mProgressDialog.dismiss();
 				try {
 					User user = UserGen.get(json.toString());
 					user.setToken(auth.getToken());
@@ -84,25 +83,26 @@ public class SignupActivity extends Activity implements OnClickListener {
 			
 			@Override
 			public void onFailure(Throwable e) {
-				progress.dismiss();
+				mProgressDialog.dismiss();
 				Toast.makeText(getApplicationContext(), "ユーザ情報の取得に失敗しました!", Toast.LENGTH_LONG).show();
 			}
 		});
 	}
 
 	@Override
-	public void onClick(View v) {
-		API.register(userNameInput.getText().toString(), new JsonHttpResponseHandler() {					
+	public void onClick(View v) {		
+		Log.i("game", "text="+userNameInput.getText());
+		API.register(userNameInput.getText().toString(), new JsonHttpResponseHandler() {
 			
 			@Override
 			public void onStart() {
-				progress.setMessage("通信中…");
-				progress.show();
+				Log.i("game", "tsushin");
+				mProgressDialog.show();
 			}
 			
 			@Override
 			public void onSuccess(JSONObject json) {
-				progress.dismiss();
+				mProgressDialog.dismiss();
 				try {
 					User user = UserGen.get(json.toString());
 					auth = new Auth(null, user.getId(), user.getToken());
@@ -117,7 +117,7 @@ public class SignupActivity extends Activity implements OnClickListener {
 
 			@Override
 			public void onFailure(Throwable e) {
-				progress.dismiss();
+				mProgressDialog.dismiss();
 				Toast.makeText(getApplicationContext(), "登録に失敗しました!", Toast.LENGTH_LONG).show();
 			}
 		});
