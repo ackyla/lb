@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.lb.R;
 import com.lb.api.API;
 import com.lb.logic.ILocationUpdateServiceClient;
@@ -428,6 +429,28 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 						try {
 							JSONObject json = jsonArray.getJSONObject(i);
 							addTerritory(new LatLng(json.getDouble("latitude"), json.getDouble("longitude")), json.getDouble("radius"));
+							
+							API.getTerritoryLocations(user, json.getInt("id"), new JsonHttpResponseHandler() {
+								@Override
+								public void onSuccess(JSONArray jsonArray) {
+									for(int i = 0; i < jsonArray.length(); i ++) {
+										try {
+											JSONObject json = jsonArray.getJSONObject(i);
+											MarkerOptions options = new MarkerOptions();
+											options.position(new LatLng(json.getDouble("latitude"), json.getDouble("longitude")));
+											Marker marker = gMap.addMarker(options);
+										} catch (JSONException e) {
+											e.printStackTrace();
+										}
+									}
+								}
+
+								@Override
+								public void onFailure(Throwable throwable) {
+									Log.i("game","getUserTerritoryListOnFailure="+ throwable);
+								}
+							});
+							
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -444,6 +467,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 					mProgressDialog.dismiss();
 				}
 			});
+		
 		}
 	}
 	

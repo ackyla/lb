@@ -76,6 +76,14 @@ public class API {
 		get("users/territories", params, handler);
 	}
 	
+	public static void getTerritoryLocations(User user, int territory_id, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		params.put("id", Integer.toString(territory_id));
+		params.put("user_id", Integer.toString(user.getId()));
+		params.put("token", user.getToken());
+		get("territories/locations", params, handler);
+	}
+	
 	// TODO ノーティフィケーション取ってくるようにする
 	public static void getUserNotifications(User user, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
