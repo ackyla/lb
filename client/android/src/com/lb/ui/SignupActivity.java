@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import net.vvakame.util.jsonpullparser.JsonFormatException;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.lb.Auth;
@@ -44,8 +43,6 @@ public class SignupActivity extends Activity implements OnClickListener {
 		Session session = (Session) getApplication();
 		DaoSession daoSession = session.getDaoSession();
 		authDao = daoSession.getAuthDao();
-
-		if (mProgressDialog == null) mProgressDialog = Utils.createProgressDialog(this);
 		
 		if(authDao.count() > 0) {
 			auth = authDao.loadAll().get(0);
@@ -61,7 +58,7 @@ public class SignupActivity extends Activity implements OnClickListener {
 		API.getUserInfo(auth.getUser_id(), new JsonHttpResponseHandler() {
 			@Override
 			public void onStart() {
-				mProgressDialog.show();
+				mProgressDialog = Utils.createProgressDialog(SignupActivity.this);
 			}
 			
 			@Override
@@ -97,7 +94,7 @@ public class SignupActivity extends Activity implements OnClickListener {
 			@Override
 			public void onStart() {
 				Log.i("game", "tsushin");
-				mProgressDialog.show();
+				mProgressDialog = Utils.createProgressDialog(SignupActivity.this);
 			}
 			
 			@Override
