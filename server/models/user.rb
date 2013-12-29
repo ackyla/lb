@@ -4,19 +4,17 @@ class User < ActiveRecord::Base
   before_create :generate_token
   has_many :users
   has_many :locations
-  has_many :territories
+  has_many :my_territories, class_name: "Territory", foreign_key: 'owner_id'
+  has_many :invasions
+  has_many :enemy_territories, class_name: "Territory", through: :invasions, source: :territory
 
   def valid_territories
-    territories.where :expired_time => nil
+    my_territories.where :expired_time => nil
   end
 
   def generate_token
     token = SecureRandom.base64(16)
     self.token = token
-  end
-
-  def cache_key
-    "user_cache_key=#{self.id}"
   end
 
   def add_location(latitude, longitude)

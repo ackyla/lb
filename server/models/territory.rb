@@ -1,7 +1,9 @@
 class Territory < ActiveRecord::Base
-  belongs_to :user
+  belongs_to :owner, class_name: "User"
   has_many :detections
   has_many :locations, :through => :detections
+  has_many :invasions
+  has_many :invaders, class_name: User, through: :invasions, source: :user
 
   def expire
     self.expired_time = DateTime.now
