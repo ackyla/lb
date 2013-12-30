@@ -18,10 +18,8 @@ Server::App.controllers :locations do
 
     new_ters.each{|ter|
       ter.invaders << @user
-    }
-
-    Detection.where(location_id: loc.id, territory_id: new_ters.map{|t| t.id}).each{|det|
-      Notification.new(user: @user, detection: det).save
+      Notification.new(notification_type: "entering", user: @user, location: loc).save
+      Notification.new(notification_type: "detection", user: ter.owner, territory: ter).save
     }
 
     loc.to_json

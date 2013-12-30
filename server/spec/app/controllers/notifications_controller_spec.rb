@@ -3,8 +3,8 @@ require 'spec_helper'
 describe "NotificationsController" do
   before do
     @user = create(:user)
-    @det = create(:detection)
-    @notification = Notification.new(user: @user, detection: @det)
+    @loc = create(:location)
+    @notification = Notification.new(user: @user, location: @loc, notification_type: "entering")
     @notification.save
     @params = {
       user_id: @user.id,

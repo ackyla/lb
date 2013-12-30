@@ -32,6 +32,15 @@ Server::App.controllers :users do
   end
 
   get :notifications, :provides => :json do
-    @user.notifications.unread.to_json
+    JSON.unparse @user.notifications.unread.map{|n|
+      ret = case n.notification_type
+            when "entering"
+              loc = n.location
+              {location_id: loc.id, longitude: loc.longitude, latitude: loc.latitude}
+            when "detection"
+              {terittory: n.territory}
+            end
+      ret.merge({user_id: n.user.id, user_name: n.user.name})
+    }
   end
 end

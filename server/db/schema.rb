@@ -37,10 +37,12 @@ ActiveRecord::Schema.define(:version => 2) do
 
   create_table "notifications", :force => true do |t|
     t.integer  "user_id"
-    t.integer  "detection_id"
-    t.boolean  "read",         :default => false
-    t.datetime "created_at",                      :null => false
-    t.datetime "updated_at",                      :null => false
+    t.string   "notification_type"
+    t.integer  "location_id"
+    t.integer  "territory_id"
+    t.boolean  "read",              :default => false
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
   end
 
   create_table "territories", :force => true do |t|

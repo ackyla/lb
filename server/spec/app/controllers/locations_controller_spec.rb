@@ -45,6 +45,8 @@ describe "LocationsController" do
   end
 
   it "notification check" do
-    expect(Notification.all.size).to eq(1)
+    [@user, @user2].each{|u|
+      expect(Notification.where(user_id: u.id).size).to eq(1)
+    }
   end
 end

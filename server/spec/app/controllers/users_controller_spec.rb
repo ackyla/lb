@@ -21,8 +21,12 @@ describe "UsersController" do
   describe "/users/notifications" do
     before do
       @user = create(:user)
-      @det = create(:detection)
-      @notification = Notification.new(user: @user, detection: @det)
+      @loc = create(:location)
+      @notification = Notification.new(
+        user: @user,
+        location: @loc,
+        notification_type: "entering"
+        )
       @notification.save
       @params = {user_id: @user.id, token: @user.token}
       get "/users/notifications", @params
@@ -31,10 +35,10 @@ describe "UsersController" do
 
     it "status check" do
       expect(last_response).to be_ok
-    end
-
-    it "notification check" do
-      expect(@json.size).to eq(1)
+      ret = @json[0]
+      %w(longitude latitude).each{|key|
+        expect(ret[key]).to eq(@loc[key.to_sym])
+      }
     end
   end
 end

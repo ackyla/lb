@@ -4,6 +4,7 @@ class Territory < ActiveRecord::Base
   has_many :locations, :through => :detections
   has_many :invasions
   has_many :invaders, class_name: User, through: :invasions, source: :user
+  has_many :notifications
 
   def expire
     self.expired_time = DateTime.now
