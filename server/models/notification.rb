@@ -6,7 +6,7 @@ class Notification < ActiveRecord::Base
 
   def notification_info
     if self.delivered == false
-      self.delivered == true
+      self.delivered = true
       self.save
     end
 
