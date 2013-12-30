@@ -2,8 +2,14 @@ class Notification < ActiveRecord::Base
   belongs_to :user
   belongs_to :detection
   scope :unread, conditions: {read: false}
+  scope :undelivered, conditions: {read: false}
 
   def notification_info
+    if self.delivered == false
+      self.delivered == true
+      self.save
+    end
+
     case self.notification_type
     when "entering"
       {

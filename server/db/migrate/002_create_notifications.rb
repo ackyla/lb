@@ -4,6 +4,7 @@ class CreateNotifications < ActiveRecord::Migration
       t.references :user
       t.references :detection
       t.string :notification_type
+      t.boolean :delivered, :default => false
       t.boolean :read, :default => false
       t.timestamps
     end

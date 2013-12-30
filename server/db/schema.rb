@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(:version => 2) do
     t.integer  "user_id"
     t.integer  "detection_id"
     t.string   "notification_type"
+    t.boolean  "delivered",         :default => false
     t.boolean  "read",              :default => false
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
