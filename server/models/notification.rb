@@ -1,15 +1,17 @@
 class Notification < ActiveRecord::Base
   belongs_to :user
-  belongs_to :location
-  belongs_to :territory
+  belongs_to :detection
   scope :unread, conditions: {read: false}
 
   def notification_info
     case self.notification_type
     when "entering"
-      {location: self.location.to_hash}
+      {
+        location: self.detection.location.to_hash,
+        territory_owner: self.detection.territory.owner.to_hash
+      }
     when "detection"
-      {territory: self.territory.to_hash}
+      {territory: self.detection.territory.to_hash}
     end.merge(self.to_hash)
   end
 

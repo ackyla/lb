@@ -20,12 +20,16 @@ ActiveRecord::Schema.define(:version => 2) do
     t.datetime "updated_at",   :null => false
   end
 
+  add_index "detections", ["location_id", "territory_id"], :name => "index_detections_on_location_and_territory", :unique => true
+
   create_table "invasions", :force => true do |t|
     t.integer  "user_id"
     t.integer  "territory_id"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
+
+  add_index "invasions", ["user_id", "territory_id"], :name => "index_detections_on_user_and_territory", :unique => true
 
   create_table "locations", :force => true do |t|
     t.float    "latitude"
@@ -37,9 +41,8 @@ ActiveRecord::Schema.define(:version => 2) do
 
   create_table "notifications", :force => true do |t|
     t.integer  "user_id"
+    t.integer  "detection_id"
     t.string   "notification_type"
-    t.integer  "location_id"
-    t.integer  "territory_id"
     t.boolean  "read",              :default => false
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false

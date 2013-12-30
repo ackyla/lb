@@ -21,10 +21,15 @@ describe "UsersController" do
   describe "/users/notifications" do
     before do
       @user = create(:user)
+      @user2 = create(:user2)
       @loc = create(:location)
+      @ter = create(:territory)
+      @user2.my_territories << @ter
+      @det = Detection.new(location: @loc, territory: @ter)
+      @det.save
       @notification = Notification.new(
         user: @user,
-        location: @loc,
+        detection: @det,
         notification_type: "entering"
         )
       @notification.save
@@ -38,6 +43,9 @@ describe "UsersController" do
       ret = @json[0]
       %w(longitude latitude).each{|key|
         expect(ret["location"][key]).to eq(@loc[key.to_sym])
+      }
+      %w(user_id, name).each{|k|
+        expect(ret["territory_owner"][k]).to eq(@user2[k.to_sym])
       }
     end
   end

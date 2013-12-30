@@ -4,7 +4,11 @@ describe "NotificationsController" do
   before do
     @user = create(:user)
     @loc = create(:location)
-    @notification = Notification.new(user: @user, location: @loc, notification_type: "entering")
+    @ter = create(:territory)
+    @det = Detection.new(location: @loc, territory: @ter)
+    @det.save
+
+    @notification = Notification.new(user: @user, detection: @det, notification_type: "entering")
     @notification.save
     @params = {
       user_id: @user.id,
