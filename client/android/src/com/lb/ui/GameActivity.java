@@ -9,6 +9,8 @@ import org.json.JSONObject;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.UiSettings;
@@ -55,7 +57,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 
@@ -428,7 +432,15 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 					for(int i = 0; i < jsonArray.length(); i ++) {
 						try {
 							JSONObject json = jsonArray.getJSONObject(i);
-							addTerritory(new LatLng(json.getDouble("latitude"), json.getDouble("longitude")), json.getDouble("radius"));
+
+							// TODO
+							TerritoryMarker territoryMarker = new TerritoryMarker();
+							territoryMarker.setCenter(new LatLng(json.getDouble("latitude"), json.getDouble("longitude")));
+							territoryMarker.setRadius(json.getDouble("radius"));
+							territoryMarker.setColor(0, 255, 0);
+							territoryMarker.setTitle("territory_" + json.getInt("id"));
+							territoryMarker.setSnippet("7,200,000,000人発見しました");
+							territoryMarker.addTo(gMap);
 							
 							API.getTerritoryLocations(user, json.getInt("id"), new JsonHttpResponseHandler() {
 								@Override
@@ -471,14 +483,32 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		}
 	}
 	
-	public void addTerritory(LatLng latlng, Double radius) {
-		CircleOptions circleOptions = new CircleOptions();
-		circleOptions.center(latlng);
-		circleOptions.strokeWidth(5);
-		circleOptions.radius(radius);
-		circleOptions.strokeColor(Color.argb(200, 0, 255, 0));
-		circleOptions.fillColor(Color.argb(50, 0, 255, 0));
-		Circle circle = gMap.addCircle(circleOptions);
+	private class TerritoryInfoWindowAdapter implements InfoWindowAdapter {
+		private final View mWindow;
+		
+		public TerritoryInfoWindowAdapter() {
+			mWindow = getLayoutInflater().inflate(R.layout.territory_info_window, null);
+		}
+		
+		@Override
+		public View getInfoContents(Marker marker) {
+			showInfoWindow(marker, mWindow);
+			return mWindow;
+		}
+
+		@Override
+		public View getInfoWindow(Marker marker) {
+			return null;
+		}
+		
+		private void showInfoWindow(Marker marker, View v) {
+			
+			TextView title = (TextView) v.findViewById(R.id.title);
+			title.setText(marker.getTitle());
+			
+			TextView snippet = (TextView) v.findViewById(R.id.snippet);
+			snippet.setText(marker.getSnippet());
+		}
 	}
 	
 	@Override
@@ -496,6 +526,19 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
 					gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す
 				}
+			});
+			
+			// マーカーに吹き出しつける
+			gMap.setInfoWindowAdapter(new TerritoryInfoWindowAdapter());
+			
+			// 吹き出しクリックした時
+			gMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+
+				@Override
+				public void onInfoWindowClick(Marker marker) {
+					
+				}
+				
 			});
 			
 			refreshMap();
@@ -537,8 +580,9 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
     }
 
 	@Override
-	public void onClickShowTerritoryButton(Double latitude, Double longitude) {
+	public void onClickShowTerritoryButton(Double latitude, Double longitude) {		
 		mTabHost.setCurrentTabByTag("tab1");
+		refreshMap();
 		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 11));
 	}
 }
