@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   has_many :my_territories, class_name: "Territory", foreign_key: 'owner_id'
   has_many :invasions
   has_many :enemy_territories, class_name: "Territory", through: :invasions, source: :territory
+  has_many :notifications
 
   def valid_territories
     my_territories.where :expired_time => nil

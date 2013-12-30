@@ -23,6 +23,11 @@ FactoryGirl.define do
     radius 10
   end
 
+  factory :detection do
+    location
+    territory
+  end
+
   factory :expired_territory do
     latitude 35.0
     longitude 135.8

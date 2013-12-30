@@ -8,7 +8,7 @@ Server::App.controllers :users do
     end
   end
 
-  before :territories do
+  before :territories, :notifications do
     login(params)
   end
 
@@ -29,5 +29,9 @@ Server::App.controllers :users do
 
   get :territories, :provides => :json do
     @user.valid_territories.to_json
+  end
+
+  get :notifications, :provides => :json do
+    @user.notifications.to_json
   end
 end

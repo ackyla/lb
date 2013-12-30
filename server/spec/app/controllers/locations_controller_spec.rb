@@ -43,4 +43,8 @@ describe "LocationsController" do
     expect(@ter.invaders.first).to eq(@user)
     expect(Invasion.all.size).to eq(1)
   end
+
+  it "notification check" do
+    expect(Notification.all.size).to eq(1)
+  end
 end
