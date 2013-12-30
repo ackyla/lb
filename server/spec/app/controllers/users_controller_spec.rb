@@ -37,7 +37,7 @@ describe "UsersController" do
       expect(last_response).to be_ok
       ret = @json[0]
       %w(longitude latitude).each{|key|
-        expect(ret[key]).to eq(@loc[key.to_sym])
+        expect(ret["location"][key]).to eq(@loc[key.to_sym])
       }
     end
   end

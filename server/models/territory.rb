@@ -32,8 +32,8 @@ class Territory < ActiveRecord::Base
 
   def to_hash
     hash = Hash[self.attributes]
-    hash[:territory_id] = hash[:id]
-    hash.delete :id
+    hash[:territory_id] = self.id
+    hash.delete "id"
     hash
   end
 end
