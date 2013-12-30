@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class NotificationAdapter extends ArrayAdapter<NotificationData>{
@@ -25,8 +26,22 @@ public class NotificationAdapter extends ArrayAdapter<NotificationData>{
 		NotificationData item = (NotificationData) getItem(position);
 		if (null == convertView) convertView = mLayoutInflater.inflate(R.layout.notification_list_item, null);
 		
-		TextView textView = (TextView)convertView.findViewById(R.id.notification_message_text);
-		textView.setText(item.getMessage());
+		ImageView imageView = (ImageView)convertView.findViewById(R.id.notification_type_image);
+		switch(item.getType()) {
+		case NotificationData.TYPE_DETECTED:
+			imageView.setBackgroundResource(android.R.drawable.ic_menu_info_details);
+			break;
+		case NotificationData.TYPE_DETECT:
+			imageView.setBackgroundResource(android.R.drawable.ic_menu_mylocation);
+			break;
+		}
+		
+		
+		TextView textView1 = (TextView)convertView.findViewById(R.id.notification_title_text);
+		textView1.setText(item.getTitle());
+		
+		TextView textView2 = (TextView)convertView.findViewById(R.id.notification_message_text);
+		textView2.setText(item.getMessage());
 		
 		return convertView;
 	}
