@@ -2,7 +2,8 @@ class InitSchema < ActiveRecord::Migration
   def self.up
     create_table :users do |t|
       t.string :token
-      t.string :name
+      t.string :name, null: false
+      t.integer :gps_point, default: 0, null: false
       t.timestamps
     end
 

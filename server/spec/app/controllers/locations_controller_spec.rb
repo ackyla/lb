@@ -7,6 +7,7 @@ describe "LocationsController" do
     @ter = create(:territory)
     @user2.my_territories << @ter
 
+    @point = @user.gps_point
     @params1 = {user_id: @user.id, token: @user.token, latitude: 35.0, longitude: 135.8}
     post "/locations/create", @params1
     @res1 = last_response
@@ -23,30 +24,21 @@ describe "LocationsController" do
   it "status check" do
     @res1.should be_ok
     @res2.should be_ok
-  end
 
-  it "location check" do
     expect(@loc1.latitude).to eq(@params1[:latitude])
     expect(@loc1.longitude).to eq(@params1[:longitude])
-  end
 
-  it "detection check" do
     expect(@loc1.territories.first).to eq(@ter)
     expect(@loc2.territories.first).to eq(@ter)
-  end
 
-  it "enemy territory check" do
     expect(@user.enemy_territories.first).to eq(@ter)
-  end
-
-  it "invader check" do
     expect(@ter.invaders.first).to eq(@user)
-    expect(Invasion.all.size).to eq(1)
-  end
 
-  it "notification check" do
+    expect(Invasion.all.size).to eq(1)
     [@user, @user2].each{|u|
       expect(Notification.where(user_id: u.id).size).to eq(1)
     }
+
+    expect(User.find_by_id(@user.id).gps_point).to eq(@point + 2)
   end
 end
