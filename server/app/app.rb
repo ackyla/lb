@@ -61,6 +61,9 @@ module Server
       set :logging, true
     end
 
+    configure :test do
+      set :logging, true
+    end
     ##
     # You can manage errors like:
     #
@@ -83,20 +86,10 @@ module Server
         error_message(100, "INVALID PARAMETER")
       end
 
-      def find_room(params)
-        invalid_param_error unless params.key? "room_id"
-        @room ||= Room.find_by_id(params[:room_id])
-        error_message(300, "INVALID ROOM") unless @room
-      end
-
       def login(params)
         invalid_param_error unless params.key? "user_id" and params.key? "token"
         @user = User.find_by_id_and_token(params[:user_id], params[:token])
         error_message(200, "INVALID USER") unless @user
-      end
-
-      def room_cache_key
-        "room_cache?room_id=#{params[:room_id]}"
       end
     end
 

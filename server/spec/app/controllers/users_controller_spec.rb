@@ -29,7 +29,7 @@ describe "UsersController" do
       @json = JSON.parse last_response.body
     end
 
-    it "response check" do
+    it "status check" do
       expect(last_response).to be_ok
     end
 

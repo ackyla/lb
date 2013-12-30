@@ -32,6 +32,6 @@ Server::App.controllers :users do
   end
 
   get :notifications, :provides => :json do
-    @user.notifications.to_json
+    @user.notifications.unread.to_json
   end
 end
