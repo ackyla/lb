@@ -1,5 +1,7 @@
 package com.lb.api;
 
+import java.util.ArrayList;
+
 import android.location.Location;
 
 import com.lb.R;
@@ -94,7 +96,7 @@ public class API {
 	public static void readNotification(User user, int notification_id, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		setUserParams(user, params);
-		params.put("id", Integer.toString(notification_id));
+		params.put("notification_id", Integer.toString(notification_id));
 		post("notifications/read", params, handler);
 	}
 }

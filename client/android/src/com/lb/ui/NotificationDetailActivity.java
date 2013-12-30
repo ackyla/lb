@@ -34,36 +34,7 @@ public class NotificationDetailActivity extends FragmentActivity {
 		Intent intent = getIntent();
 		mId = intent.getIntExtra("notification_id", 0);
 		mType = intent.getStringExtra("notification_type");
-		
-		if (mId > 0) {
-			API.readNotification(Session.getUser(), mId, new JsonHttpResponseHandler() {
-				
-				@Override
-				public void onStart() {
-					if (mProgressDialog == null) mProgressDialog = Utils.createProgressDialog(NotificationDetailActivity.this);
-					mProgressDialog.show();
-				}
-				
-				@Override
-				public void onSuccess(JSONObject json) {
-					Toast.makeText(NotificationDetailActivity.this, "既読", Toast.LENGTH_LONG).show();
-					
-					NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);	
-					manager.cancel(mId);
-				}
 
-				@Override
-				public void onFailure(Throwable throwable) {
-					Log.i("game","getUserTerritoryListOnFailure="+ throwable);
-				}
-				
-				@Override
-				public void onFinish() {
-					mProgressDialog.dismiss();
-				}
-			});
-		}
-		
 	}
 	
 	  @Override

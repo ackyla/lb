@@ -63,6 +63,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 
@@ -523,6 +524,25 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			});
 			
 			refreshMap();
+			
+			Intent intent = getIntent();
+			Integer notificationId = intent.getIntExtra("notification_id", 0);
+			
+			if (notificationId > 0) {
+				API.readNotification(Session.getUser(), notificationId, new JsonHttpResponseHandler() {
+
+					@Override
+					public void onSuccess(JSONObject json) {
+						//NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);	
+						//manager.cancel(mId);
+					}
+
+					@Override
+					public void onFailure(Throwable throwable) {
+						Log.i("game","getUserTerritoryListOnFailure="+ throwable);
+					}
+				});
+			}
 		}
 	}
 	

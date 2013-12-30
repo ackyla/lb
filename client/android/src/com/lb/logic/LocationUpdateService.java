@@ -165,7 +165,7 @@ public class LocationUpdateService extends Service{
 							try {
 								JSONObject json = jsonArray.getJSONObject(jsonArray.length()-1);
 						        SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
-							    Intent intent = new Intent(LocationUpdateService.this, NotificationDetailActivity.class);
+							    Intent intent = new Intent(LocationUpdateService.this, GameActivity.class);
 							    intent.putExtra("notification_id", json.getInt("notification_id"));
 
 							    Notification.Builder builder = new Notification.Builder(getApplicationContext());
@@ -177,6 +177,10 @@ public class LocationUpdateService extends Service{
 								    builder.setContentText("タップして詳細を見る");
 								    builder.setContentInfo(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に見つかった");
 								    builder.setSmallIcon(android.R.drawable.ic_menu_info_details);
+								    intent.putExtra("latitude", json.getJSONObject("location").getDouble("latitude"));
+								    intent.putExtra("longitude", json.getJSONObject("location").getDouble("longitude"));
+								    intent.putExtra("title", json.getJSONObject("territory_owner").getString("name") + " のテリトリーに入りました");
+								    intent.putExtra("message", sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に見つかった");
 								}else{
 									// みつけた
 								    builder.setTicker("テリトリー_"+json.getJSONObject("territory").getInt("territory_id")+"への侵入者発見");
@@ -184,12 +188,15 @@ public class LocationUpdateService extends Service{
 								    builder.setContentText("タップして詳細を見る");
 								    builder.setContentInfo(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
 								    builder.setSmallIcon(android.R.drawable.ic_menu_mylocation);
+								    intent.putExtra("latitude", json.getJSONObject("territory").getDouble("latitude"));
+								    intent.putExtra("longitude", json.getJSONObject("territory").getDouble("longitude"));
 								}
 								intent.putExtra("notification_type", type);
 								PendingIntent pendingIntent = PendingIntent.getActivity(LocationUpdateService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 							    builder.setContentIntent(pendingIntent);
-							    builder.setVibrate(new long[] {1000, 700, 250, 700, 250, 700, 250});
-
+							    builder.setVibrate(new long[] {1000, 700, 250});
+							    builder.setAutoCancel(true);
+							    builder.setOnlyAlertOnce(true);
 								Notification notification = builder.getNotification();
 								NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 								manager.notify(json.getInt("notification_id"), notification);
