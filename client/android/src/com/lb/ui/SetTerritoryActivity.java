@@ -87,7 +87,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 				@Override
 				public void onMyLocationChange(Location location) {
 					// てりとりー
-					Double radius = 5000.0;
+					Double radius = 1000.0;
 					addTerritory(new LatLng(location.getLatitude(), location.getLongitude()), radius);
 					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
 					gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す

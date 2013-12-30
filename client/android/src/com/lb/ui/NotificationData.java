@@ -9,6 +9,8 @@ public class NotificationData {
 	private Integer mType;
 	private String mTitle;
 	private String mMessage;
+	private Double mLatitude;
+	private Double mLongitude;
 
 	public void setId(Integer id) {
 		mId = id;
@@ -36,5 +38,19 @@ public class NotificationData {
 	}
 	public String getMessage() {
 		return mMessage;
+	}
+	
+	public void setLatitude(Double latitude) {
+		mLatitude = latitude;
+	}
+	public Double getLatitude() {
+		return mLatitude;
+	}
+	
+	public void setLongitude(Double longitude) {
+		mLongitude = longitude;
+	}
+	public Double getLongitude() {
+		return mLongitude;
 	}
 }
