@@ -19,6 +19,8 @@ describe "LocationsController" do
     @res2 = last_response
     @json2 = JSON.parse last_response.body
     @loc2 = Location.find_by_id(@json2["id"])
+    @user.reload
+    @user2.reload
   end
 
   it "status check" do
@@ -39,6 +41,8 @@ describe "LocationsController" do
       expect(Notification.where(user_id: u.id).size).to eq(1)
     }
 
-    expect(User.find_by_id(@user.id).gps_point).to eq(@point + 2)
+    expect(@user.gps_point).to eq(@point + 2)
+
+    expect(@user2.exp).to eq(1)
   end
 end
