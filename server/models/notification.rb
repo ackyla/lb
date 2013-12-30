@@ -2,7 +2,7 @@ class Notification < ActiveRecord::Base
   belongs_to :user
   belongs_to :detection
   scope :unread, conditions: {read: false}
-  scope :undelivered, conditions: {read: false}
+  scope :undelivered, conditions: {delivered: false}
 
   def notification_info
     if self.delivered == false
