@@ -1,18 +1,12 @@
 Server::App.controllers :notifications do
   before :read do
     login params
-    @notifications = Notification.where(
-      user_id: @user.id,
-      id: params[:notification_ids]
-      )
+    @notification = Notification.find_by_id(params[:notification_id])
   end
 
 
   post :read, :provides => :json do
-    @notifications.map{|n|
-      n.read = true
-      n.save
-      n
-    }.to_json
+    @notification.read = true
+    @notification.save
   end
 end
