@@ -35,19 +35,19 @@ public class NotificationListFragment extends ListFragment {
 						JSONObject json = jsonArray.getJSONObject(i);
 						NotificationData item = new NotificationData();
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
-						
+						Log.i("game", "json="+json);
 						item.setId(json.getInt("notification_id"));
 						
 						String type = json.getString("notification_type");
 						if(type.equals("entering")) {
 							// みつかった
 							item.setType(NotificationData.TYPE_DETECTED);
-							item.setTitle("ほげ のテリトリーに入りました");
+							item.setTitle(json.getJSONObject("territory_owner").getString("name") + " のテリトリーに入りました");
 							item.setMessage(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に見つかった");	
 						}else{
 							// みつけた
 							item.setType(NotificationData.TYPE_DETECT);
-							item.setTitle("テリトリーへの侵入者発見");
+							item.setTitle("テリトリー_"+json.getJSONObject("territory").getInt("territory_id")+" への侵入者発見");
 							item.setMessage(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
 						}
 						
