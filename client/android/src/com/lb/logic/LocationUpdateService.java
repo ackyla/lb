@@ -167,30 +167,29 @@ public class LocationUpdateService extends Service{
 						        SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
 							    Intent intent = new Intent(LocationUpdateService.this, NotificationDetailActivity.class);
 							    intent.putExtra("notification_id", json.getInt("notification_id"));
-						        
-								Notification.Builder builder = new Notification.Builder(getApplicationContext());
-								
+
+							    Notification.Builder builder = new Notification.Builder(getApplicationContext());
 								String type = json.getString("notification_type");
 								if(type.equals("entering")) {
 									// みつかった
-								    builder.setTicker("ほげ のテリトリーに入りました");
-								    builder.setContentTitle("ほげ のテリトリーに入りました");
+								    builder.setTicker(json.getJSONObject("territory_owner").getString("name") + " のテリトリーに入りました");
+								    builder.setContentTitle(json.getJSONObject("territory_owner").getString("name") + " のテリトリーに入りました");
 								    builder.setContentText("タップして詳細を見る");
 								    builder.setContentInfo(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に見つかった");
 								    builder.setSmallIcon(android.R.drawable.ic_menu_info_details);
 								}else{
 									// みつけた
-								    builder.setTicker("テリトリーへの侵入者発見");
-								    builder.setContentTitle("テリトリーへの侵入者発見");
+								    builder.setTicker("テリトリー_"+json.getJSONObject("territory").getInt("territory_id")+"への侵入者発見");
+								    builder.setContentTitle("テリトリー_"+json.getJSONObject("territory").getInt("territory_id")+"への侵入者発見");
 								    builder.setContentText("タップして詳細を見る");
 								    builder.setContentInfo(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
 								    builder.setSmallIcon(android.R.drawable.ic_menu_mylocation);
 								}
-
-							    builder.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, intent, 0));
+								intent.putExtra("notification_type", type);
+								PendingIntent pendingIntent = PendingIntent.getActivity(LocationUpdateService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+							    builder.setContentIntent(pendingIntent);
 							    builder.setVibrate(new long[] {1000, 700, 250, 700, 250, 700, 250});
-							    builder.setAutoCancel(true);
-							    builder.setOnlyAlertOnce(true);
+
 								Notification notification = builder.getNotification();
 								NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 								manager.notify(json.getInt("notification_id"), notification);

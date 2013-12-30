@@ -16,6 +16,8 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -29,6 +31,7 @@ import com.lb.model.Session;
 import com.lb.model.User;
 import com.lb.model.Utils;
 import com.lb.ui.MapFragment.OnGoogleMapFragmentListener;
+import com.lb.ui.NotificationListFragment.OnNotificationListFragmentItemClickListener;
 import com.lb.ui.TerritoryDetailFragment.OnTerritoryDetailFragmentListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -63,7 +66,7 @@ import android.widget.TextView;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 
-public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, OnGoogleMapFragmentListener, OnTerritoryDetailFragmentListener {
+public class GameActivity extends FragmentActivity implements ILocationUpdateServiceClient, OnGoogleMapFragmentListener, OnTerritoryDetailFragmentListener, OnNotificationListFragmentItemClickListener {
 
 	private static Intent serviceIntent;
 	private LocationUpdateService updateService;
@@ -152,7 +155,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
         mTabHost.setOnTabChangedListener(new OnTabChangeListener() {
 			@Override
 			public void onTabChanged(String tabId) {
-				 getCurrentFragment().clearBackStack();
+				getCurrentFragment().clearBackStack();
 			}
         });
 		/** 遺産
@@ -559,8 +562,27 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 
 	@Override
 	public void onClickShowTerritoryButton(Double latitude, Double longitude) {		
+		mTabHost.setCurrentTabByTag("tab1");		
+		refreshMap();
+		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 12));
+	}
+
+	@Override
+	public void onClickNotificationListItem(Double latitude, Double longitude, Integer type, String title, String message) {
 		mTabHost.setCurrentTabByTag("tab1");
 		refreshMap();
-		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 11));
+		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 12));
+		
+		if (type == NotificationData.TYPE_DETECTED) {
+			MarkerOptions markerOpt = new MarkerOptions();
+			markerOpt.title(title);
+			markerOpt.snippet(message);
+			markerOpt.position(new LatLng(latitude, longitude));
+			//BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(android.R.drawable.ic_dialog_info);
+			BitmapDescriptor icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+			markerOpt.icon(icon);
+			Marker marker = gMap.addMarker(markerOpt);
+			marker.showInfoWindow();
+		}
 	}
 }

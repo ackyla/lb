@@ -90,4 +90,11 @@ public class API {
 		params.put("token", user.getToken());
 		get("users/notifications", params, handler);
 	}
+	
+	public static void readNotification(User user, int notification_id, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		setUserParams(user, params);
+		params.put("id", Integer.toString(notification_id));
+		post("notifications/read", params, handler);
+	}
 }

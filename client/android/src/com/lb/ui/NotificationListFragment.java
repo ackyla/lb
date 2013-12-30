@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -18,9 +19,18 @@ import android.widget.ListView;
 import com.lb.api.API;
 import com.lb.model.Session;
 import com.lb.model.Utils;
+import com.lb.ui.TerritoryDetailFragment.OnTerritoryDetailFragmentListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 public class NotificationListFragment extends ListFragment {
+	
+	private OnNotificationListFragmentItemClickListener listener;
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		listener = (OnNotificationListFragmentItemClickListener) activity;
+	}
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -43,11 +53,15 @@ public class NotificationListFragment extends ListFragment {
 							// みつかった
 							item.setType(NotificationData.TYPE_DETECTED);
 							item.setTitle(json.getJSONObject("territory_owner").getString("name") + " のテリトリーに入りました");
+							item.setLatitude(json.getJSONObject("location").getDouble("latitude"));
+							item.setLongitude(json.getJSONObject("location").getDouble("longitude"));
 							item.setMessage(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に見つかった");	
 						}else{
 							// みつけた
 							item.setType(NotificationData.TYPE_DETECT);
 							item.setTitle("テリトリー_"+json.getJSONObject("territory").getInt("territory_id")+" への侵入者発見");
+							item.setLatitude(json.getJSONObject("territory").getDouble("latitude"));
+							item.setLongitude(json.getJSONObject("territory").getDouble("longitude"));
 							item.setMessage(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
 						}
 						
@@ -78,5 +92,10 @@ public class NotificationListFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		NotificationData item = (NotificationData) l.getItemAtPosition(position);
+		listener.onClickNotificationListItem(item.getLatitude(), item.getLongitude(), item.getType(), item.getTitle(), item.getMessage());
 	}
+	
+    public static interface OnNotificationListFragmentItemClickListener {
+        void onClickNotificationListItem(Double latitude, Double longitude, Integer type, String title, String message);
+    }
 }
