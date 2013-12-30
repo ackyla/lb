@@ -35,6 +35,8 @@ class InitSchema < ActiveRecord::Migration
     end
 
     add_index :users, [:id, :token], :name => "index_users_on_id_and_token", :unique => true
+    add_index :detections, [:location_id, :territory_id], :name => "index_detections_on_location_and_territory", :unique => true
+    add_index :invasions, [:user_id, :territory_id], :name => "index_detections_on_user_and_territory", :unique => true
   end
 
   def self.down
@@ -42,5 +44,6 @@ class InitSchema < ActiveRecord::Migration
     drop_table :locations
     drop_table :detections
     drop_table :territories
+    drop_table :invasions
   end
 end
