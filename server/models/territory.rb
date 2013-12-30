@@ -10,6 +10,15 @@ class Territory < ActiveRecord::Base
     self.expired_time = DateTime.now
   end
 
+  def detect(user, loc)
+    self.invaders << user
+    det = self.detections.where(location_id: loc.id).first
+    self.owner.exp += 1
+    self.owner.save
+    Notification.new(notification_type: "entering", user: user, detection: det).save
+    Notification.new(notification_type: "detection", user: self.owner, detection: det).save
+  end
+
   def add_location(loc)
     locations << loc if self.include? loc
   end

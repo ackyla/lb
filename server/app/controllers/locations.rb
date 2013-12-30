@@ -17,10 +17,7 @@ Server::App.controllers :locations do
     Invasion.destroy_all(user_id: @user.id, territory_id: (enemies - ters).map{|t| t.id})
 
     new_ters.each{|ter|
-      ter.invaders << @user
-      det = Detection.where(location_id: loc.id, territory_id: ter.id).first
-      Notification.new(notification_type: "entering", user: @user, detection: det).save
-      Notification.new(notification_type: "detection", user: ter.owner, detection: det).save
+      ter.detect(@user, loc)
     }
 
     loc.to_json

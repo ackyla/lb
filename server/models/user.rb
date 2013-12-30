@@ -2,12 +2,11 @@ require 'securerandom'
 
 class User < ActiveRecord::Base
   before_create :generate_token
-  has_many :users
-  has_many :locations
-  has_many :my_territories, class_name: "Territory", foreign_key: 'owner_id'
-  has_many :invasions
+  has_many :locations, dependent: :destroy
+  has_many :my_territories, class_name: "Territory", foreign_key: 'owner_id', dependent: :destroy
+  has_many :invasions, dependent: :destroy
   has_many :enemy_territories, class_name: "Territory", through: :invasions, source: :territory
-  has_many :notifications
+  has_many :notifications, dependent: :destroy
 
   def valid_territories
     my_territories.where :expired_time => nil
@@ -19,9 +18,12 @@ class User < ActiveRecord::Base
   end
 
   def add_location(latitude, longitude)
-    Location.new(latitude: latitude, longitude: longitude){|loc|
+    loc = Location.new(latitude: latitude, longitude: longitude){|loc|
       loc.user = self
     }
+    self.gps_point += 1
+    self.save
+    loc
   end
 
   def to_hash

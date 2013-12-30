@@ -6,37 +6,41 @@ describe User do
     @user = build(:user)
   end
 
-  describe "User生成" do
-    it "saveできる" do
+  describe "create" do
+    it "save" do
       @user.save.should be_true
     end
 
-    it "idが正常" do
-      @user.id == 1
+    it "name" do
+      expect(@user.name).to eq("user1")
     end
 
-    it "nameが正常" do
-      @user.name == "user1"
-    end
-  end
-
-  describe "Location" do
-    it "location数" do
-      @user.locations.size == 1
+    it "level" do
+      expect(@user.level).to eq(1)
     end
 
-    it "locationを追加" do
+    it "exp" do
+      expect(@user.exp).to eq(0)
+    end
+
+    it "gps point" do
+      expect(@user.gps_point).to eq(0)
+    end
+
+
+    it "location" do
+      expect(@user.locations.size).to eq(0)
       size = @user.locations.size
       loc = @user.add_location(35.0, 135.8)
-      loc != nil and (@user.locations.size == size+1)
+      loc.save
+      @user.reload
+      expect(@user.locations.size).to eq(size + 1)
     end
-  end
 
-  describe "Territory" do
-    it "get valid territories" do
+    it "territory" do
       ters = @user.valid_territories
       ter = ters.first
-      ters.size == 1 and first.id == 1
+      expect(ters.size).to eq(0)
     end
   end
 end

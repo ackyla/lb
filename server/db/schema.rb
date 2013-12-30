@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(:version => 2) do
     t.integer  "user_id"
     t.integer  "detection_id"
     t.string   "notification_type"
+    t.boolean  "delivered",         :default => false
     t.boolean  "read",              :default => false
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
@@ -60,9 +61,12 @@ ActiveRecord::Schema.define(:version => 2) do
 
   create_table "users", :force => true do |t|
     t.string   "token"
-    t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.string   "name",                      :null => false
+    t.integer  "gps_point",  :default => 0, :null => false
+    t.integer  "level",      :default => 1, :null => false
+    t.integer  "exp",        :default => 0, :null => false
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
   end
 
   add_index "users", ["id", "token"], :name => "index_users_on_id_and_token", :unique => true
