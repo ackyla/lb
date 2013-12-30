@@ -1,5 +1,7 @@
 package com.lb.logic;
 
+import java.util.TimerTask;
+
 import org.json.JSONObject;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,6 +35,8 @@ public class LocationUpdateService extends Service{
     
 	private LocationListener locationListener;
 	private LocationClient locationClient;
+	
+	private TimerTask getNotificationTask;
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -125,6 +129,7 @@ public class LocationUpdateService extends Service{
     	Session.setIsStarted(true);
     	Log.v("game", "start update");
     	startGpsManager();
+    	startNotificationReceiver();
     }
     
     public void stopUpdate() {
@@ -132,6 +137,34 @@ public class LocationUpdateService extends Service{
     	stopForeground(true);
     	Log.v("game", "stop update");
     	stopGpsManager();
+    	stopNotificationReceiver();
+    }
+    
+    private void startNotificationReceiver() {
+    	TimerLogic timerLogic = new TimerLogic(this);
+		getNotificationTask = timerLogic.create(new Runnable() {
+			@Override
+			public void run() {
+				showNotification();
+			}
+		});
+		timerLogic.start(getNotificationTask, 10000);
+    }
+    
+    private void stopNotificationReceiver() {
+    	if(getNotificationTask != null) getNotificationTask.cancel();
+    }
+    
+    private void showNotification() {
+		// TODO ノーチフィケーションちゃんと書く
+	    Notification.Builder builder = new Notification.Builder(getApplicationContext());
+	    builder.setTicker("ほげさんのテリトリーに入りました" + System.currentTimeMillis());
+	    builder.setContentTitle("ほげさんのテリトリーに入りました" + System.currentTimeMillis());
+	    builder.setContentText("タップして詳細を見ます。");
+	    builder.setSmallIcon(R.drawable.ic_launcher);
+		Notification notification = builder.getNotification();
+		NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		manager.notify(NOTIFICATION_ID, notification);
     }
     
     private void startGpsManager() {
@@ -141,15 +174,6 @@ public class LocationUpdateService extends Service{
 				API.postLocation(Session.getUser(), location, new JsonHttpResponseHandler() {
 					@Override
 					public void onSuccess(JSONObject json) {
-						// TODO ノーチフィケーションちゃんと書く
-					    Notification.Builder builder = new Notification.Builder(getApplicationContext());
-					    builder.setTicker("ほげさんのテリトリーに入りました" + System.currentTimeMillis());
-					    builder.setContentTitle("ほげさんのテリトリーに入りました" + System.currentTimeMillis());
-					    builder.setContentText("タップして詳細を見ます。");
-					    builder.setSmallIcon(R.drawable.ic_launcher);
-						Notification notification = builder.getNotification();
-						NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-						manager.notify(NOTIFICATION_ID, notification);
 						Log.v("game", "location=" + json.toString());
 					}
 					@Override
