@@ -23,4 +23,11 @@ class User < ActiveRecord::Base
       loc.user = self
     }
   end
+
+  def to_hash
+    hash = Hash[self.attributes]
+    hash["user_id"] = self.id
+    hash.delete "id"
+    hash
+  end
 end

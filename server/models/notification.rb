@@ -7,9 +7,12 @@ class Notification < ActiveRecord::Base
   def notification_info
     case self.notification_type
     when "entering"
-      self.location.to_hash
+      {location: self.location.to_hash}
     when "detection"
-      self.territory.to_hash
-    end.merge({user_id: self.user.id, user_name: self.user.name})
+      {territory: self.territory.to_hash}
+    end.merge(
+      notification_id: self.id,
+      user: self.user.to_hash
+      )
   end
 end
