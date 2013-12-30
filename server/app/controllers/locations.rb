@@ -13,10 +13,7 @@ Server::App.controllers :locations do
     }
 
     new_ters = (ters - enemies)
-    (enemies - ters).each{|ter|
-      Invasion.find(user: @user, territor: @ter).destroy()
-    }
-
+    Invasion.destroy_all(user_id: @user.id, territor_id: (enemies - ters).map{|t| t.id})
     new_ters.each{|ter|
       ter.invaders << @user
     }
