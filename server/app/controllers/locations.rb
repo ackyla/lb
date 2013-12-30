@@ -4,7 +4,7 @@ Server::App.controllers :locations do
     loc = @user.add_location(params[:latitude], params[:longitude])
     loc.save
 
-    ters = Territory.where("owner_id != ?", @user.id).select{|ter|
+    ters = Territory.actives.where("owner_id != ?", @user.id).select{|ter|
       ter.include? loc
     }
 
