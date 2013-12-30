@@ -1,6 +1,6 @@
 package com.lb.ui;
 
-class NotificationData {
+public class NotificationData {
 
 	public static final int TYPE_DETECTED = 1;
 	public static final int TYPE_DETECT = 2;

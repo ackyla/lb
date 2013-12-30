@@ -1,5 +1,9 @@
 package com.lb.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import com.lb.R;
 
 import android.app.ProgressDialog;
@@ -21,4 +25,15 @@ public class Utils {
         return dialog;
     }
 	
+    public static Date parseStringToDate(String dateString) {
+    	Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss");
+        
+        try {
+			date = sdf.parse(dateString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+        return date;
+    }
 }

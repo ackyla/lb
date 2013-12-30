@@ -1,5 +1,6 @@
 package com.lb.ui;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import android.widget.ListView;
 
 import com.lb.api.API;
 import com.lb.model.Session;
+import com.lb.model.Utils;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 public class NotificationListFragment extends ListFragment {
@@ -32,9 +34,11 @@ public class NotificationListFragment extends ListFragment {
 					try {
 						JSONObject json = jsonArray.getJSONObject(i);
 						NotificationData item = new NotificationData();
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
+						
 						item.setType(NotificationData.TYPE_DETECTED);
 						item.setTitle("user_"+json.getInt("user_id")+" のテリトリーに入りました");
-						item.setMessage(""+json.toString());
+						item.setMessage(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
 						objects.add(item);
 					} catch (JSONException e) {
 						e.printStackTrace();

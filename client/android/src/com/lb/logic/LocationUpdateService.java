@@ -1,7 +1,14 @@
 package com.lb.logic;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.TimerTask;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -14,6 +21,9 @@ import com.lb.R;
 import com.lb.api.API;
 import com.lb.model.Session;
 import com.lb.model.User;
+import com.lb.model.Utils;
+import com.lb.ui.NotificationAdapter;
+import com.lb.ui.NotificationData;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Notification;
@@ -145,7 +155,35 @@ public class LocationUpdateService extends Service{
 		getNotificationTask = timerLogic.create(new Runnable() {
 			@Override
 			public void run() {
-				showNotification();
+				API.getUserNotifications(Session.getUser(), new JsonHttpResponseHandler() {
+					@Override
+					public void onSuccess(JSONArray jsonArray) {
+						if (jsonArray.length() > 0) {
+							try {
+								JSONObject json = jsonArray.getJSONObject(jsonArray.length()-1);
+						         
+						        SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
+						        
+								Notification.Builder builder = new Notification.Builder(getApplicationContext());
+							    builder.setTicker("user_" + json.getInt("user_id") +" のテリトリーに入りました");
+							    builder.setContentTitle("user_" + json.getInt("user_id") +" のテリトリーに入りました");
+							    builder.setContentText("タップして詳細を見る");
+							    builder.setContentInfo(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
+							    builder.setSmallIcon(android.R.drawable.ic_menu_info_details);
+								Notification notification = builder.getNotification();
+								NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+								manager.notify(NOTIFICATION_ID, notification);
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+
+					@Override
+					public void onFailure(Throwable throwable) {
+						Log.i("game","getUserNotificationListOnFailure="+ throwable);
+					}
+				});
 			}
 		});
 		timerLogic.start(getNotificationTask, 10000);
@@ -154,20 +192,7 @@ public class LocationUpdateService extends Service{
     private void stopNotificationReceiver() {
     	if(getNotificationTask != null) getNotificationTask.cancel();
     }
-    
-    private void showNotification() {
-		// TODO ノーチフィケーションちゃんと書く
-    	
-	    Notification.Builder builder = new Notification.Builder(getApplicationContext());
-	    builder.setTicker("ほげさんのテリトリーに入りました" + System.currentTimeMillis());
-	    builder.setContentTitle("ほげさんのテリトリーに入りました" + System.currentTimeMillis());
-	    builder.setContentText("タップして詳細を見ます。");
-	    builder.setSmallIcon(R.drawable.ic_launcher);
-		Notification notification = builder.getNotification();
-		NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		manager.notify(NOTIFICATION_ID, notification);
-    }
-    
+
     private void startGpsManager() {
     	locationListener = new LocationListener() {
 			@Override
