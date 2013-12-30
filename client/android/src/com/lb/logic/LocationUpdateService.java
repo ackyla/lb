@@ -164,24 +164,36 @@ public class LocationUpdateService extends Service{
 						if (jsonArray.length() > 0) {
 							try {
 								JSONObject json = jsonArray.getJSONObject(jsonArray.length()-1);
-						         
 						        SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
+							    Intent intent = new Intent(LocationUpdateService.this, NotificationDetailActivity.class);
+							    intent.putExtra("notification_id", json.getInt("notification_id"));
 						        
 								Notification.Builder builder = new Notification.Builder(getApplicationContext());
-							    builder.setTicker("ほげ のテリトリーに入りました id=" + json.getInt("detection_id"));
-							    builder.setContentTitle("ほげ のテリトリーに入りました id=" + json.getInt("detection_id"));
-							    builder.setContentText("タップして詳細を見る");
-							    builder.setContentInfo(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
-							    builder.setSmallIcon(android.R.drawable.ic_menu_info_details);
-							    Intent intent = new Intent(LocationUpdateService.this, NotificationDetailActivity.class);
-							    
+								
+								String type = json.getString("notification_type");
+								if(type.equals("entering")) {
+									// みつかった
+								    builder.setTicker("ほげ のテリトリーに入りました");
+								    builder.setContentTitle("ほげ のテリトリーに入りました");
+								    builder.setContentText("タップして詳細を見る");
+								    builder.setContentInfo(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に見つかった");
+								    builder.setSmallIcon(android.R.drawable.ic_menu_info_details);
+								}else{
+									// みつけた
+								    builder.setTicker("テリトリーへの侵入者発見");
+								    builder.setContentTitle("テリトリーへの侵入者発見");
+								    builder.setContentText("タップして詳細を見る");
+								    builder.setContentInfo(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
+								    builder.setSmallIcon(android.R.drawable.ic_menu_mylocation);
+								}
+
 							    builder.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, intent, 0));
 							    builder.setVibrate(new long[] {1000, 700, 250, 700, 250, 700, 250});
 							    builder.setAutoCancel(true);
 							    builder.setOnlyAlertOnce(true);
 								Notification notification = builder.getNotification();
 								NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-								manager.notify(json.getInt("id"), notification);
+								manager.notify(json.getInt("notification_id"), notification);
 							} catch (JSONException e) {
 								e.printStackTrace();
 							}
