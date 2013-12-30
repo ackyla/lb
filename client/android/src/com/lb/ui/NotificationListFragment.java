@@ -32,7 +32,9 @@ public class NotificationListFragment extends ListFragment {
 					try {
 						JSONObject json = jsonArray.getJSONObject(i);
 						NotificationData item = new NotificationData();
-						item.setMessage("ほげ");
+						item.setType(NotificationData.TYPE_DETECTED);
+						item.setTitle("user_"+json.getInt("user_id")+" のテリトリーに入りました");
+						item.setMessage(""+json.toString());
 						objects.add(item);
 					} catch (JSONException e) {
 						e.printStackTrace();

@@ -157,6 +157,7 @@ public class LocationUpdateService extends Service{
     
     private void showNotification() {
 		// TODO ノーチフィケーションちゃんと書く
+    	
 	    Notification.Builder builder = new Notification.Builder(getApplicationContext());
 	    builder.setTicker("ほげさんのテリトリーに入りました" + System.currentTimeMillis());
 	    builder.setContentTitle("ほげさんのテリトリーに入りました" + System.currentTimeMillis());
