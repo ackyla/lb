@@ -29,4 +29,11 @@ class Territory < ActiveRecord::Base
     distance = earth_r * (Math::atan(-deg / Math::sqrt(-deg * deg + 1)) + Math::PI / 2)
     return distance
   end
+
+  def to_hash
+    hash = Hash[self.attributes]
+    hash[:territory_id] = hash[:id]
+    hash.delete :id
+    hash
+  end
 end

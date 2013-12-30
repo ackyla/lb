@@ -3,4 +3,11 @@ class Location < ActiveRecord::Base
   has_many :detections
   has_many :territories, :through => :detections
   has_many :notifications
+
+  def to_hash
+    hash = Hash[self.attributes]
+    hash[:location_id] = hash[:id]
+    hash.delete :id
+    hash
+  end
 end
