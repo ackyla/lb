@@ -53,6 +53,11 @@ module Server
       set :logging, true            # Logging in STDOUT for development and file for production (default only for development)
     end
 
+    configure :test do
+      enable :raise_errors
+      enable :logging
+    end
+
     configure :production do
       set :cache, Padrino::Cache::Store::Memcache.new(::Memcached.new('127.0.0.1:11211', :exception_retry_limit => 1))
       set :raise_errors, false
@@ -61,9 +66,6 @@ module Server
       set :logging, true
     end
 
-    configure :test do
-      set :logging, true
-    end
     ##
     # You can manage errors like:
     #

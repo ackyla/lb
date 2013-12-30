@@ -4,6 +4,8 @@ class InitSchema < ActiveRecord::Migration
       t.string :token
       t.string :name, null: false
       t.integer :gps_point, default: 0, null: false
+      t.integer :level, default: 1, null: false
+      t.integer :exp, default: 0, null: false
       t.timestamps
     end
 
