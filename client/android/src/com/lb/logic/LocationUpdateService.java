@@ -22,12 +22,15 @@ import com.lb.api.API;
 import com.lb.model.Session;
 import com.lb.model.User;
 import com.lb.model.Utils;
+import com.lb.ui.GameActivity;
 import com.lb.ui.NotificationAdapter;
 import com.lb.ui.NotificationData;
+import com.lb.ui.NotificationDetailActivity;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -161,18 +164,36 @@ public class LocationUpdateService extends Service{
 						if (jsonArray.length() > 0) {
 							try {
 								JSONObject json = jsonArray.getJSONObject(jsonArray.length()-1);
-						         
 						        SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
+							    Intent intent = new Intent(LocationUpdateService.this, NotificationDetailActivity.class);
+							    intent.putExtra("notification_id", json.getInt("notification_id"));
 						        
 								Notification.Builder builder = new Notification.Builder(getApplicationContext());
-							    builder.setTicker("user_" + json.getInt("user_id") +" のテリトリーに入りました");
-							    builder.setContentTitle("user_" + json.getInt("user_id") +" のテリトリーに入りました");
-							    builder.setContentText("タップして詳細を見る");
-							    builder.setContentInfo(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
-							    builder.setSmallIcon(android.R.drawable.ic_menu_info_details);
+								
+								String type = json.getString("notification_type");
+								if(type.equals("entering")) {
+									// みつかった
+								    builder.setTicker("ほげ のテリトリーに入りました");
+								    builder.setContentTitle("ほげ のテリトリーに入りました");
+								    builder.setContentText("タップして詳細を見る");
+								    builder.setContentInfo(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に見つかった");
+								    builder.setSmallIcon(android.R.drawable.ic_menu_info_details);
+								}else{
+									// みつけた
+								    builder.setTicker("テリトリーへの侵入者発見");
+								    builder.setContentTitle("テリトリーへの侵入者発見");
+								    builder.setContentText("タップして詳細を見る");
+								    builder.setContentInfo(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
+								    builder.setSmallIcon(android.R.drawable.ic_menu_mylocation);
+								}
+
+							    builder.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, intent, 0));
+							    builder.setVibrate(new long[] {1000, 700, 250, 700, 250, 700, 250});
+							    builder.setAutoCancel(true);
+							    builder.setOnlyAlertOnce(true);
 								Notification notification = builder.getNotification();
 								NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-								manager.notify(NOTIFICATION_ID, notification);
+								manager.notify(json.getInt("notification_id"), notification);
 							} catch (JSONException e) {
 								e.printStackTrace();
 							}

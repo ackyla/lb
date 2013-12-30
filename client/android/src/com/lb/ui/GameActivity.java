@@ -441,28 +441,6 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 							territoryMarker.setTitle("territory_" + json.getInt("id"));
 							territoryMarker.setSnippet("7,200,000,000人発見しました");
 							territoryMarker.addTo(gMap);
-							
-							API.getTerritoryLocations(user, json.getInt("id"), new JsonHttpResponseHandler() {
-								@Override
-								public void onSuccess(JSONArray jsonArray) {
-									for(int i = 0; i < jsonArray.length(); i ++) {
-										try {
-											JSONObject json = jsonArray.getJSONObject(i);
-											MarkerOptions options = new MarkerOptions();
-											options.position(new LatLng(json.getDouble("latitude"), json.getDouble("longitude")));
-											Marker marker = gMap.addMarker(options);
-										} catch (JSONException e) {
-											e.printStackTrace();
-										}
-									}
-								}
-
-								@Override
-								public void onFailure(Throwable throwable) {
-									Log.i("game","getUserTerritoryListOnFailure="+ throwable);
-								}
-							});
-							
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}

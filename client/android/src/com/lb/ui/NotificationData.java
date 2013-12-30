@@ -5,10 +5,18 @@ public class NotificationData {
 	public static final int TYPE_DETECTED = 1;
 	public static final int TYPE_DETECT = 2;
 	
+	private Integer mId;
 	private Integer mType;
 	private String mTitle;
 	private String mMessage;
 
+	public void setId(Integer id) {
+		mId = id;
+	}
+	public Integer getId() {
+		return mId;
+	}
+	
 	public void setType(Integer type) {
 		mType = type;
 	}

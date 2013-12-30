@@ -24,7 +24,7 @@ public class NotificationListFragment extends ListFragment {
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);		
+		super.onActivityCreated(savedInstanceState);
 		API.getUserNotifications(Session.getUser(), new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONArray jsonArray) {
@@ -36,9 +36,21 @@ public class NotificationListFragment extends ListFragment {
 						NotificationData item = new NotificationData();
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
 						
-						item.setType(NotificationData.TYPE_DETECTED);
-						item.setTitle("user_"+json.getInt("user_id")+" のテリトリーに入りました");
-						item.setMessage(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
+						item.setId(json.getInt("notification_id"));
+						
+						String type = json.getString("notification_type");
+						if(type.equals("entering")) {
+							// みつかった
+							item.setType(NotificationData.TYPE_DETECTED);
+							item.setTitle("ほげ のテリトリーに入りました");
+							item.setMessage(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に見つかった");	
+						}else{
+							// みつけた
+							item.setType(NotificationData.TYPE_DETECT);
+							item.setTitle("テリトリーへの侵入者発見");
+							item.setMessage(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
+						}
+						
 						objects.add(item);
 					} catch (JSONException e) {
 						e.printStackTrace();
