@@ -8,15 +8,8 @@ Server::App.controllers :territories do
   end
 
   post :create, :provides => :json do
-    territory = Territory.new(
-      :latitude => params[:latitude],
-      :longitude => params[:longitude],
-      :radius => params[:radius]
-      ){|territory|
-      territory.owner = @user
-    }
-    territory.save
-    territory.to_json
+    ter = @user.add_territory(params[:latitude], params[:longitude], params[:character_id])
+    ter.to_json
   end
 
   post :destroy, :provides => :json do
