@@ -4,7 +4,7 @@ class Territory < ActiveRecord::Base
   has_many :detections
   has_many :locations, :through => :detections
   has_many :invasions
-  has_many :invaders, class_name: User, through: :invasions, source: :user
+  has_many :invaders, class_name: "User", through: :invasions, source: :user
   scope :actives, conditions: {expired_time: nil}
 
   def expire
@@ -45,5 +45,9 @@ class Territory < ActiveRecord::Base
     hash[:territory_id] = self.id
     hash.delete "id"
     hash
+  end
+
+  def supply(point)
+    self.save
   end
 end
