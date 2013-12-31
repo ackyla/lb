@@ -18,6 +18,16 @@ class User < ActiveRecord::Base
     self.token = token
   end
 
+  def add_territory(latitude, longitude, character_id)
+    character = Character.find(character_id)
+    return unless character
+    return if character.cost > self.gps_point
+
+    ter = Territory.new(latitude: latitude, longitude: longitude, character: character, owner: self)
+    self.gps_point -= character.cost
+    ter if self.save and ter.save
+  end
+
   def add_location(latitude, longitude)
     recent_location = Location.order(created_at: :desc).first
     time_interval = (recent_location != nil)? Time.now - recent_location.created_at : nil
