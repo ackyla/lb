@@ -11,6 +11,12 @@ public class User {
 	private static String token;
 	@JsonKey
 	private static String name;
+	@JsonKey
+	private static int gps_point;
+	@JsonKey
+	private static int level;
+	@JsonKey
+	private static int exp;
 	
 	public int getId() {
 		return id;
@@ -31,5 +37,26 @@ public class User {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public int getGps_Point() {
+		return gps_point;
+	}
+	public void setGps_Point(int gps_point) {
+		this.gps_point = gps_point;
+	}
+	
+	public int getLevel() {
+		return level;
+	}
+	public void setLevel(int level) {
+		this.level = level;
+	}
+	
+	public int getExp() {
+		return exp;
+	}
+	public void setExp(int exp) {
+		this.exp = exp;
 	}
 }
