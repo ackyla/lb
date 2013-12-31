@@ -14,6 +14,8 @@ public class User {
 	@JsonKey
 	private static int gps_point;
 	@JsonKey
+	private static int gps_point_limit;
+	@JsonKey
 	private static int level;
 	@JsonKey
 	private static int exp;
@@ -44,6 +46,13 @@ public class User {
 	}
 	public void setGps_Point(int gps_point) {
 		this.gps_point = gps_point;
+	}
+	
+	public int getGps_Point_Limit() {
+		return gps_point_limit;
+	}
+	public void setGps_Point_Limit(int gps_point_limit) {
+		this.gps_point_limit = gps_point_limit;
 	}
 	
 	public int getLevel() {
