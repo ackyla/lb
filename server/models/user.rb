@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   has_many :invasions, dependent: :destroy
   has_many :enemy_territories, class_name: "Territory", through: :invasions, source: :territory
   has_many :notifications, dependent: :destroy
+  MINIMUM_TIME_INTERVAL = 300
 
   def valid_territories
     my_territories.where :expired_time => nil
@@ -18,6 +19,10 @@ class User < ActiveRecord::Base
   end
 
   def add_location(latitude, longitude)
+    recent_location = Location.order(created_at: :desc).first
+    time_interval = (recent_location != nil)? Time.now - recent_location.created_at : nil
+    return if time_interval != nil and time_interval < MINIMUM_TIME_INTERVAL
+
     loc = Location.new(latitude: latitude, longitude: longitude){|loc|
       loc.user = self
     }

@@ -33,7 +33,7 @@ Server::App.controllers :territories do
     point = params[:gps_point]
     error_message 100, "error" unless point
     if @user.supply(@territory, point)
-      JSON.unparse {supplied_point: point, terrritory: @territory.to_hash}
+      JSON.unparse({supplied_point: point, terrritory: @territory.to_hash})
     else
       {error: "error"}
     end
