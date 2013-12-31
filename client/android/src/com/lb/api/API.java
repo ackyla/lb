@@ -99,4 +99,8 @@ public class API {
 		params.put("notification_id", Integer.toString(notification_id));
 		post("notifications/read", params, handler);
 	}
+	
+	public static void getCharacterList(AsyncHttpResponseHandler handler) {
+		get("characters/list", null, handler);
+	}
 }

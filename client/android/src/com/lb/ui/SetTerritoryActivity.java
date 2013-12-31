@@ -1,5 +1,12 @@
 package com.lb.ui;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.vvakame.util.jsonpullparser.JsonFormatException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,13 +25,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.lb.R;
 import com.lb.api.API;
+import com.lb.model.Character;
+import com.lb.model.CharacterGen;
 import com.lb.model.Session;
+import com.lb.model.User;
+import com.lb.model.UserGen;
 import com.lb.model.Utils;
+import com.lb.ui.CharacterListFragment.OnCharacterListFragmentItemClickListener;
 import com.lb.ui.MapFragment.OnGoogleMapFragmentListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Location;
@@ -40,13 +53,39 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.TabHost.OnTabChangeListener;
 
-public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMapFragmentListener {
+public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMapFragmentListener, OnCharacterListFragmentItemClickListener {
 	private GoogleMap gMap;
 	private Circle mCircle;
 	private ProgressDialog mProgressDialog;
+	private AlertDialog mSelectDialog;
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		if(mSelectDialog == null) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(SetTerritoryActivity.this);
+			builder.setTitle("設置するテリトリーを選んで下さい");
+			builder.setView(getLayoutInflater().inflate(R.layout.character_list_dialog, null));
+			builder.setCancelable(false);
+			builder.setNeutralButton("キャンセル", new AlertDialog.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+					dialog.cancel();
+				}
+				
+			});
+			mSelectDialog = builder.create();
+			mSelectDialog.show();
+		}
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +125,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 			gMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener(){
 				@Override
 				public void onMyLocationChange(Location location) {
-					// てりとりー
-					Double radius = 1000.0;
-					addTerritory(new LatLng(location.getLatitude(), location.getLongitude()), radius);
+					mCircle = addTerritory(new LatLng(location.getLatitude(), location.getLongitude()), 100.0);
 					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
 					gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す
 				}
@@ -187,13 +224,19 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 		}
 	}
 	
-	public void addTerritory(LatLng latlng, Double radius) {
+	public Circle addTerritory(LatLng latlng, Double radius) {
 		CircleOptions circleOptions = new CircleOptions();
 		circleOptions.center(latlng);
 		circleOptions.strokeWidth(5);
 		circleOptions.radius(radius);
 		circleOptions.strokeColor(Color.argb(200, 0, 255, 0));
 		circleOptions.fillColor(Color.argb(50, 0, 255, 0));
-		mCircle = gMap.addCircle(circleOptions);
+		return gMap.addCircle(circleOptions);
+	}
+
+	@Override
+	public void onClickCharacterListItem(Character character) {		
+		mCircle.setRadius(character.getRadius());
+		mSelectDialog.cancel();
 	}
 }
