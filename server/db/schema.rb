@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 4) do
+ActiveRecord::Schema.define(:version => 5) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -80,12 +80,13 @@ ActiveRecord::Schema.define(:version => 4) do
 
   create_table "users", :force => true do |t|
     t.string   "token"
-    t.string   "name",                      :null => false
-    t.integer  "gps_point",  :default => 0, :null => false
-    t.integer  "level",      :default => 1, :null => false
-    t.integer  "exp",        :default => 0, :null => false
-    t.datetime "created_at",                :null => false
-    t.datetime "updated_at",                :null => false
+    t.string   "name",                             :null => false
+    t.integer  "gps_point",       :default => 0,   :null => false
+    t.integer  "level",           :default => 1,   :null => false
+    t.integer  "exp",             :default => 0,   :null => false
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+    t.integer  "gps_point_limit", :default => 100, :null => false
   end
 
   add_index "users", ["id", "token"], :name => "index_users_on_id_and_token", :unique => true

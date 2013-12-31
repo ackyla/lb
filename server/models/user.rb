@@ -21,7 +21,8 @@ class User < ActiveRecord::Base
     loc = Location.new(latitude: latitude, longitude: longitude){|loc|
       loc.user = self
     }
-    self.gps_point += 1
+
+    self.gps_point += 1 if self.gps_point < self.gps_point_limit
     self.save
     loc
   end
