@@ -33,10 +33,10 @@ Server::App.controllers :users do
 
   get :notifications, :provides => :json do
     notifications =
-      if not params[:unread]
+      if not params[:all]
         @user.notifications.undelivered.map{|n| n.notification_info}
       else
-        @user.notifications.unread.map{|n| n.notification_info}
+        @user.notifications.map{|n| n.notification_info}
       end
 
     JSON.unparse notifications
