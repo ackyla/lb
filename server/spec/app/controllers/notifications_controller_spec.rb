@@ -13,7 +13,7 @@ describe "NotificationsController" do
     @params = {
       user_id: @user.id,
       token: @user.token,
-      "notification_ids[]" => [@notification.id]
+      notification_id: @notification.id
     }
     post '/notifications/read', @params
     @json = JSON.parse last_response.body
@@ -21,8 +21,7 @@ describe "NotificationsController" do
 
   it "status check" do
     expect(last_response).to be_ok
-    Notification.where(id: @json.map{|n| n["id"]}).each{|n|
-      expect(n.read).to eq(true)
-    }
+    @notification.reload
+    expect(@notification.read).to eq(true)
   end
 end
