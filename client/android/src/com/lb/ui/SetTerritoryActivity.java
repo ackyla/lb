@@ -63,6 +63,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 	private Circle mCircle;
 	private ProgressDialog mProgressDialog;
 	private AlertDialog mSelectDialog;
+	private Character mCharacter;
 	
 	@Override
 	public void onResume() {
@@ -183,7 +184,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 					builder.setPositiveButton("する", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							API.createTerritory(Session.getUser(), mCircle.getCenter().latitude, mCircle.getCenter().longitude, mCircle.getRadius(), new JsonHttpResponseHandler() {
+							API.createTerritory(Session.getUser(), mCircle.getCenter().latitude, mCircle.getCenter().longitude, mCharacter.getId(), new JsonHttpResponseHandler() {
 								@Override
 								public void onStart() {
 									if (mProgressDialog == null) mProgressDialog = Utils.createProgressDialog(SetTerritoryActivity.this);
@@ -235,7 +236,8 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 	}
 
 	@Override
-	public void onClickCharacterListItem(Character character) {		
+	public void onClickCharacterListItem(Character character) {
+		mCharacter = character;
 		mCircle.setRadius(character.getRadius());
 		mSelectDialog.cancel();
 	}

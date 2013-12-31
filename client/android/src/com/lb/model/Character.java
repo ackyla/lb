@@ -7,11 +7,20 @@ import net.vvakame.util.jsonpullparser.annotation.JsonModel;
 public class Character {
 	
 	@JsonKey
+	private int id;
+	@JsonKey
 	private String name;
 	@JsonKey
 	private Double radius;
 	@JsonKey
 	private Double precision;
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	public int getId() {
+		return id;
+	}
 	
 	public void setName(String name) {
 		this.name = name;

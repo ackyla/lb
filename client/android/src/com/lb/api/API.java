@@ -55,12 +55,12 @@ public class API {
 		get("users/show", params, handler);
 	}
 
-	public static void createTerritory(User user, double latitude, double longitude, double radius, AsyncHttpResponseHandler handler) {
+	public static void createTerritory(User user, double latitude, double longitude, int character_id, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		setUserParams(user, params);
 		params.put("latitude", Double.toString(latitude));
 		params.put("longitude", Double.toString(longitude));
-		params.put("radius", Double.toString(radius));
+		params.put("character_id", Integer.toString(character_id));
 		post("territories/create", params, handler);
 	}
 	
