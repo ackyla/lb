@@ -77,6 +77,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	private GoogleMap gMap;
     private FragmentTabHost mTabHost;
     private ProgressDialog mProgressDialog;
+    private GameDropdownAdapter mGameDropdownAdapter;
 	
 	/** 遺産
 	private static final int GET_LOCATION_INTERVAL = 5000; // msec
@@ -153,11 +154,11 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
         item.setMessage(" Lv" + user.getLevel());
         item.setGpsPoint(user.getGps_Point());
         item.setGpsPointMax(user.getGps_Point_Limit());
-        GameDropdownAdapter adapter = new GameDropdownAdapter(this);
-        adapter.add(item);
-        actionBar.setListNavigationCallbacks(adapter, null);
+        mGameDropdownAdapter = new GameDropdownAdapter(this);
+        mGameDropdownAdapter.add(item);
+        actionBar.setListNavigationCallbacks(mGameDropdownAdapter, null);
     }
-	
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -422,8 +423,11 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	
 	@Override
 	public void onLocationUpdate(Location loc) {
-		// TODO Auto-generated method stub
-		
+		if(mGameDropdownAdapter != null && user != null && user.getGps_Point() < user.getGps_Point_Limit()) {
+			user.setGps_Point(user.getGps_Point() + 1);
+			mGameDropdownAdapter.refreshGpsPoint(0, user.getGps_Point(), user.getGps_Point_Limit());
+			mGameDropdownAdapter.notifyDataSetChanged();
+		}
 	}
 
 	@Override

@@ -223,11 +223,11 @@ public class LocationUpdateService extends Service{
     private void startGpsManager() {
     	locationListener = new LocationListener() {
 			@Override
-			public void onLocationChanged(Location location) {
+			public void onLocationChanged(final Location location) {
 				API.postLocation(Session.getUser(), location, new JsonHttpResponseHandler() {
 					@Override
 					public void onSuccess(JSONObject json) {
-						Log.v("game", "location=" + json.toString());
+						if(mainServiceClient != null) mainServiceClient.onLocationUpdate(location);
 					}
 					@Override
 					public void onFailure(Throwable throwable) {

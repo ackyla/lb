@@ -20,6 +20,12 @@ public class GameDropdownAdapter extends ArrayAdapter<GameDropdownData>{
 		mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
+	public void refreshGpsPoint(int position, int current, int limit) {
+		GameDropdownData item = getItem(position);
+		item.setGpsPoint(current);
+		item.setGpsPointMax(limit);
+	}
+	
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
         View view;
