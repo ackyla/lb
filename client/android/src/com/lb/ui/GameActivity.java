@@ -35,6 +35,7 @@ import com.lb.ui.NotificationListFragment.OnNotificationListFragmentItemClickLis
 import com.lb.ui.TerritoryDetailFragment.OnTerritoryDetailFragmentListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
@@ -61,6 +62,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -140,6 +142,20 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		return false;
 	}
 
+    private void configureActionBar() {
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+
+        GameDropdownData item = new GameDropdownData();
+        item.setTitle(user.getName());
+        item.setMessage(" Lv" + user.getLevel());
+        GameDropdownAdapter adapter = new GameDropdownAdapter(this);
+        adapter.add(item);
+        actionBar.setListNavigationCallbacks(adapter, null);
+    }
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -399,6 +415,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			startActivity(intent);
 			finish();
 		}
+		configureActionBar();
 	}
 	
 	@Override
