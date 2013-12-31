@@ -30,7 +30,7 @@ public class GameDropdownAdapter extends ArrayAdapter<GameDropdownData>{
     public View getView(int position, View convertView, ViewGroup parent){
         View view;
         if(convertView == null){
-            view = mLayoutInflater.inflate(R.layout.org_item, parent, false);
+            view = mLayoutInflater.inflate(R.layout.game_dropdown_list_title, parent, false);
         }else{
             view = convertView;
         }
@@ -53,23 +53,16 @@ public class GameDropdownAdapter extends ArrayAdapter<GameDropdownData>{
     public View getDropDownView(int position, View convertView, ViewGroup parent){
         View view;
         if(convertView == null){
-            view = mLayoutInflater.inflate(R.layout.org_item, parent, false);
+            view = mLayoutInflater.inflate(R.layout.game_dropdown_list_item, parent, false);
         }else{
             view = convertView;
         }
         GameDropdownData item = getItem(position);
         ImageView icon = (ImageView)view.findViewById(R.id.iv_avatar);
-        //icon.setImageResource(item.getIconId());
+        icon.setImageResource(item.getImage());
         //icon.setColorFilter(getContext().getColor(item.getColorId())));
         TextView tv1 = (TextView) view.findViewById(R.id.tv_title);
         tv1.setText(item.getTitle());
-        TextView tv2 = (TextView) view.findViewById(R.id.tv_message);
-        tv2.setText(item.getMessage());
-        ProgressBar pb = (ProgressBar) view.findViewById(R.id.pb_gps_point);
-        pb.setMax(item.getGpsPointMax());
-        pb.setProgress(item.getGpsPoint());
-        TextView tv3 =  (TextView) view.findViewById(R.id.tv_gps_point);
-        tv3.setText("陣力 "+item.getGpsPoint()+"/"+item.getGpsPointMax());
 
         return view;
     }

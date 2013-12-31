@@ -36,6 +36,7 @@ import com.lb.ui.TerritoryDetailFragment.OnTerritoryDetailFragmentListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.ActionBar;
+import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
@@ -154,9 +155,28 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
         item.setMessage(" Lv" + user.getLevel());
         item.setGpsPoint(user.getGps_Point());
         item.setGpsPointMax(user.getGps_Point_Limit());
+        item.setImage(R.drawable.ic_launcher);
+        
+        GameDropdownData item2 = new GameDropdownData();
+        item2.setTitle("ロケーション履歴");
+        item2.setImage(android.R.drawable.ic_menu_recent_history);
+        
         mGameDropdownAdapter = new GameDropdownAdapter(this);
         mGameDropdownAdapter.add(item);
-        actionBar.setListNavigationCallbacks(mGameDropdownAdapter, null);
+        mGameDropdownAdapter.add(item2);
+        actionBar.setListNavigationCallbacks(mGameDropdownAdapter, new OnNavigationListener() {
+
+			@Override
+			public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+				if(itemPosition == 0) {
+					
+				}else{
+					getActionBar().setSelectedNavigationItem(0);
+				}
+				return true;
+			}
+        	
+        });
     }
     
 	@Override
