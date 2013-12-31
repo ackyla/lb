@@ -17,12 +17,13 @@ class InitSchema < ActiveRecord::Migration
     end
 
     create_table :territories do |t|
-      t.float :latitude
-      t.float :longitude
-      t.float :radius
+      t.float :latitude, default: 0.0
+      t.float :longitude, default: 0.0
+      t.float :radius, default: 0.0
       t.references :owner
-      t.timestamps
+      t.references :character, null: false
       t.datetime "expired_time"
+      t.timestamps
     end
 
     create_table :detections do |t|

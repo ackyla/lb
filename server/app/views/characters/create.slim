@@ -1,0 +1,13 @@
+doctype html
+html
+  head
+    title キャラクター作成
+  body
+    - form_for @character, :create do |f|
+      = f.error_messages
+      - if @character.id != nil
+        = f.hidden_field :id
+      = f.text_field_block :name, caption: "名前", value: "名前を入力"
+      = f.text_field_block :radius, caption: "半径", value: 1000
+      = f.text_field_block :precision, caption: "精度", value: 0.8
+      = f.submit_block "submit"
