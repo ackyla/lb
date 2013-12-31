@@ -46,4 +46,8 @@ class Territory < ActiveRecord::Base
     hash.delete "id"
     hash
   end
+
+  def supply(point)
+    self.save
+  end
 end

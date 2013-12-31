@@ -27,6 +27,12 @@ class User < ActiveRecord::Base
     loc
   end
 
+  def supply(ter, point)
+    return "error" if point > self.gps_point
+    self.gps_point -= point
+    ter.supply(point) and self.save
+  end
+
   def to_hash
     hash = Hash[self.attributes]
     hash["user_id"] = self.id
