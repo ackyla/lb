@@ -14,6 +14,8 @@ public class Character {
 	private Double radius;
 	@JsonKey
 	private Double precision;
+	@JsonKey
+	private int cost;
 	
 	public void setId(int id) {
 		this.id = id;
@@ -41,5 +43,12 @@ public class Character {
 	}
 	public Double getPrecision() {
 		return precision;
+	}
+	
+	public void setCost(int cost) {
+		this.cost = cost;
+	}
+	public int getCost() {
+		return cost;
 	}
 }

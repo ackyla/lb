@@ -24,6 +24,13 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
+            android:id="@+id/tv_cost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="消費陣力: 10"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+        
+        <TextView
             android:id="@+id/tv_radius"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

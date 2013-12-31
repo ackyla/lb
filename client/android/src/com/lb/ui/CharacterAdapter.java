@@ -36,6 +36,9 @@ public class CharacterAdapter extends ArrayAdapter<Character>{
 		
 		TextView tv3 = (TextView)convertView.findViewById(R.id.tv_precision);
 		tv3.setText("精度: "+item.getPrecision()*100+"%");
+		
+		TextView tv4 = (TextView)convertView.findViewById(R.id.tv_cost);
+		tv4.setText("消費陣力: "+item.getCost());
 
 		return convertView;
 	}

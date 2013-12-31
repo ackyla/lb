@@ -180,7 +180,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 					
 					AlertDialog.Builder builder = new AlertDialog.Builder(SetTerritoryActivity.this);
 					builder.setTitle("テリトリーを設置します");
-					builder.setMessage("消費ポイント: 5000");
+					builder.setMessage("消費陣力: " + mCharacter.getCost());
 					builder.setPositiveButton("する", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
