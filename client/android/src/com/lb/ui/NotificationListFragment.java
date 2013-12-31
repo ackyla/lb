@@ -35,7 +35,7 @@ public class NotificationListFragment extends ListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		API.getUserNotifications(Session.getUser(), new JsonHttpResponseHandler() {
+		API.getUserNotifications(Session.getUser(), true, new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONArray jsonArray) {
 				List<NotificationData> objects = new ArrayList<NotificationData>();

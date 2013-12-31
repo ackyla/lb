@@ -86,10 +86,10 @@ public class API {
 		get("territories/locations", params, handler);
 	}
 	
-	public static void getUserNotifications(User user, AsyncHttpResponseHandler handler) {
+	public static void getUserNotifications(User user, boolean delivered, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
-		params.put("user_id", Integer.toString(user.getId()));
-		params.put("token", user.getToken());
+		setUserParams(user, params);
+		if(delivered) params.put("unread", "true");
 		get("users/notifications", params, handler);
 	}
 	

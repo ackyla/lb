@@ -158,7 +158,7 @@ public class LocationUpdateService extends Service{
 		getNotificationTask = timerLogic.create(new Runnable() {
 			@Override
 			public void run() {
-				API.getUserNotifications(Session.getUser(), new JsonHttpResponseHandler() {
+				API.getUserNotifications(Session.getUser(), false, new JsonHttpResponseHandler() {
 					@Override
 					public void onSuccess(JSONArray jsonArray) {
 						if (jsonArray.length() > 0) {
