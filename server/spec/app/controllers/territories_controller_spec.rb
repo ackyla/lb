@@ -15,4 +15,19 @@ describe "TerritoriesController" do
       expect(user.my_territories).to include(ter)
     end
   end
+
+  describe "/territories/move" do
+    it "move territory" do
+      user = create(:user)
+      ter = create(:territory)
+      user.my_territories << ter
+      params = {latitude: 0, longitude: 0, id: ter.id}
+      post "/territories/move", params
+      ter.reload
+
+      expect(last_response).to be_ok
+      expect(ter.latitude).to eq(params[:latitude])
+      expect(ter.longitude).to eq(params[:longitude])
+    end
+  end
 end

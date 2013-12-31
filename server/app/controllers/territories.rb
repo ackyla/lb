@@ -3,7 +3,7 @@ Server::App.controllers :territories do
     login(params)
   end
 
-  before :destroy, :locations, :supply do
+  before :destroy, :locations, :supply, :move do
     @territory = Territory.find_by_id(params[:id])
   end
 
@@ -30,5 +30,12 @@ Server::App.controllers :territories do
     else
       {error: "error"}
     end
+  end
+
+  post :move, provides: :json do
+    @territory.latitude = params[:latitude]
+    @territory.longitude = params[:longitude]
+    @territory.save
+    @territory.to_json
   end
 end
