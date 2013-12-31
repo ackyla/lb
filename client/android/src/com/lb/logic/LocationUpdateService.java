@@ -161,9 +161,9 @@ public class LocationUpdateService extends Service{
 				API.getUserNotifications(Session.getUser(), false, new JsonHttpResponseHandler() {
 					@Override
 					public void onSuccess(JSONArray jsonArray) {
-						if (jsonArray.length() > 0) {
+						for(int i = 0; i < jsonArray.length(); i ++) {
 							try {
-								JSONObject json = jsonArray.getJSONObject(jsonArray.length()-1);
+								JSONObject json = jsonArray.getJSONObject(i);
 						        SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
 							    Intent intent = new Intent(LocationUpdateService.this, GameActivity.class);
 							    intent.putExtra("notification_id", json.getInt("notification_id"));
