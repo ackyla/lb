@@ -2,6 +2,8 @@
 FactoryGirl.define do
   factory :user do
     name "user1"
+    gps_point 500
+    gps_point_limit 1000
   end
 
   factory :user2, class: User do
@@ -22,6 +24,7 @@ FactoryGirl.define do
     name "テストキャラ"
     radius 1000
     precision 1.0
+    cost 100
   end
 
   factory :territory do

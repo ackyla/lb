@@ -4,6 +4,17 @@ require 'spec_helper'
 describe User do
   before do
     @user = build(:user)
+
+  end
+
+  it "add_teritory" do
+    character = create(:character)
+    point = @user.gps_point
+    ter = @user.add_territory(35.0, 135.8, character.id)
+    @user.reload
+
+    expect(@user.my_territories).to include(ter)
+    expect(@user.gps_point).to eq(point - character.cost)
   end
 
   describe "create" do
@@ -22,11 +33,6 @@ describe User do
     it "exp" do
       expect(@user.exp).to eq(0)
     end
-
-    it "gps point" do
-      expect(@user.gps_point).to eq(0)
-    end
-
 
     it "location" do
       expect(@user.locations.size).to eq(0)
