@@ -151,6 +151,8 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
         GameDropdownData item = new GameDropdownData();
         item.setTitle(user.getName());
         item.setMessage(" Lv" + user.getLevel());
+        item.setGpsPoint(user.getGps_Point());
+        item.setGpsPointMax(2000);
         GameDropdownAdapter adapter = new GameDropdownAdapter(this);
         adapter.add(item);
         actionBar.setListNavigationCallbacks(adapter, null);

@@ -5,6 +5,8 @@ public class GameDropdownData {
 	private String mTitle;
 	private String mMessage;
 	private int mImage;
+	private int gpsPoint;
+	private int gpsPointMax;
 
 	public void setTitle(String title) {
 		mTitle = title;
@@ -25,5 +27,19 @@ public class GameDropdownData {
 	}
 	public int getImage() {
 		return mImage;
+	}
+	
+	public void setGpsPoint(int gpsPoint) {
+		this.gpsPoint = gpsPoint;
+	}
+	public int getGpsPoint() {
+		return gpsPoint;
+	}
+	
+	public void setGpsPointMax(int gpsPointMax) {
+		this.gpsPointMax = gpsPointMax;
+	}
+	public int getGpsPointMax() {
+		return gpsPointMax;
 	}
 }

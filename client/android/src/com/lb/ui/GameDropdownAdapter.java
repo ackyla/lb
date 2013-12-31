@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class GameDropdownAdapter extends ArrayAdapter<GameDropdownData>{
@@ -33,6 +34,11 @@ public class GameDropdownAdapter extends ArrayAdapter<GameDropdownData>{
         tv1.setText(item.getTitle());
         TextView tv2 =  (TextView) view.findViewById(R.id.tv_message);
         tv2.setText(item.getMessage());
+        ProgressBar pb = (ProgressBar) view.findViewById(R.id.pb_gps_point);
+        pb.setMax(item.getGpsPointMax());
+        pb.setProgress(item.getGpsPoint());
+        TextView tv3 =  (TextView) view.findViewById(R.id.tv_gps_point);
+        tv3.setText("陣力 "+item.getGpsPoint()+"/"+item.getGpsPointMax());
         
         return view;
     }
@@ -53,6 +59,11 @@ public class GameDropdownAdapter extends ArrayAdapter<GameDropdownData>{
         tv1.setText(item.getTitle());
         TextView tv2 = (TextView) view.findViewById(R.id.tv_message);
         tv2.setText(item.getMessage());
+        ProgressBar pb = (ProgressBar) view.findViewById(R.id.pb_gps_point);
+        pb.setMax(item.getGpsPointMax());
+        pb.setProgress(item.getGpsPoint());
+        TextView tv3 =  (TextView) view.findViewById(R.id.tv_gps_point);
+        tv3.setText("陣力 "+item.getGpsPoint()+"/"+item.getGpsPointMax());
 
         return view;
     }
