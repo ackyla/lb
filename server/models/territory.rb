@@ -1,5 +1,6 @@
 class Territory < ActiveRecord::Base
   belongs_to :owner, class_name: "User"
+  belongs_to :character
   has_many :detections
   has_many :locations, :through => :detections
   has_many :invasions
