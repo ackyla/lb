@@ -1,0 +1,11 @@
+doctype html
+html
+  head
+    title キャラクター一覧
+  body
+    - Character.all.each do |c|
+      ul
+        li = c.name
+        li = c.radius
+        li = c.precision
+        a href=url(:characters, :create, character_id: c.id) = "edit"
