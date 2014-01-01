@@ -49,4 +49,30 @@ describe "UsersController" do
       }
     end
   end
+
+  describe "/users/locations" do
+    before do
+      @user = create(:user)
+      @user2 = create(:user2)
+
+      @loc1 = create(:location)
+      @loc1.update_attributes(:user => @user)
+      @loc2 = create(:location2)
+      @loc2.update_attributes(:user => @user)
+      @loc3 = create(:location)
+      @loc3.update_attributes(:user => @user, :created_at => (DateTime.now-1))
+
+      @loc4 = create(:location)
+      @loc4.update_attributes(:user => @user2)
+
+      @params = {user_id: @user.id, token: @user.token, date: DateTime.now.strftime("%Y-%m-%dT00:00:00%Z")}
+      get "/users/locations", @params
+      @json = JSON.parse last_response.body
+    end
+
+    it "status check" do
+      expect(last_response).to be_ok
+      expect(@json.length).to eq(2)
+    end
+  end
 end
