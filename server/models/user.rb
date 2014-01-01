@@ -1,7 +1,6 @@
 require 'securerandom'
 
 class User < ActiveRecord::Base
-  before_create :generate_token
   has_many :locations, dependent: :destroy
   has_many :my_territories, class_name: "Territory", foreign_key: 'owner_id', dependent: :destroy
   has_many :invasions, dependent: :destroy
@@ -9,7 +8,7 @@ class User < ActiveRecord::Base
   has_many :notifications, dependent: :destroy
   MINIMUM_TIME_INTERVAL = 300
 
-  def generate_token
+  before_create do
     token = SecureRandom.base64(16)
     self.token = token
   end
@@ -21,11 +20,11 @@ class User < ActiveRecord::Base
 
     ter = self.my_territories.new(latitude: latitude, longitude: longitude, character: character)
     self.gps_point -= character.cost
-    ter if self.save and ter.save
+    return (save and ter)
   end
 
   def add_location(latitude, longitude)
-    recent_location = self.locations.order('created_at desc').first
+    recent_location = locations.order('created_at desc').first
     if recent_location
       time_interval = Time.now - recent_location.created_at
       return if time_interval < MINIMUM_TIME_INTERVAL
@@ -33,8 +32,7 @@ class User < ActiveRecord::Base
 
     loc = self.locations.new(latitude: latitude, longitude: longitude)
     self.gps_point += 1 if self.gps_point < self.gps_point_limit
-    self.save
-    loc
+    return (save and loc)
   end
 
   def supply(ter, point)
@@ -43,10 +41,26 @@ class User < ActiveRecord::Base
     ter.supply(point) and self.save
   end
 
+  def add_exp(exp_point)
+    self.exp += exp_point
+    level_up if level_up?
+    self.save
+  end
+
   def to_hash
     hash = Hash[self.attributes]
     hash["user_id"] = self.id
     hash.delete "id"
     hash
+  end
+
+  private
+  def level_up?
+    self.exp > (self.level * 100)
+  end
+
+  def level_up
+    self.gps_point = self.gps_point_limit
+    self.level = self.exp / 100 + 1
   end
 end
