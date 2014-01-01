@@ -388,25 +388,17 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			});
 			
 			refreshMap();
-			
+
+			// ノーティフィケーションから来た時
 			Intent intent = getIntent();
 			Integer notificationId = intent.getIntExtra("notification_id", 0);
-			
-			if (notificationId > 0) {
-				API.readNotification(Session.getUser(), notificationId, new JsonHttpResponseHandler() {
-
-					@Override
-					public void onSuccess(JSONObject json) {
-						//NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);	
-						//manager.cancel(mId);
-					}
-
-					@Override
-					public void onFailure(Throwable throwable) {
-						Log.i("game","getUserTerritoryListOnFailure="+ throwable);
-					}
-				});
-			}
+			Double latitude = intent.getDoubleExtra("latitude", 35.0);
+			Double longitude = intent.getDoubleExtra("longitude", 135.8);
+			String title = intent.getStringExtra("title");
+			String message = intent.getStringExtra("message");
+			Integer type = intent.getIntExtra("notification_type", NotificationData.TYPE_DETECTED);
+			boolean read = intent.getBooleanExtra("read", true);
+			if (notificationId > 0) onClickNotificationListItem(notificationId, latitude, longitude, type, title, message, read);
 		}
 	}
 	
@@ -451,7 +443,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	}
 
 	@Override
-	public void onClickNotificationListItem(Double latitude, Double longitude, Integer type, String title, String message) {
+	public void onClickNotificationListItem(Integer id, Double latitude, Double longitude, Integer type, String title, String message, boolean read) {
 		mTabHost.setCurrentTabByTag("tab1");
 		refreshMap();
 		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 12));
@@ -467,5 +459,8 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			Marker marker = gMap.addMarker(markerOpt);
 			marker.showInfoWindow();
 		}
+		
+		// 既読にする
+		if(!read) API.readNotification(Session.getUser(), id, null);
 	}
 }

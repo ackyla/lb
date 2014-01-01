@@ -1,10 +1,6 @@
 package com.lb.logic;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.TimerTask;
 
 import org.json.JSONArray;
@@ -17,22 +13,17 @@ import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailed
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.lb.R;
 import com.lb.api.API;
 import com.lb.model.Session;
-import com.lb.model.User;
 import com.lb.model.Utils;
 import com.lb.ui.GameActivity;
-import com.lb.ui.NotificationAdapter;
 import com.lb.ui.NotificationData;
-import com.lb.ui.NotificationDetailActivity;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Binder;
@@ -167,7 +158,7 @@ public class LocationUpdateService extends Service{
 						        SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
 							    Intent intent = new Intent(LocationUpdateService.this, GameActivity.class);
 							    intent.putExtra("notification_id", json.getInt("notification_id"));
-
+							    intent.putExtra("read", json.getBoolean("read"));
 							    Notification.Builder builder = new Notification.Builder(getApplicationContext());
 								String type = json.getString("notification_type");
 								if(type.equals("entering")) {
@@ -181,6 +172,7 @@ public class LocationUpdateService extends Service{
 								    intent.putExtra("longitude", json.getJSONObject("location").getDouble("longitude"));
 								    intent.putExtra("title", json.getJSONObject("territory_owner").getString("name") + " のテリトリーに入りました");
 								    intent.putExtra("message", sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に見つかった");
+								    intent.putExtra("notification_type", NotificationData.TYPE_DETECTED);
 								}else{
 									// みつけた
 								    builder.setTicker("テリトリー_"+json.getJSONObject("territory").getInt("territory_id")+"への侵入者発見");
@@ -190,8 +182,8 @@ public class LocationUpdateService extends Service{
 								    builder.setSmallIcon(android.R.drawable.ic_menu_mylocation);
 								    intent.putExtra("latitude", json.getJSONObject("territory").getDouble("latitude"));
 								    intent.putExtra("longitude", json.getJSONObject("territory").getDouble("longitude"));
+								    intent.putExtra("notification_type", NotificationData.TYPE_DETECT);
 								}
-								intent.putExtra("notification_type", type);
 								PendingIntent pendingIntent = PendingIntent.getActivity(LocationUpdateService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 							    builder.setContentIntent(pendingIntent);
 							    builder.setVibrate(new long[] {1000, 700, 250});

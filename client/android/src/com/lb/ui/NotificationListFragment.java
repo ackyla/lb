@@ -92,10 +92,10 @@ public class NotificationListFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		NotificationData item = (NotificationData) l.getItemAtPosition(position);
-		listener.onClickNotificationListItem(item.getLatitude(), item.getLongitude(), item.getType(), item.getTitle(), item.getMessage());
+		listener.onClickNotificationListItem(item.getId(), item.getLatitude(), item.getLongitude(), item.getType(), item.getTitle(), item.getMessage(), item.getRead());
 	}
 	
     public static interface OnNotificationListFragmentItemClickListener {
-        void onClickNotificationListItem(Double latitude, Double longitude, Integer type, String title, String message);
+        void onClickNotificationListItem(Integer id, Double latitude, Double longitude, Integer type, String title, String message, boolean read);
     }
 }
