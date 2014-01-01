@@ -14,10 +14,6 @@ class Territory < ActiveRecord::Base
     self.expiration_date = DateTime.now + 1
   end
 
-  def expire
-    self.expired_time = DateTime.now
-  end
-
   def detect(user, loc)
     self.invaders << user
     det = self.detections.where(location_id: loc.id).first
