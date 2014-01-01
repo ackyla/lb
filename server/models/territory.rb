@@ -21,10 +21,9 @@ class Territory < ActiveRecord::Base
   def detect(user, loc)
     self.invaders << user
     det = self.detections.where(location_id: loc.id).first
-    self.owner.exp += 1
-    self.owner.save
-    Notification.new(notification_type: "entering", user: user, detection: det).save
-    Notification.new(notification_type: "detection", user: self.owner, detection: det).save
+    self.owner.add_exp(1)
+    Notification.create(notification_type: "entering", user: user, detection: det)
+    Notification.create(notification_type: "detection", user: self.owner, detection: det)
   end
 
   def add_location(loc)
