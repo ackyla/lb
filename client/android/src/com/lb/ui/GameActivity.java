@@ -551,7 +551,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			gMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener(){
 				@Override
 				public void onMyLocationChange(Location location) {
-					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
+					gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
 					gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す
 				}
 			});
