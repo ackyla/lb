@@ -1,0 +1,45 @@
+import de.greenrobot.daogenerator.DaoGenerator;
+import de.greenrobot.daogenerator.Entity;
+import de.greenrobot.daogenerator.Schema;
+
+// DBのバージョン
+def dbVersion = 4
+// 出力先のパッケージ名
+def daoOutputPackage = "com.lb"
+// 出力先のディレクトリパス（generator実行前にcleanするのでソースは分けたほうがいい）
+def daoOutputDirPath = "android/src-gen"
+
+// generatorで作成したディレクトリを削除する
+task daoGeneratorClean(type: Delete) {
+    delete "../${daoOutputDirPath}"
+}
+
+task daoGenerator {
+    description 'daoを生成します'
+
+    doLast {
+        Schema schema = new Schema(dbVersion, daoOutputPackage);
+
+        // ------------- この辺でテーブル定義 START -------------------
+
+        Entity auth = schema.addEntity("Auth");
+
+				auth.addIdProperty().autoincrement();
+				auth.addIntProperty("user_id").notNull();
+				auth.addStringProperty("token");
+
+        // ------------- この辺でテーブル定義 END -------------------
+
+        try {
+            // 未作成ならディレクトリを作る
+            File file = new File(daoOutputDirPath);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            // Dao生成!
+            new DaoGenerator().generateAll(schema, daoOutputDirPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
