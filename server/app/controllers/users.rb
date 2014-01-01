@@ -8,7 +8,7 @@ Server::App.controllers :users do
     end
   end
 
-  before :territories, :notifications do
+  before :territories, :notifications, :locations do
     login(params)
   end
 
@@ -40,5 +40,10 @@ Server::App.controllers :users do
       end
 
     JSON.unparse notifications
+  end
+
+  get :locations, :provides => :json do
+    locations = Location.where("user_id = ? AND created_at >= ? AND created_at < ?", @user.id, Date.parse(params[:date]), Date.parse(params[:date])+1)
+    locations.to_json
   end
 end
