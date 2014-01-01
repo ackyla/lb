@@ -12,6 +12,7 @@ public class NotificationData {
 	private Double mLatitude;
 	private Double mLongitude;
 	private boolean read;
+	private Integer territoryId;
 
 	public void setId(Integer id) {
 		mId = id;
@@ -61,4 +62,12 @@ public class NotificationData {
 	public boolean getRead() {
 		return read;
 	}
+	
+	public void setTerritoryId(Integer territoryId) {
+		this.territoryId = territoryId;
+	}
+	public Integer getTerritoryId() {
+		return territoryId;
+	}
+	
 }

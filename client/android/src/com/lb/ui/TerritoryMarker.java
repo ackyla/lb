@@ -18,7 +18,9 @@ import com.lb.R;
 public class TerritoryMarker {
 	
 	private MarkerOptions mMarkerOpt;
-	private CircleOptions mCircleOpt;	
+	private CircleOptions mCircleOpt;
+	private Marker mMarker;
+	private Circle mCircle;
 	
 	public TerritoryMarker() {
 		mMarkerOpt = new MarkerOptions();
@@ -52,8 +54,12 @@ public class TerritoryMarker {
 	
 	public void addTo(GoogleMap map) {
 		if(map != null) {
-			map.addCircle(mCircleOpt);
-			map.addMarker(mMarkerOpt);
+			mCircle = map.addCircle(mCircleOpt);
+			mMarker = map.addMarker(mMarkerOpt);
 		}
-	}	
+	}
+	
+	public void showInfoWindow() {
+		if(mMarker != null) mMarker.showInfoWindow();
+	}
 }

@@ -183,6 +183,7 @@ public class LocationUpdateService extends Service{
 								    intent.putExtra("latitude", json.getJSONObject("territory").getDouble("latitude"));
 								    intent.putExtra("longitude", json.getJSONObject("territory").getDouble("longitude"));
 								    intent.putExtra("notification_type", NotificationData.TYPE_DETECT);
+								    intent.putExtra("territory_id", json.getJSONObject("territory").getInt("territory_id"));
 								}
 								PendingIntent pendingIntent = PendingIntent.getActivity(LocationUpdateService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 							    builder.setContentIntent(pendingIntent);

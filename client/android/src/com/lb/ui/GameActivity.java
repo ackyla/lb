@@ -83,6 +83,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
     private FragmentTabHost mTabHost;
     private ProgressDialog mProgressDialog;
     private GameDropdownAdapter mGameDropdownAdapter;
+    private Integer mTerritoryId = 0;
 	private final ServiceConnection serviceConnection = new ServiceConnection() {
 
 		@Override
@@ -309,6 +310,10 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 							territoryMarker.setTitle("territory_" + json.getInt("id"));
 							territoryMarker.setSnippet("7,200,000,000人発見しました");
 							territoryMarker.addTo(gMap);
+							if(json.getInt("id") == mTerritoryId) {								
+								territoryMarker.showInfoWindow();
+								mTerritoryId = 0;
+							}
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -398,7 +403,8 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			String message = intent.getStringExtra("message");
 			Integer type = intent.getIntExtra("notification_type", NotificationData.TYPE_DETECTED);
 			boolean read = intent.getBooleanExtra("read", true);
-			if (notificationId > 0) onClickNotificationListItem(notificationId, latitude, longitude, type, title, message, read);
+			Integer territoryId = intent.getIntExtra("territory_id", 0);
+			if (notificationId > 0) onClickNotificationListItem(notificationId, latitude, longitude, type, title, message, read, territoryId);
 		}
 	}
 	
@@ -441,11 +447,14 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		refreshMap();
 		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 12));
 	}
-
+	
 	@Override
-	public void onClickNotificationListItem(Integer id, Double latitude, Double longitude, Integer type, String title, String message, boolean read) {
+	public void onClickNotificationListItem(Integer id, Double latitude, Double longitude, Integer type, String title, String message, boolean read, Integer territoryId) {
 		mTabHost.setCurrentTabByTag("tab1");
+		
+		mTerritoryId = territoryId;
 		refreshMap();
+		
 		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 12));
 		
 		if (type == NotificationData.TYPE_DETECTED) {
