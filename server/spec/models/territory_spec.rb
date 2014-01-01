@@ -2,16 +2,19 @@
 require 'spec_helper'
 
 describe Territory do
-  describe "Destroy" do
-    before do
-      @ter = build(:territory)
+  describe "#create" do
+    it "territory.radius == character.radius" do
+      ter = create(:territory)
+      char = create(:character)
+      expect(ter.radius).to eq(char.radius)
     end
+  end
 
-    it "Destroy" do
-      time = DateTime.now
-      @ter.expire
-      expired_time = @ter.expired_time
-      expired_time != nil and time < expired_time
-    end
+  it "destroy check" do
+    ter = build(:territory)
+    time = DateTime.now
+    ter.expire
+    expect(ter.expired_time).to be > time
+    expect(ter.expired_time).to be < Time.now
   end
 end

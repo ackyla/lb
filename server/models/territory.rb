@@ -7,6 +7,10 @@ class Territory < ActiveRecord::Base
   has_many :invaders, class_name: "User", through: :invasions, source: :user
   scope :actives, conditions: {expired_time: nil}
 
+  before_create do
+    self.radius = character.radius
+  end
+
   def expire
     self.expired_time = DateTime.now
   end

@@ -1,18 +1,25 @@
+# -*- coding: utf-8 -*-
 require 'spec_helper'
 
 describe "TerritoriesController" do
-  describe "/territories/create" do
-    it "create territory" do
-      char = create(:character)
-      user = create(:user)
-      params = {latitude: 100, longitude: 100, character_id: char.id, user_id: user.id, token: user.token}
+  describe "#create" do
+    before do
+      @char = create(:character)
+      @user = create(:user)
+      params = {latitude: 100, longitude: 100, character_id: @char.id, user_id: @user.id, token: @user.token}
       post "/territories/create", params
-      json = JSON.parse last_response.body
-      ter = Territory.find(json["id"])
-      user.reload
+      @json = JSON.parse last_response.body
+      @ter = Territory.find(@json["id"])
+      @user.reload
+    end
 
+    it "レスポンス チェック" do
       expect(last_response).to be_ok
-      expect(user.my_territories).to include(ter)
+    end
+
+    it "テリトリーの検証" do
+      expect(@user.my_territories).to include(@ter)
+      expect(@ter["radius"]).to eq(@char.radius)
     end
   end
 
