@@ -171,6 +171,9 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 				if(itemPosition == 0) {
 					
 				}else{
+					Intent intent = new Intent();
+					intent.setClass(getActivity(), LocationHistoryActivity.class);
+					startActivity(intent);
 					getActionBar().setSelectedNavigationItem(0);
 				}
 				return true;

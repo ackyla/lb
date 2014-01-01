@@ -1,6 +1,7 @@
 package com.lb.api;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.location.Location;
 
@@ -102,5 +103,12 @@ public class API {
 	
 	public static void getCharacterList(AsyncHttpResponseHandler handler) {
 		get("characters/list", null, handler);
+	}
+	
+	public static void getUserLocations(User user, String date, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		setUserParams(user, params);
+		params.put("date", date);
+		get("users/locations", params, handler);
 	}
 }

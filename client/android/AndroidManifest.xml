@@ -61,6 +61,13 @@
                 android:value="com.lb.ui.GameActivity" />
         </activity>
         <activity
+            android:name="com.lb.ui.LocationHistoryActivity"
+            android:label="@string/app_name" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.lb.ui.GameActivity" />
+        </activity>
+        <activity
             android:name="com.lb.ui.MainActivity"
             android:label="@string/app_name" >
         </activity>
