@@ -40,22 +40,15 @@ public class SignupActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_signup);
 		
-		Session session = (Session) getApplication();
-		DaoSession daoSession = session.getDaoSession();
-		authDao = daoSession.getAuthDao();
-		
-		if(authDao.count() > 0) {
-			auth = authDao.loadAll().get(0);
-			startGame();
-		}
-		
 		userNameInput = (EditText)findViewById(R.id.editText1);
 		Button button = (Button)findViewById(R.id.buttonRegister);
 		button.setOnClickListener(this);
 	}
 
-	private void startGame() {
-		API.getUserInfo(auth.getUser_id(), new JsonHttpResponseHandler() {
+	@Override
+	public void onClick(View v) {		
+		API.register(userNameInput.getText().toString(), new JsonHttpResponseHandler() {
+			
 			@Override
 			public void onStart() {
 				mProgressDialog = Utils.createProgressDialog(SignupActivity.this);
@@ -66,45 +59,20 @@ public class SignupActivity extends Activity implements OnClickListener {
 				mProgressDialog.dismiss();
 				try {
 					User user = UserGen.get(json.toString());
-					user.setToken(auth.getToken());
+					
+					Session session = (Session) getApplication();
+					DaoSession daoSession = session.getDaoSession();
+					authDao = daoSession.getAuthDao();
+					auth = new Auth(null, user.getId(), user.getToken());
+					authDao.insert(auth);
+					
 					Session.setUser(user);
 					
 					Intent intent = new Intent();
 					intent.setClass(SignupActivity.this, GameActivity.class);
 					startActivity(intent);
+					//overridePendingTransition(0,0);
 					finish();
-				} catch (IOException e) {
-				} catch (JsonFormatException e) {
-				}
-			}
-			
-			@Override
-			public void onFailure(Throwable e) {
-				mProgressDialog.dismiss();
-				Toast.makeText(getApplicationContext(), "ユーザ情報の取得に失敗しました!", Toast.LENGTH_LONG).show();
-			}
-		});
-	}
-
-	@Override
-	public void onClick(View v) {		
-		Log.i("game", "text="+userNameInput.getText());
-		API.register(userNameInput.getText().toString(), new JsonHttpResponseHandler() {
-			
-			@Override
-			public void onStart() {
-				Log.i("game", "tsushin");
-				mProgressDialog = Utils.createProgressDialog(SignupActivity.this);
-			}
-			
-			@Override
-			public void onSuccess(JSONObject json) {
-				mProgressDialog.dismiss();
-				try {
-					User user = UserGen.get(json.toString());
-					auth = new Auth(null, user.getId(), user.getToken());
-					authDao.insert(auth);					
-					startGame();
 				} catch (IOException e1) {
 					
 				} catch (JsonFormatException e1) {
