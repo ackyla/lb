@@ -11,9 +11,9 @@ public class Character {
 	@JsonKey
 	private String name;
 	@JsonKey
-	private Double radius;
+	private double radius;
 	@JsonKey
-	private Double precision;
+	private double precision;
 	@JsonKey
 	private int cost;
 	
@@ -31,17 +31,17 @@ public class Character {
 		return name;
 	}
 	
-	public void setRadius(Double radius) {
+	public void setRadius(double radius) {
 		this.radius = radius;
 	}
-	public Double getRadius() {
+	public double getRadius() {
 		return radius;
 	}
 	
-	public void setPrecision(Double precision) {
+	public void setPrecision(double precision) {
 		this.precision = precision;
 	}
-	public Double getPrecision() {
+	public double getPrecision() {
 		return precision;
 	}
 	

@@ -5,11 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+
 import net.vvakame.util.jsonpullparser.JsonFormatException;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
@@ -44,20 +43,14 @@ public class CharacterListFragment extends ListFragment {
 			@Override
 			public void onSuccess(JSONArray jsonArray) {
 				List<Character> objects = new ArrayList<Character>();
-				
-				for(int i = 0; i < jsonArray.length(); i ++) {
-					try {
-						Character character = CharacterGen.get(jsonArray.getJSONObject(i).toString());
-						objects.add(character);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (JsonFormatException e) {
-						e.printStackTrace();
-					}
+				try {
+					objects = CharacterGen.getList(jsonArray.toString());
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (JsonFormatException e) {
+					e.printStackTrace();
 				}
-				
+
 				Context context = getActivity();
 				if(context != null) {
 					CharacterAdapter adapter = new CharacterAdapter(context, objects);
