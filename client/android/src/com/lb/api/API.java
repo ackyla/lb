@@ -1,6 +1,7 @@
 package com.lb.api;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.location.Location;
 
@@ -55,12 +56,12 @@ public class API {
 		get("users/show", params, handler);
 	}
 
-	public static void createTerritory(User user, double latitude, double longitude, double radius, AsyncHttpResponseHandler handler) {
+	public static void createTerritory(User user, double latitude, double longitude, int character_id, AsyncHttpResponseHandler handler) {
 		RequestParams params = new RequestParams();
 		setUserParams(user, params);
 		params.put("latitude", Double.toString(latitude));
 		params.put("longitude", Double.toString(longitude));
-		params.put("radius", Double.toString(radius));
+		params.put("character_id", Integer.toString(character_id));
 		post("territories/create", params, handler);
 	}
 	
@@ -98,5 +99,16 @@ public class API {
 		setUserParams(user, params);
 		params.put("notification_id", Integer.toString(notification_id));
 		post("notifications/read", params, handler);
+	}
+	
+	public static void getCharacterList(AsyncHttpResponseHandler handler) {
+		get("characters/list", null, handler);
+	}
+	
+	public static void getUserLocations(User user, String date, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		setUserParams(user, params);
+		params.put("date", date);
+		get("users/locations", params, handler);
 	}
 }
