@@ -72,6 +72,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 		if(mSelectDialog == null) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(SetTerritoryActivity.this);
 			builder.setTitle("設置するテリトリーを選んで下さい");
+			builder.setMessage("残り陣力: "+Session.getUser().getGps_Point());
 			builder.setView(getLayoutInflater().inflate(R.layout.character_list_dialog, null));
 			builder.setCancelable(false);
 			builder.setNeutralButton("キャンセル", new AlertDialog.OnClickListener() {
@@ -177,7 +178,6 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 
 				@Override
 				public void onClick(View v) {
-					
 					AlertDialog.Builder builder = new AlertDialog.Builder(SetTerritoryActivity.this);
 					builder.setTitle("テリトリーを設置します");
 					builder.setMessage("消費陣力: " + mCharacter.getCost());
@@ -205,6 +205,12 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 										e.printStackTrace();
 									}
 									Toast.makeText(SetTerritoryActivity.this, "テリトリーを設置しました", Toast.LENGTH_LONG).show();
+									
+									// 陣力が足りなくなったらキャラクターリストを開く
+									if (mCharacter.getCost() > Session.getUser().getGps_Point()) {
+										mSelectDialog.setMessage("残り陣力: " + Session.getUser().getGps_Point());
+										mSelectDialog.show();
+									}
 								}
 
 								@Override
@@ -247,8 +253,12 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 
 	@Override
 	public void onClickCharacterListItem(Character character) {
-		mCharacter = character;
-		mCircle.setRadius(character.getRadius());
-		mSelectDialog.cancel();
+		if(character.getCost() > Session.getUser().getGps_Point()) {
+			Toast.makeText(SetTerritoryActivity.this, "陣力が足りません", Toast.LENGTH_LONG).show();
+		}else{
+			mCharacter = character;
+			mCircle.setRadius(character.getRadius());
+			mSelectDialog.cancel();
+		}
 	}
 }
