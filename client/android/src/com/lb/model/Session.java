@@ -52,4 +52,5 @@ public class Session extends Application {
     public static Context getContext() {
     	return mContext;
     }
+
 }

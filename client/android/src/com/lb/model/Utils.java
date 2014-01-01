@@ -36,4 +36,12 @@ public class Utils {
 		}
         return date;
     }
+    
+    public static User updateSessionUserInfo(User user) {
+    	User sessionUser = Session.getUser();
+    	user.setId(sessionUser.getId());
+    	user.setToken(sessionUser.getToken());
+    	Session.setUser(user);
+    	return user;
+    }
 }

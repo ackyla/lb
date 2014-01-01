@@ -227,7 +227,15 @@ public class LocationUpdateService extends Service{
 				API.postLocation(Session.getUser(), location, new JsonHttpResponseHandler() {
 					@Override
 					public void onSuccess(JSONObject json) {
-						if(mainServiceClient != null) mainServiceClient.onLocationUpdate(location);
+						try {
+							String st = json.getString("status");
+							if(st.equals("ok")) {
+								if(mainServiceClient != null) mainServiceClient.onLocationUpdate(json);
+							}
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						
 					}
 					@Override
 					public void onFailure(Throwable throwable) {

@@ -194,12 +194,22 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 								
 								@Override
 								public void onSuccess(JSONObject json) {
-									addTerritory(mCircle.getCenter(), mCircle.getRadius());
+									try {
+										Utils.updateSessionUserInfo(UserGen.get(json.getJSONObject("user").toString()));
+										addTerritory(mCircle.getCenter(), mCircle.getRadius());
+									} catch (IOException e) {
+										e.printStackTrace();
+									} catch (JsonFormatException e) {
+										e.printStackTrace();
+									} catch (JSONException e) {
+										e.printStackTrace();
+									}
 									Toast.makeText(SetTerritoryActivity.this, "テリトリーを設置しました", Toast.LENGTH_LONG).show();
 								}
 
 								@Override
 								public void onFailure(Throwable throwable) {
+									Toast.makeText(SetTerritoryActivity.this, "テリトリーを設置できませんでした", Toast.LENGTH_LONG).show();
 									Log.v("game","postHitLocationOnFailure="+ throwable);
 								}
 								
