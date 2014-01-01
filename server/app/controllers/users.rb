@@ -28,7 +28,7 @@ Server::App.controllers :users do
   end
 
   get :territories, :provides => :json do
-    @user.valid_territories.to_json
+    @user.my_territories.to_json
   end
 
   get :notifications, :provides => :json do

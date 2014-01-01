@@ -36,7 +36,6 @@ describe "TerritoriesController" do
       post "/territories/move", params
       ter.reload
 
-      p last_response.status
       expect(last_response).to be_ok
       expect(ter.latitude).to eq(params[:latitude])
       expect(ter.longitude).to eq(params[:longitude])

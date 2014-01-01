@@ -2,51 +2,24 @@
 require 'spec_helper'
 
 describe User do
-  before do
-    @user = build(:user)
 
-  end
+  let(:char) { create(:character) }
 
-  it "add_teritory" do
-    character = create(:character)
-    point = @user.gps_point
-    ter = @user.add_territory(35.0, 135.8, character.id)
-    @user.reload
+  describe "#add_territory" do
+    let(:user) { create(:user) }
 
-    expect(@user.my_territories).to include(ter)
-    expect(@user.gps_point).to eq(point - character.cost)
-  end
-
-  describe "create" do
-    it "save" do
-      @user.save.should be_true
+    before do
+      @point = user.gps_point
+      @ter = user.add_territory(35.0, 135.8, char.id)
+      user.reload
     end
 
-    it "name" do
-      expect(@user.name).to eq("user1")
+    it "テリトリーが追加される" do
+      expect(user.my_territories).to include(@ter)
     end
 
-    it "level" do
-      expect(@user.level).to eq(1)
-    end
-
-    it "exp" do
-      expect(@user.exp).to eq(0)
-    end
-
-    it "location" do
-      expect(@user.locations.size).to eq(0)
-      size = @user.locations.size
-      loc = @user.add_location(35.0, 135.8)
-      loc.save
-      @user.reload
-      expect(@user.locations.size).to eq(size + 1)
-    end
-
-    it "territory" do
-      ters = @user.valid_territories
-      ter = ters.first
-      expect(ters.size).to eq(0)
+    it "GPSポイントが消費される" do
+      expect(user.gps_point).to eq(@point - char.cost)
     end
   end
 end
