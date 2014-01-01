@@ -23,4 +23,30 @@ describe "LocationsController" do
     expect(ter.invaders).to include(user)
     expect(user.gps_point).to eq(point + 1)
   end
+
+  it "interval check" do
+    user = create(:user)
+
+    params = {user_id: user.id, token: user.token, latitude: 35.0, longitude: 135.8}
+    post "/locations/create", params
+    expect(last_response).to be_ok
+    json = JSON.parse last_response.body
+    expect(json["status"]).to eq("ok")
+    loc = Location.find_by_id(json["location"]["id"])
+    loc.update_attributes(:created_at => DateTime.now - (User::MINIMUM_TIME_INTERVAL+10).seconds)
+
+    post "/locations/create", params
+    expect(last_response).to be_ok
+    json = JSON.parse last_response.body
+    expect(json["status"]).to eq("ok")
+    locs = Location.all
+    expect(locs.length).to eq(2)
+
+    post "/locations/create", params
+    expect(last_response).to be_ok
+    json = JSON.parse last_response.body
+    expect(json["status"]).to eq("failure")
+    locs = Location.all
+    expect(locs.length).to eq(2)
+  end
 end
