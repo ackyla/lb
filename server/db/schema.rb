@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 6) do
+ActiveRecord::Schema.define(:version => 7) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -69,14 +69,14 @@ ActiveRecord::Schema.define(:version => 6) do
   end
 
   create_table "territories", :force => true do |t|
-    t.float    "latitude",     :default => 0.0
-    t.float    "longitude",    :default => 0.0
-    t.float    "radius",       :default => 0.0
+    t.float    "latitude",        :default => 0.0
+    t.float    "longitude",       :default => 0.0
+    t.float    "radius",          :default => 0.0
     t.integer  "owner_id"
-    t.integer  "character_id",                  :null => false
-    t.datetime "expired_time"
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
+    t.integer  "character_id",                     :null => false
+    t.datetime "expiration_date"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
   end
 
   create_table "users", :force => true do |t|

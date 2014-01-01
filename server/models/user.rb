@@ -9,10 +9,6 @@ class User < ActiveRecord::Base
   has_many :notifications, dependent: :destroy
   MINIMUM_TIME_INTERVAL = 300
 
-  def valid_territories
-    my_territories.where :expired_time => nil
-  end
-
   def generate_token
     token = SecureRandom.base64(16)
     self.token = token
@@ -42,7 +38,7 @@ class User < ActiveRecord::Base
   end
 
   def supply(ter, point)
-    return "error" if point > self.gps_point
+    return if (point > self.gps_point)
     self.gps_point -= point
     ter.supply(point) and self.save
   end

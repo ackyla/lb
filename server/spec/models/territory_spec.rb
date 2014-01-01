@@ -9,12 +9,4 @@ describe Territory do
       expect(ter.radius).to eq(char.radius)
     end
   end
-
-  it "destroy check" do
-    ter = build(:territory)
-    time = DateTime.now
-    ter.expire
-    expect(ter.expired_time).to be > time
-    expect(ter.expired_time).to be < Time.now
-  end
 end
