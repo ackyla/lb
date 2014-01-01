@@ -23,20 +23,19 @@ class User < ActiveRecord::Base
     return unless character
     return if character.cost > self.gps_point
 
-    ter = Territory.new(latitude: latitude, longitude: longitude, character: character, owner: self)
+    ter = self.my_territories.new(latitude: latitude, longitude: longitude, character: character)
     self.gps_point -= character.cost
     ter if self.save and ter.save
   end
 
   def add_location(latitude, longitude)
-    recent_location = Location.order(created_at: :desc).first
-    time_interval = (recent_location != nil)? Time.now - recent_location.created_at : nil
-    return if time_interval != nil and time_interval < MINIMUM_TIME_INTERVAL
+    recent_location = self.locations.order('created_at desc').first
+    if recent_location
+      time_interval = Time.now - recent_location.created_at
+      return if time_interval < MINIMUM_TIME_INTERVAL
+    end
 
-    loc = Location.new(latitude: latitude, longitude: longitude){|loc|
-      loc.user = self
-    }
-
+    loc = self.locations.new(latitude: latitude, longitude: longitude)
     self.gps_point += 1 if self.gps_point < self.gps_point_limit
     self.save
     loc
