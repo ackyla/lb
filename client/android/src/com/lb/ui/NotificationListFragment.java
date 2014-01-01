@@ -47,7 +47,7 @@ public class NotificationListFragment extends ListFragment {
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
 						Log.i("game", "json="+json);
 						item.setId(json.getInt("notification_id"));
-						
+						item.setRead(json.getBoolean("read"));
 						String type = json.getString("notification_type");
 						if(type.equals("entering")) {
 							// みつかった

@@ -5,11 +5,13 @@ import java.util.List;
 import com.lb.R;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class NotificationAdapter extends ArrayAdapter<NotificationData>{
@@ -25,6 +27,9 @@ public class NotificationAdapter extends ArrayAdapter<NotificationData>{
 	public View getView(int position, View convertView, ViewGroup parent) {
 		NotificationData item = (NotificationData) getItem(position);
 		if (null == convertView) convertView = mLayoutInflater.inflate(R.layout.notification_list_item, null);
+		
+		LinearLayout ll = (LinearLayout) convertView.findViewById(R.id.ll_notification);
+		if (item.getRead()) ll.setBackgroundColor(Color.argb(30, 0, 0, 0));		
 		
 		ImageView imageView = (ImageView)convertView.findViewById(R.id.notification_type_image);
 		switch(item.getType()) {
