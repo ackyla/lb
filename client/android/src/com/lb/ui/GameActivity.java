@@ -595,8 +595,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
     @Override
     public void onBackPressed() {
         if (!getCurrentFragment().popBackStack()) {
-            // タブ内FragmentのBackStackがない場合は終了
-            super.onBackPressed();
+            // タブ内FragmentのBackStackがない場合は何もしない
         }
     }
 	
