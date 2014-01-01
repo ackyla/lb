@@ -9,7 +9,8 @@ Server::App.controllers :territories do
 
   post :create, :provides => :json do
     ter = @user.add_territory(params[:latitude], params[:longitude], params[:character_id])
-    ter.to_json
+    res = {territory: ter.to_hash, user: ter.owner.to_hash}
+    JSON.unparse(res)
   end
 
   post :destroy, :provides => :json do

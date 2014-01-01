@@ -9,8 +9,8 @@ describe "TerritoriesController" do
       params = {latitude: 100, longitude: 100, character_id: @char.id, user_id: @user.id, token: @user.token}
       post "/territories/create", params
       @json = JSON.parse last_response.body
-      @ter = Territory.find(@json["id"])
-      @user.reload
+      @ter = Territory.find(@json["territory"]["territory_id"])
+      @user = User.find(@json["user"]["user_id"])
     end
 
     it "レスポンス チェック" do
