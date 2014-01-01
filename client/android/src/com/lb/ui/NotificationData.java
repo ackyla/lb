@@ -11,6 +11,7 @@ public class NotificationData {
 	private String mMessage;
 	private Double mLatitude;
 	private Double mLongitude;
+	private boolean read;
 
 	public void setId(Integer id) {
 		mId = id;
@@ -52,5 +53,12 @@ public class NotificationData {
 	}
 	public Double getLongitude() {
 		return mLongitude;
+	}
+	
+	public void setRead(boolean read) {
+		this.read = read;
+	}
+	public boolean getRead() {
+		return read;
 	}
 }
