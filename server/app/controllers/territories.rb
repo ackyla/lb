@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*-
 Server::App.controllers :territories do
-  before :create, :destroy, :locations do
+  before :create do
     login(params)
   end
 
   before :destroy, :locations, :supply, :move do
-    @territory = Territory.find_by_id(params[:id])
+    login(params)
+    @territory = @user.my_territories.find(params[:id])
   end
 
   post :create, :provides => :json do
@@ -23,14 +25,13 @@ Server::App.controllers :territories do
     @territory.locations.to_json
   end
 
-  post :supply, :provides => :json do
-    point = params[:gps_point]
-    error_message 100, "error" unless point
+  post :supply, provides: :json do
+    return status_failure "GPSポイントが指定されていません." unless params[:gps_point]
+    point = params[:gps_point].to_i
     if @user.supply(@territory, point)
-      JSON.unparse({supplied_point: point, terrritory: @territory.to_hash})
-    else
-      {error: "error"}
+      return JSON.unparse(status_ok({supplied_point: point, terrritory: @territory.to_hash}))
     end
+    return status_failure
   end
 
   post :move, provides: :json do

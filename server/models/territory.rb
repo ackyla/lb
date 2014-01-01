@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Territory < ActiveRecord::Base
   belongs_to :owner, class_name: "User"
   belongs_to :character
@@ -5,10 +6,12 @@ class Territory < ActiveRecord::Base
   has_many :locations, :through => :detections
   has_many :invasions
   has_many :invaders, class_name: "User", through: :invasions, source: :user
-  scope :actives, conditions: {expired_time: nil}
+  scope :actives, where("expiration_date >= ? ", Time.now)
 
   before_create do
     self.radius = character.radius
+    # デフォルトの有効期限は1日
+    self.expiration_date = DateTime.now + 1
   end
 
   def expire
@@ -52,6 +55,7 @@ class Territory < ActiveRecord::Base
   end
 
   def supply(point)
+    self.expiration_date += (point * 10).hours
     self.save
   end
 end

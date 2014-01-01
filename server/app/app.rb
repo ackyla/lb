@@ -88,6 +88,14 @@ module Server
         error_message(100, "INVALID PARAMETER")
       end
 
+      def status_failure(message, opt={})
+        {status: "failure", message: message}.merge(opt)
+      end
+
+      def status_ok(opt = {})
+        {status: "ok"}.merge(opt)
+      end
+
       def login(params)
         invalid_param_error unless params.key? "user_id" and params.key? "token"
         @user = User.find_by_id_and_token(params[:user_id], params[:token])
