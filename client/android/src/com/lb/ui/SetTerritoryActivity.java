@@ -116,8 +116,9 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 	}
 	
 	@Override
-	public void onMapReady(GoogleMap map) {
+	public void onMapReady(GoogleMap map, final View v) {
 		if(gMap == null) {
+			v.setVisibility(View.INVISIBLE);
 			gMap = map;
 			gMap.setMyLocationEnabled(true);
 			UiSettings settings = gMap.getUiSettings();
@@ -130,6 +131,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 					mCircle = addTerritory(new LatLng(location.getLatitude(), location.getLongitude()), 100.0);
 					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
 					gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す
+					v.setVisibility(View.VISIBLE);
 				}
 			});
 			

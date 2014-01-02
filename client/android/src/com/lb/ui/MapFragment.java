@@ -57,7 +57,7 @@ public class MapFragment extends SupportMapFragment {
     	View v = super.onCreateView(inflater, container, savedInstanceState);
     	Log.i("game", "createview");
         if (listener != null) {
-        	listener.onMapReady(getMap());
+        	listener.onMapReady(getMap(), v);
         }
         return v; 
     }
@@ -69,6 +69,6 @@ public class MapFragment extends SupportMapFragment {
     }
     
     public static interface OnGoogleMapFragmentListener {
-        void onMapReady(GoogleMap map);
+        void onMapReady(GoogleMap map, View v);
     }
 }

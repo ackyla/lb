@@ -34,7 +34,9 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -52,7 +54,8 @@ public class LocationHistoryActivity extends FragmentActivity implements OnGoogl
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_location_history);
-
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		mCal = Calendar.getInstance();
 		
 		final Button bt1 = (Button) findViewById(R.id.bt_date);
@@ -83,10 +86,21 @@ public class LocationHistoryActivity extends FragmentActivity implements OnGoogl
 	}
 
 	@Override
-	public void onMapReady(GoogleMap map) {
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    // Respond to the action bar's Up/Home button
+	    case android.R.id.home:
+	    	NavUtils.navigateUpFromSameTask(this);
+	        return true;
+	    }
+	    return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public void onMapReady(GoogleMap map, final View v) {
 		if(gMap == null) {
+			v.setVisibility(View.INVISIBLE);
 			gMap = map;
-			
 			gMap.setMyLocationEnabled(true);
 			UiSettings settings = gMap.getUiSettings();
 			settings.setMyLocationButtonEnabled(true);
@@ -95,8 +109,9 @@ public class LocationHistoryActivity extends FragmentActivity implements OnGoogl
 			gMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener(){
 				@Override
 				public void onMyLocationChange(Location location) {
-					gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
+					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
 					gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す
+					v.setVisibility(View.VISIBLE);
 				}
 			});
 			
