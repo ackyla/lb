@@ -1,7 +1,10 @@
 package com.lb.ui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.vvakame.util.jsonpullparser.JsonFormatException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,6 +13,8 @@ import org.json.JSONObject;
 import com.lb.R;
 import com.lb.api.API;
 import com.lb.model.Session;
+import com.lb.model.Territory;
+import com.lb.model.TerritoryGen;
 import com.lb.model.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -31,23 +36,13 @@ public class TerritoryListFragment extends ListFragment {
 		API.getUserTerritories(Session.getUser(), new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONArray jsonArray) {
-				List<TerritoryData> objects = new ArrayList<TerritoryData>();
-				
-				for(int i = 0; i < jsonArray.length(); i ++) {
-					try {
-						JSONObject json = jsonArray.getJSONObject(i);
-						Integer id = json.getInt("id");
-						Double latitude = json.getDouble("latitude");
-						Double longitude = json.getDouble("longitude");
-						TerritoryData item = new TerritoryData();
-						item.setTextData("テリトリー_" + id);
-						item.setId(id);
-						item.setLatitude(latitude);
-						item.setLongitude(longitude);
-						objects.add(item);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
+				List<Territory> objects = new ArrayList<Territory>();
+				try {
+					objects = TerritoryGen.getList(jsonArray.toString());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (JsonFormatException e1) {
+					e1.printStackTrace();
 				}
 				
 				Context context = getActivity();
@@ -70,7 +65,7 @@ public class TerritoryListFragment extends ListFragment {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		TerritoryData item = (TerritoryData) l.getItemAtPosition(position);
+		Territory item = (Territory) l.getItemAtPosition(position);
 		
 		TerritoryDetailFragment fragment = new TerritoryDetailFragment();
 		Bundle bundle = new Bundle();

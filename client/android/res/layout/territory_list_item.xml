@@ -1,20 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal" >
 
     <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher" />
+        android:id="@+id/iv_territory"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/territory" />
 
-    <TextView
-        android:id="@+id/nname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="6dp" >
 
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TERRITORY"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="場所: 日本"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+        
+        <TextView
+            android:id="@+id/tv_radius"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="半径: 1km"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+        
+        <TextView
+            android:id="@+id/tv_precision"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="精度: 50%"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+        
+    </LinearLayout>
 </LinearLayout>
