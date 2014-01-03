@@ -20,19 +20,56 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 public class TerritoryListFragment extends ListFragment {
 	
+	private static final int INTERNAL_EMPTY_ID = 0x00ff0001;
+	private static final int INTERNAL_PROGRESS_CONTAINER_ID = 0x00ff0002;
+	private static final int INTERNAL_LIST_CONTAINER_ID = 0x00ff0003;
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	View v = inflater.inflate(R.layout.fragment_territory_list, container, false);
+    	
+    	LinearLayout pframe = (LinearLayout) v.findViewById(R.id.progressContainer);
+    	pframe.setId(INTERNAL_PROGRESS_CONTAINER_ID);
+    	
+        FrameLayout lframe = (FrameLayout) v.findViewById(R.id.listContainer);
+        lframe.setId(INTERNAL_LIST_CONTAINER_ID);
+        
+    	Button bt = (Button) v.findViewById(R.id.bt_create_territory);
+    	bt.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClass(getActivity(), SetTerritoryActivity.class);
+				startActivity(intent);
+			}
+    		
+    	});
+        
+	    return v;
+	}
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);		
+		super.onActivityCreated(savedInstanceState);
+		
 		API.getUserTerritories(Session.getUser(), new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONArray jsonArray) {
