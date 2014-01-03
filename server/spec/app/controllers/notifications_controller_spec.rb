@@ -1,27 +1,31 @@
+# -*- coding: utf-8 -*-
 require 'spec_helper'
 
 describe "NotificationsController" do
-  before do
-    @user = create(:user)
-    @loc = create(:location)
-    @ter = create(:territory)
-    @det = Detection.new(location: @loc, territory: @ter)
-    @det.save
+  let(:user) { create(:user) }
+  let(:loc) { create(:location) }
 
-    @notification = Notification.new(user: @user, detection: @det, notification_type: "entering")
-    @notification.save
-    @params = {
-      user_id: @user.id,
-      token: @user.token,
-      notification_id: @notification.id
-    }
-    post '/notifications/read', @params
-    @json = JSON.parse last_response.body
-  end
+  let(:ter) { create(:territory) }
+  let(:user2) {
+    u = create(:user2)
+    u.territories << ter
+  }
 
-  it "status check" do
-    expect(last_response).to be_ok
-    @notification.reload
-    expect(@notification.read).to eq(true)
+  describe "#read" do
+    it "レスポンスチェック" do
+      det = Detection.create(location: loc, territory: ter)
+      notif = Notification.new(user: user, detection: det, notification_type: "entering")
+      notif.save
+      params = {
+        user_id: user.id,
+        token: user.token,
+        notification_id: notif.id
+      }
+      post '/notifications/read', params
+      notif.reload
+
+      expect(last_response).to be_ok
+      expect(notif.read).to eq(true)
+    end
   end
 end
