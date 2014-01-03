@@ -25,6 +25,30 @@ describe "TerritoriesController" do
     end
   end
 
+  describe "#detections" do
+    let(:loc) { create(:location) }
+
+    before do
+      @det = Detection.create(territory: ter, location: loc)
+      ter.detections << @det
+      user.my_territories << ter
+      ter.save
+      ter.reload
+
+      params = {id: ter.id, user_id: user.id, token: user.token}
+      get "/territories/detections", params
+    end
+
+    it "レスポンスチェック" do
+      expect(last_response).to be_ok
+    end
+
+    it "Detectionが取得できる" do
+      json = JSON.parse last_response.body
+      expect(json["locations"].map{|l| l["id"]}).to include(loc.id)
+    end
+  end
+
   describe "#move" do
     it "move territory" do
       user.my_territories << ter

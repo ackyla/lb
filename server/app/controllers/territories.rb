@@ -4,7 +4,7 @@ Server::App.controllers :territories do
     login(params)
   end
 
-  before :destroy, :locations, :supply, :move do
+  before :destroy, :locations, :supply, :move, :detections do
     login(params)
     @territory = @user.my_territories.find(params[:id])
   end
@@ -23,6 +23,14 @@ Server::App.controllers :territories do
 
   get :locations, :provides => :json do
     @territory.locations.to_json
+  end
+
+  get :detections, provides: :json do
+    ret = {territory: @territory.to_hash}
+    if @territory.detections.size > 0
+      ret = ret.merge({locations: @territory.detections.map{|d| d.location.to_hash }})
+    end
+    JSON.unparse ret
   end
 
   post :supply, provides: :json do
