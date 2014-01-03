@@ -22,13 +22,6 @@
             android:layout_height="wrap_content"
             android:text="TERRITORY"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/tv_location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="場所: 日本"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
         
         <TextView
             android:id="@+id/tv_radius"
