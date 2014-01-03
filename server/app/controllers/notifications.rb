@@ -4,7 +4,6 @@ Server::App.controllers :notifications do
     @notification = Notification.find_by_id(params[:notification_id])
   end
 
-
   post :read, :provides => :json do
     @notification.read = true
     @notification.save

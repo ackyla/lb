@@ -5,14 +5,10 @@ Server::App.controllers :locations do
     if loc
       loc.save
       ters = Territory.actives.where("owner_id != ?", @user.id).select{|ter|
-        ter.include? loc
+        ter.add_location(loc)
       }
 
       enemies = @user.enemy_territories.to_a
-      ters.each{|ter|
-        ter.add_location loc
-      }
-
       new_ters = (ters - enemies)
       Invasion.destroy_all(user_id: @user.id, territory_id: (enemies - ters).map{|t| t.id})
 

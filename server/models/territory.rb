@@ -2,8 +2,8 @@
 class Territory < ActiveRecord::Base
   belongs_to :owner, class_name: "User"
   belongs_to :character
+  has_and_belongs_to_many :locations
   has_many :detections
-  has_many :locations, :through => :detections
   has_many :invasions
   has_many :invaders, class_name: "User", through: :invasions, source: :user
   scope :actives, where("expiration_date >= ? ", Time.now)
@@ -15,20 +15,17 @@ class Territory < ActiveRecord::Base
   end
 
   def detect(user, loc)
-    self.invaders << user
-    det = self.detections.where(location_id: loc.id).first
-    self.owner.add_exp(1)
+    invaders << user
+    det = detections.new(location: loc)
+    owner.add_exp 1
     Notification.create(notification_type: "entering", user: user, detection: det)
     Notification.create(notification_type: "detection", user: self.owner, detection: det)
   end
 
   def add_location(loc)
-    locations << loc if self.include? loc
-  end
-
-  def include?(loc)
-    dist = distance(loc)
-    dist < self.radius
+    return unless distance(loc) < self.radius
+    locations << loc
+    self.save
   end
 
   def distance(loc)
