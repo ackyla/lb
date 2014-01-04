@@ -16,6 +16,8 @@ public class Character {
 	private double precision;
 	@JsonKey
 	private int cost;
+	@JsonKey
+	private double distance;
 	
 	public void setId(int id) {
 		this.id = id;
@@ -50,5 +52,12 @@ public class Character {
 	}
 	public int getCost() {
 		return cost;
+	}
+	
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
+	public double getDistance() {
+		return distance;
 	}
 }

@@ -61,6 +61,7 @@ import android.widget.TabHost.OnTabChangeListener;
 public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMapFragmentListener, OnCharacterListFragmentItemClickListener {
 	private GoogleMap gMap;
 	private Circle mCircle;
+	private Circle mDistance;
 	private ProgressDialog mProgressDialog;
 	private AlertDialog mSelectDialog;
 	private Character mCharacter;
@@ -129,6 +130,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 				@Override
 				public void onMyLocationChange(Location location) {
 					mCircle = addTerritory(new LatLng(location.getLatitude(), location.getLongitude()), 100.0);
+					mDistance = addDistance(new LatLng(location.getLatitude(), location.getLongitude()), 10000.0);
 					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
 					gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す
 					v.setVisibility(View.VISIBLE);
@@ -252,6 +254,16 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 		circleOptions.fillColor(Color.argb(50, 0, 255, 0));
 		return gMap.addCircle(circleOptions);
 	}
+	
+	public Circle addDistance(LatLng latlng, Double radius) {
+		CircleOptions circleOptions = new CircleOptions();
+		circleOptions.center(latlng);
+		circleOptions.strokeWidth(2);
+		circleOptions.radius(radius);
+		circleOptions.strokeColor(Color.argb(200, 0, 255, 255));
+		circleOptions.fillColor(Color.argb(50, 0, 255, 255));
+		return gMap.addCircle(circleOptions);
+	}
 
 	@Override
 	public void onClickCharacterListItem(Character character) {
@@ -260,6 +272,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 		}else{
 			mCharacter = character;
 			mCircle.setRadius(character.getRadius());
+			mDistance.setRadius(character.getDistance());
 			mSelectDialog.cancel();
 		}
 	}

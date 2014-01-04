@@ -39,6 +39,9 @@ public class CharacterAdapter extends ArrayAdapter<Character>{
 		
 		TextView tv4 = (TextView)convertView.findViewById(R.id.tv_cost);
 		tv4.setText("消費陣力: "+item.getCost());
+		
+		TextView tv5 = (TextView) convertView.findViewById(R.id.tv_distance);
+		tv5.setText("遠隔: "+item.getDistance()/1000+"km");
 
 		return convertView;
 	}
