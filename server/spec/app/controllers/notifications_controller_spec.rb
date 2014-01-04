@@ -4,12 +4,19 @@ require 'spec_helper'
 describe "NotificationsController" do
   let(:user) { create(:user) }
   let(:loc) { create(:location) }
-
-  let(:ter) { create(:territory) }
   let(:user2) {
-    u = create(:user2)
-    u.territories << ter
+    u = build(:user2)
+    u.locations << loc
+    u.save
+    u
   }
+  let(:ter) {
+    t = build(:territory)
+    t.owner = user2
+    t.save
+    t
+  }
+
 
   describe "#read" do
     it "レスポンスチェック" do

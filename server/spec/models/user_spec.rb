@@ -2,15 +2,16 @@
 require 'spec_helper'
 
 describe User do
-
+  let(:loc) { create(:location) }
   let(:char) { create(:character) }
   let(:user) { create(:user) }
 
+
   describe "#add_territory" do
     before do
+      user.add_location(loc)
       @point = user.gps_point
       @ter = user.add_territory(35.0, 135.8, char.id)
-      user.reload
     end
 
     it "テリトリーが追加される" do
@@ -24,16 +25,16 @@ describe User do
 
   describe "#add_location" do
     before do
-      @pre_point = user.gps_point
-      @loc = user.add_location(100, 100)
+      @point = user.gps_point
+      user.add_location(loc)
     end
 
     it "ロケーションが生成される" do
-      expect(user.locations).to include(@loc)
+      expect(user.locations).to include(loc)
     end
 
     it "GPSポイントが増える" do
-      expect(user.gps_point).to be > @pre_point
+      expect(user.gps_point).to be > @point
     end
   end
 
@@ -43,11 +44,11 @@ describe User do
       expect(user.exp).to eq(10)
     end
 
-
     describe "レベルアップ処理" do
       before do
         user.add_exp 110
       end
+
       it "レベルアップする" do
         expect(user.level).to eq(2)
       end

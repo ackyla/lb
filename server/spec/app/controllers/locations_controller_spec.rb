@@ -2,6 +2,8 @@
 require 'spec_helper'
 
 describe "LocationsController" do
+  let(:loc) { create(:location) }
+
   describe "#create" do
     before do
       @user = create(:user)
@@ -13,9 +15,13 @@ describe "LocationsController" do
       }
       @pre_point = @user.gps_point
       @user2 = create(:user2)
-      @ter = create(:territory)
+      @user2.locations << loc
+      @ter = build(:territory)
       @user2.my_territories << @ter
+      @ter.save
+      @user2.save
       post "/locations/create", @params
+
       @user.reload
       @ter.reload
     end

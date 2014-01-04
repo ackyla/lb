@@ -19,20 +19,21 @@ class User < ActiveRecord::Base
     return if character.cost > self.gps_point
 
     ter = self.my_territories.new(latitude: latitude, longitude: longitude, character: character)
+    return unless ter.within_range(locations.last)
+
     self.gps_point -= character.cost
     return (save and ter)
   end
 
-  def add_location(latitude, longitude)
+  def add_location(loc)
     recent_location = locations.order('created_at desc').first
     if recent_location
       time_interval = Time.now - recent_location.created_at
       return if time_interval < MINIMUM_TIME_INTERVAL
     end
-
-    loc = self.locations.new(latitude: latitude, longitude: longitude)
+    locations << loc
     self.gps_point += 1 if self.gps_point < self.gps_point_limit
-    return (save and loc)
+    save
   end
 
   def supply(ter, point)

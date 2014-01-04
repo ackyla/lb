@@ -22,8 +22,9 @@ FactoryGirl.define do
 
   factory :character do
     name "テストキャラ"
-    radius 1000
     precision 1.0
+    radius 1000
+    distance 1000
     cost 100
   end
 

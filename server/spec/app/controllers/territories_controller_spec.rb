@@ -2,13 +2,22 @@
 require 'spec_helper'
 
 describe "TerritoriesController" do
-  let(:user) { create(:user) }
+  let(:loc) { create(:location) }
+  let(:user) {
+    u = create(:user)
+    u.add_location(loc)
+    u
+  }
   let(:ter) { create(:territory) }
   let(:char) { create(:character) }
 
   describe "#create" do
     before do
-      params = {latitude: 100, longitude: 100, character_id: char.id, user_id: user.id, token: user.token}
+      params = {
+        latitude: loc.latitude, longitude: loc.longitude,
+        user_id: user.id, token: user.token,
+        character_id: char.id
+      }
       post "/territories/create", params
       user.reload
     end

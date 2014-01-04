@@ -26,20 +26,9 @@ class Territory < ActiveRecord::Base
   end
 
   def add_location(loc)
-    return unless distance(loc) < self.radius
+    return unless loc.distance(self) < self.radius
     locations << loc
     self.save
-  end
-
-  def distance(loc)
-    y1 = self.latitude * Math::PI / 180
-    x1 = self.longitude * Math::PI / 180
-    y2 = loc.latitude * Math::PI / 180
-    x2 = loc.longitude * Math::PI / 180
-    earth_r = 6378140
-    deg = Math::sin(y1) * Math::sin(y2) + Math::cos(y1) * Math::cos(y2) * Math::cos(x2 - x1)
-    distance = earth_r * (Math::atan(-deg / Math::sqrt(-deg * deg + 1)) + Math::PI / 2)
-    return distance
   end
 
   def to_hash
@@ -52,5 +41,9 @@ class Territory < ActiveRecord::Base
   def supply(point)
     self.expiration_date += (point * 10).hours
     self.save
+  end
+
+  def within_range(loc)
+    loc.distance(self) < self.character.distance
   end
 end
