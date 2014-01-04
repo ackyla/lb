@@ -2,11 +2,16 @@
 require 'spec_helper'
 
 describe Territory do
+  let (:ter) { create(:territory) }
+  let (:char) { create(:character) }
+
   describe "#create" do
-    it "territory.radius == character.radius" do
-      ter = create(:territory)
-      char = create(:character)
+    it "radiusがキャラクターの値からコピーされる" do
       expect(ter.radius).to eq(char.radius)
+    end
+
+    it "precisionがキャラクターの値からコピーされる" do
+      expect(ter.precision).to eq(char.precision)
     end
   end
 end

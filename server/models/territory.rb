@@ -10,6 +10,7 @@ class Territory < ActiveRecord::Base
 
   before_create do
     self.radius = character.radius
+    self.precision = character.precision
     # デフォルトの有効期限は1日
     self.expiration_date = DateTime.now + 1
   end
@@ -18,8 +19,10 @@ class Territory < ActiveRecord::Base
     invaders << user
     det = detections.new(location: loc)
     owner.add_exp 1
-    Notification.create(notification_type: "entering", user: user, detection: det)
-    Notification.create(notification_type: "detection", user: self.owner, detection: det)
+    [
+      Notification.create(notification_type: "entering", user: user, detection: det),
+      Notification.create(notification_type: "detection", user: self.owner, detection: det)
+    ]
   end
 
   def add_location(loc)
