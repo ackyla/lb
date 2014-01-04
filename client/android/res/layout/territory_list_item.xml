@@ -37,5 +37,12 @@
             android:text="精度: 50%"
             android:textAppearance="?android:attr/textAppearanceSmall" />
         
+        <TextView
+            android:id="@+id/tv_detection_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="発見数: 0人"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+        
     </LinearLayout>
 </LinearLayout>

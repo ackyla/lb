@@ -38,6 +38,12 @@ public class TerritoryAdapter extends ArrayAdapter<Territory>{
 		
 		TextView tv2 = (TextView) convertView.findViewById(R.id.tv_radius);
 		tv2.setText("半径: " + item.getRadius()/1000 + "km");
+		
+		TextView tv3 = (TextView) convertView.findViewById(R.id.tv_precision);
+		tv3.setText("精度: " + item.getPrecision()*100 + "%");
+		
+		TextView tv4 = (TextView) convertView.findViewById(R.id.tv_detection_count);
+		tv4.setText("発見数: " + item.getDetectionCount() + "人");
 
 		return convertView;
 	}

@@ -31,6 +31,8 @@ import com.lb.api.API;
 import com.lb.logic.ILocationUpdateServiceClient;
 import com.lb.logic.LocationUpdateService;
 import com.lb.model.Session;
+import com.lb.model.Territory;
+import com.lb.model.TerritoryGen;
 import com.lb.model.User;
 import com.lb.model.UserGen;
 import com.lb.model.Utils;
@@ -298,24 +300,27 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 				
 				@Override
 				public void onSuccess(JSONArray jsonArray) {
-					for(int i = 0; i < jsonArray.length(); i ++) {
-						try {
-							JSONObject json = jsonArray.getJSONObject(i);
-
-							// TODO
-							TerritoryMarker territoryMarker = new TerritoryMarker();
-							territoryMarker.setCenter(new LatLng(json.getDouble("latitude"), json.getDouble("longitude")));
-							territoryMarker.setRadius(json.getDouble("radius"));
-							territoryMarker.setColor(0, 255, 0);
-							territoryMarker.setTitle("territory_" + json.getInt("id"));
-							territoryMarker.setSnippet("7,200,000,000人発見しました");
-							territoryMarker.addTo(gMap);
-							if(json.getInt("id") == mTerritoryId) {								
-								territoryMarker.showInfoWindow();
-								mTerritoryId = 0;
-							}
-						} catch (JSONException e) {
-							e.printStackTrace();
+					List<Territory> territories = new ArrayList<Territory>();
+					try {
+						territories = TerritoryGen.getList(jsonArray.toString());
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					} catch (JsonFormatException e1) {
+						e1.printStackTrace();
+					}
+					
+					for(int i = 0; i < territories.size(); i ++) {
+						Territory territory = territories.get(i);
+						TerritoryMarker territoryMarker = new TerritoryMarker();
+						territoryMarker.setCenter(new LatLng(territory.getLatitude(), territory.getLongitude()));
+						territoryMarker.setRadius(territory.getRadius());
+						territoryMarker.setColor(0, 255, 0);
+						territoryMarker.setTitle("territory_" + territory.getId());
+						territoryMarker.setSnippet(territory.getDetectionCount() + "人発見しました");
+						territoryMarker.addTo(gMap);
+						if(territory.getId() == mTerritoryId) {
+							territoryMarker.showInfoWindow();
+							mTerritoryId = 0;
 						}
 					}
 				}
@@ -389,7 +394,6 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 
 				@Override
 				public void onInfoWindowClick(Marker marker) {
-					
 				}
 				
 			});
