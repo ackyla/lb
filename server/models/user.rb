@@ -36,10 +36,9 @@ class User < ActiveRecord::Base
     save
   end
 
-  def supply(ter, point)
-    return if (point > self.gps_point)
+  def use_point(point)
     self.gps_point -= point
-    ter.supply(point) and self.save
+    save
   end
 
   def add_exp(exp_point)

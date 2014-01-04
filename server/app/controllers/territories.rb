@@ -36,10 +36,8 @@ Server::App.controllers :territories do
   post :supply, provides: :json do
     return status_failure "GPSポイントが指定されていません." unless params[:gps_point]
     point = params[:gps_point].to_i
-    if @user.supply(@territory, point)
-      return JSON.unparse(status_ok({supplied_point: point, terrritory: @territory.to_hash}))
-    end
-    return status_failure
+    return status_failure unless @territory.supply point
+    return JSON.unparse(status_ok({supplied_point: point, terrritory: @territory.to_hash}))
   end
 
   post :move, provides: :json do

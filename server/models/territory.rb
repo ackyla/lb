@@ -39,8 +39,9 @@ class Territory < ActiveRecord::Base
   end
 
   def supply(point)
+    return unless owner.use_point point
     self.expiration_date += (point * 10).hours
-    self.save
+    save
   end
 
   def within_range(loc)
