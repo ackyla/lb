@@ -17,6 +17,7 @@ describe "LocationsController" do
       @user2.my_territories << @ter
       post "/locations/create", @params
       @user.reload
+      @ter.reload
     end
 
     it "レスポンス チェック" do
@@ -34,6 +35,7 @@ describe "LocationsController" do
     it "侵入状態の更新" do
       expect(@user.enemy_territories).to include(@ter)
       expect(@ter.invaders).to include(@user)
+      expect(@ter.detection_count).to eq(1)
     end
 
     it "陣力の増加" do
