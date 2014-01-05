@@ -43,7 +43,8 @@ public class NotificationListFragment extends ListFragment {
 			public void onSuccess(JSONArray jsonArray) {
 				List<NotificationData> objects = new ArrayList<NotificationData>();
 				
-				for(int i = 0; i < jsonArray.length(); i ++) {
+				// TODO
+				for(int i = jsonArray.length()-1; i >= 0; i --) {
 					try {
 						JSONObject json = jsonArray.getJSONObject(i);
 						NotificationData item = new NotificationData();
