@@ -10,6 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
+import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.UiSettings;
@@ -49,6 +53,7 @@ public class LocationHistoryActivity extends FragmentActivity implements OnGoogl
 	private GoogleMap gMap;
 	private ProgressDialog mProgressDialog;
 	private Calendar mCal;
+	private LocationClient mLocationClient;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -106,14 +111,27 @@ public class LocationHistoryActivity extends FragmentActivity implements OnGoogl
 			settings.setMyLocationButtonEnabled(true);
 			
 			// カメラを現在位置にフォーカスする
-			gMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener(){
+			mLocationClient = new LocationClient(getApplicationContext(), new ConnectionCallbacks() {
 				@Override
-				public void onMyLocationChange(Location location) {
-					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
-					gMap.setOnMyLocationChangeListener(null); // 一回移動したらリスナーを殺す
+				public void onConnected(Bundle bundle) {					
+					Location location = mLocationClient.getLastLocation();
+					LatLng latlng = Utils.getDefaultLatLng();
+					if(location != null) latlng = new LatLng(location.getLatitude(), location.getLongitude());
+					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 12));
+					v.setVisibility(View.VISIBLE);
+					mLocationClient.disconnect();
+				}
+
+				@Override
+				public void onDisconnected() {
+				}
+	    	}, new OnConnectionFailedListener() {
+				@Override
+				public void onConnectionFailed(ConnectionResult result) {
 					v.setVisibility(View.VISIBLE);
 				}
 			});
+	    	mLocationClient.connect();
 			
 		}
 	}

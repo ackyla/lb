@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.lb.R;
 
 import android.app.ProgressDialog;
@@ -43,5 +44,13 @@ public class Utils {
     	user.setToken(sessionUser.getToken());
     	Session.setUser(user);
     	return user;
+    }
+    
+    /**
+     * 富士山のLatLngを返す
+     * @return
+     */
+    public static LatLng getDefaultLatLng() {
+    	return new LatLng(35.360549, 138.727786);
     }
 }
