@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import com.lb.R;
 import com.lb.model.Territory;
+import com.lb.model.Utils;
 
 import android.content.Context;
 import android.location.Address;
@@ -45,6 +46,9 @@ public class TerritoryAdapter extends ArrayAdapter<Territory>{
 		TextView tv4 = (TextView) convertView.findViewById(R.id.tv_detection_count);
 		tv4.setText("発見数: " + item.getDetectionCount() + "人");
 
+		TextView tv5 = (TextView) convertView.findViewById(R.id.tv_expiration_date);
+		tv5.setText("期限: " + Utils.getRelativeTimeSpanString(Utils.parseStringToDate(item.getExpirationDate())));
+		
 		return convertView;
 	}
 }

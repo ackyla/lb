@@ -2,6 +2,8 @@ package com.lb.ui;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -12,6 +14,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -44,18 +47,17 @@ public class NotificationListFragment extends ListFragment {
 					try {
 						JSONObject json = jsonArray.getJSONObject(i);
 						NotificationData item = new NotificationData();
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
-						Log.i("game", "json="+json);
 						item.setId(json.getInt("notification_id"));
 						item.setRead(json.getBoolean("read"));
 						String type = json.getString("notification_type");
+						Date date = Utils.parseStringToDate(json.getString("created_at"));
+						item.setMessage(Utils.getRelativeTimeSpanString(date));
 						if(type.equals("entering")) {
 							// みつかった
 							item.setType(NotificationData.TYPE_DETECTED);
 							item.setTitle(json.getJSONObject("territory_owner").getString("name") + " のテリトリーに入りました");
 							item.setLatitude(json.getJSONObject("location").getDouble("latitude"));
 							item.setLongitude(json.getJSONObject("location").getDouble("longitude"));
-							item.setMessage(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に見つかった");
 							item.setTerritoryId(0);
 						}else{
 							// みつけた
@@ -64,7 +66,6 @@ public class NotificationListFragment extends ListFragment {
 							item.setLatitude(json.getJSONObject("territory").getDouble("latitude"));
 							item.setLongitude(json.getJSONObject("territory").getDouble("longitude"));
 							item.setTerritoryId(json.getJSONObject("territory").getInt("territory_id"));
-							item.setMessage(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
 						}
 						
 						objects.add(item);

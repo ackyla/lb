@@ -1,6 +1,7 @@
 package com.lb.logic;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.TimerTask;
 
 import org.json.JSONArray;
@@ -155,30 +156,28 @@ public class LocationUpdateService extends Service{
 						for(int i = 0; i < jsonArray.length(); i ++) {
 							try {
 								JSONObject json = jsonArray.getJSONObject(i);
-						        SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
 							    Intent intent = new Intent(LocationUpdateService.this, GameActivity.class);
 							    intent.putExtra("notification_id", json.getInt("notification_id"));
 							    intent.putExtra("read", json.getBoolean("read"));
 							    Notification.Builder builder = new Notification.Builder(getApplicationContext());
 								String type = json.getString("notification_type");
+								Date date = Utils.parseStringToDate(json.getString("created_at"));								
 								if(type.equals("entering")) {
 									// みつかった
 								    builder.setTicker(json.getJSONObject("territory_owner").getString("name") + " のテリトリーに入りました");
 								    builder.setContentTitle(json.getJSONObject("territory_owner").getString("name") + " のテリトリーに入りました");
 								    builder.setContentText("タップして詳細を見る");
-								    builder.setContentInfo(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に見つかった");
 								    builder.setSmallIcon(android.R.drawable.ic_menu_info_details);
 								    intent.putExtra("latitude", json.getJSONObject("location").getDouble("latitude"));
 								    intent.putExtra("longitude", json.getJSONObject("location").getDouble("longitude"));
 								    intent.putExtra("title", json.getJSONObject("territory_owner").getString("name") + " のテリトリーに入りました");
-								    intent.putExtra("message", sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に見つかった");
 								    intent.putExtra("notification_type", NotificationData.TYPE_DETECTED);
+									intent.putExtra("message", Utils.getRelativeTimeSpanString(date));
 								}else{
 									// みつけた
 								    builder.setTicker("テリトリー_"+json.getJSONObject("territory").getInt("territory_id")+"への侵入者発見");
 								    builder.setContentTitle("テリトリー_"+json.getJSONObject("territory").getInt("territory_id")+"への侵入者発見");
 								    builder.setContentText("タップして詳細を見る");
-								    builder.setContentInfo(sdf.format(Utils.parseStringToDate(json.getString("created_at")))+" に侵入");
 								    builder.setSmallIcon(android.R.drawable.ic_menu_mylocation);
 								    intent.putExtra("latitude", json.getJSONObject("territory").getDouble("latitude"));
 								    intent.putExtra("longitude", json.getJSONObject("territory").getDouble("longitude"));
@@ -186,6 +185,7 @@ public class LocationUpdateService extends Service{
 								    intent.putExtra("territory_id", json.getJSONObject("territory").getInt("territory_id"));
 								}
 								PendingIntent pendingIntent = PendingIntent.getActivity(LocationUpdateService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+								builder.setContentInfo(Utils.getRelativeTimeSpanString(date));
 							    builder.setContentIntent(pendingIntent);
 							    builder.setVibrate(new long[] {1000, 700, 250});
 							    builder.setAutoCancel(true);

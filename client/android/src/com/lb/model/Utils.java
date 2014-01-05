@@ -2,6 +2,7 @@ package com.lb.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -9,6 +10,7 @@ import com.lb.R;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.view.WindowManager.BadTokenException;
 
 public class Utils {
@@ -36,6 +38,16 @@ public class Utils {
 			e.printStackTrace();
 		}
         return date;
+    }
+    
+    /**
+     * 現在時刻との相対時間を返す
+     * @param date
+     * @return
+     */
+    public static String getRelativeTimeSpanString(Date date) {
+    	Date now = Calendar.getInstance().getTime();
+    	return DateUtils.getRelativeTimeSpanString(date.getTime(), now.getTime(), DateUtils.FORMAT_ABBREV_RELATIVE).toString();
     }
     
     public static User updateSessionUserInfo(User user) {
