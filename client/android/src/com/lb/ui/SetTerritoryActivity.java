@@ -46,6 +46,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -55,11 +56,16 @@ import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.TabHost.OnTabChangeListener;
@@ -78,12 +84,26 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 		super.onResume();
 		
 		if(mSelectDialog == null) {
+			LinearLayout v = (LinearLayout) getLayoutInflater().inflate(R.layout.character_list_dialog, null);
+			Button bt = (Button) v.findViewById(R.id.bt_cancel);
+			bt.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					if (mSelectDialog != null) {
+						finish();
+						mSelectDialog.cancel();
+					}
+				}
+				
+			});
+			
 			AlertDialog.Builder builder = new AlertDialog.Builder(SetTerritoryActivity.this);
 			builder.setTitle("設置するテリトリーを選んで下さい");
 			builder.setMessage("残り陣力: "+Session.getUser().getGps_Point());
-			builder.setView(getLayoutInflater().inflate(R.layout.character_list_dialog, null));
+			builder.setView(v);
 			builder.setCancelable(false);
-			builder.setNeutralButton("キャンセル", new AlertDialog.OnClickListener() {
+			/*builder.setNegativeButton("キャンセル", new AlertDialog.OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -91,7 +111,8 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 					dialog.cancel();
 				}
 				
-			});
+			});*/
+			
 			mSelectDialog = builder.create();
 			mSelectDialog.show();
 		}
