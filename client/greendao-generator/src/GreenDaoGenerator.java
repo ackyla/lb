@@ -5,7 +5,7 @@ import de.greenrobot.daogenerator.Schema;
 public class GreenDaoGenerator {
 	
 	public static void main(String[] args) throws Exception {
-		Schema schema = new Schema(4, "com.lb");
+		Schema schema = new Schema(5, "com.lb");
 		addAuth(schema);
 		new DaoGenerator().generateAll(schema, "../android/src-gen");
 	}
@@ -15,5 +15,7 @@ public class GreenDaoGenerator {
 		auth.addIdProperty().autoincrement();
 		auth.addIntProperty("user_id").notNull();
 		auth.addStringProperty("token");
+		auth.addStringProperty("name");
+		auth.addStringProperty("url");
 	}
 }

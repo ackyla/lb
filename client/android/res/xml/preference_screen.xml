@@ -5,6 +5,15 @@
 	<SwitchPreference
 		android:key="background"
 		android:title="常駐"
-		android:summary="常駐します" />
+		android:summary="常駐します"
+		android:defaultValue="true" />
+	
+	<!-- エンドポイント -->
+	<ListPreference
+	    android:key="debug_mode_url"
+	    android:title="APIのurl"
+	    android:summary="デバッグモード"
+	    android:entries="@array/debug_server_urls"
+	    android:entryValues="@array/debug_server_urls" />
 	
 </PreferenceScreen>

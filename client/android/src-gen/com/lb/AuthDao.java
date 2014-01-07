@@ -26,6 +26,8 @@ public class AuthDao extends AbstractDao<Auth, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property User_id = new Property(1, int.class, "user_id", false, "USER_ID");
         public final static Property Token = new Property(2, String.class, "token", false, "TOKEN");
+        public final static Property Name = new Property(3, String.class, "name", false, "NAME");
+        public final static Property Url = new Property(4, String.class, "url", false, "URL");
     };
 
 
@@ -43,7 +45,9 @@ public class AuthDao extends AbstractDao<Auth, Long> {
         db.execSQL("CREATE TABLE " + constraint + "'AUTH' (" + //
                 "'_id' INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "'USER_ID' INTEGER NOT NULL ," + // 1: user_id
-                "'TOKEN' TEXT);"); // 2: token
+                "'TOKEN' TEXT," + // 2: token
+                "'NAME' TEXT," + // 3: name
+                "'URL' TEXT);"); // 4: url
     }
 
     /** Drops the underlying database table. */
@@ -67,6 +71,16 @@ public class AuthDao extends AbstractDao<Auth, Long> {
         if (token != null) {
             stmt.bindString(3, token);
         }
+ 
+        String name = entity.getName();
+        if (name != null) {
+            stmt.bindString(4, name);
+        }
+ 
+        String url = entity.getUrl();
+        if (url != null) {
+            stmt.bindString(5, url);
+        }
     }
 
     /** @inheritdoc */
@@ -81,7 +95,9 @@ public class AuthDao extends AbstractDao<Auth, Long> {
         Auth entity = new Auth( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getInt(offset + 1), // user_id
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // token
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // token
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // name
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // url
         );
         return entity;
     }
@@ -92,6 +108,8 @@ public class AuthDao extends AbstractDao<Auth, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setUser_id(cursor.getInt(offset + 1));
         entity.setToken(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setUrl(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
      }
     
     /** @inheritdoc */

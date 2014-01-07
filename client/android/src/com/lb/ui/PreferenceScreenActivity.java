@@ -2,6 +2,7 @@ package com.lb.ui;
 
 import com.lb.R;
 import com.lb.logic.LocationUpdateService;
+import com.lb.model.Session;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -10,11 +11,12 @@ import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.util.Log;
+import android.widget.Toast;
 
-public class PreferenceScreenActivity extends Activity{
+public class PreferenceScreenActivity extends Activity {
 	
 	public static final String PREF_KEY_BACKGROUND = "background";
-	private static LocationUpdateService updateService;
+	public static final String PREF_KEY_DEBUG_MODE_URL = "debug_mode_url";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,11 @@ public class PreferenceScreenActivity extends Activity{
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 			addPreferencesFromResource(R.xml.preference_screen);
+			
+			// デバッグモードじゃないときはURL選択を表示しない
+			if (!getResources().getBoolean(R.bool.debug_mode)) {
+				getPreferenceScreen().removePreference(this.getPreferenceScreen().findPreference(PREF_KEY_DEBUG_MODE_URL));
+			}
 		}
 		
         @Override
@@ -48,11 +55,8 @@ public class PreferenceScreenActivity extends Activity{
             
         	@Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        		
-        		if (key.equals(PREF_KEY_BACKGROUND)) {
-        			if(sharedPreferences.getBoolean(PREF_KEY_BACKGROUND, true)) {
-        				Log.i("game", "on");
-        			}
+        		if (key.equals(PREF_KEY_DEBUG_MODE_URL)) {        			
+        			Toast.makeText(getActivity(), "APIのurlを" + sharedPreferences.getString(PREF_KEY_DEBUG_MODE_URL, "") + "に設定しました", Toast.LENGTH_LONG).show();
         		}
             }
 

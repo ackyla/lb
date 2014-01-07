@@ -63,7 +63,7 @@ public class SignupActivity extends Activity implements OnClickListener {
 					Session session = (Session) getApplication();
 					DaoSession daoSession = session.getDaoSession();
 					authDao = daoSession.getAuthDao();
-					auth = new Auth(null, user.getId(), user.getToken());
+					auth = new Auth(null, user.getId(), user.getToken(), user.getName(), "");
 					authDao.insert(auth);
 					
 					Session.setUser(user);

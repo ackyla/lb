@@ -9,6 +9,8 @@ public class Auth {
     private Long id;
     private int user_id;
     private String token;
+    private String name;
+    private String url;
 
     public Auth() {
     }
@@ -17,10 +19,12 @@ public class Auth {
         this.id = id;
     }
 
-    public Auth(Long id, int user_id, String token) {
+    public Auth(Long id, int user_id, String token, String name, String url) {
         this.id = id;
         this.user_id = user_id;
         this.token = token;
+        this.name = name;
+        this.url = url;
     }
 
     public Long getId() {
@@ -45,6 +49,22 @@ public class Auth {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
 }

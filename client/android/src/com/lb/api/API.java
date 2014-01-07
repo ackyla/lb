@@ -1,23 +1,22 @@
 package com.lb.api;
 
-import java.util.ArrayList;
-import java.util.Date;
-
+import android.app.Application;
 import android.location.Location;
+import android.preference.PreferenceManager;
 
 import com.lb.R;
 import com.lb.model.Session;
 import com.lb.model.User;
+import com.lb.ui.PreferenceScreenActivity;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 public class API {
-	private static final String URL = Session.getContext().getString(R.string.server_url);
 	private static AsyncHttpClient client = new AsyncHttpClient();
 	
 	public static void get(String url, RequestParams params,
-			AsyncHttpResponseHandler responseHandler) {
+			AsyncHttpResponseHandler responseHandler) {		
 		client.get(getAbsoluteUrl(url), params, responseHandler);
 	}
 
@@ -27,7 +26,12 @@ public class API {
 	}
 
 	private static String getAbsoluteUrl(String relativeUrl) {
-		return URL + relativeUrl;
+		boolean debug = Session.getContext().getResources().getBoolean(R.bool.debug_mode);
+		String url = Session.getContext().getResources().getString(R.string.server_url);
+		if (debug) {
+			url = PreferenceManager.getDefaultSharedPreferences(Session.getContext()).getString(PreferenceScreenActivity.PREF_KEY_DEBUG_MODE_URL, url);
+		}
+		return url + relativeUrl;
 	}
 
 	private static void setUserParams(User user, RequestParams params) {
