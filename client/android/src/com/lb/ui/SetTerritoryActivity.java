@@ -24,6 +24,8 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -72,7 +74,7 @@ import android.widget.TabHost.OnTabChangeListener;
 
 public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMapFragmentListener, OnCharacterListFragmentItemClickListener {
 	private GoogleMap gMap;
-	private Circle mCircle;
+	private TerritoryMarker mTerritoryMarker;
 	private Circle mDistance;
 	private ProgressDialog mProgressDialog;
 	private AlertDialog mSelectDialog;
@@ -160,7 +162,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 					Location location = mLocationClient.getLastLocation();
 					LatLng latlng = Utils.getDefaultLatLng();
 					if(location != null) latlng = new LatLng(location.getLatitude(), location.getLongitude());
-					mCircle = addTerritory(latlng, 100.0);
+					mTerritoryMarker = addTerritory(latlng, 100.0, BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
 					mDistance = addDistance(latlng, 10000.0);
 					gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 12));
 					v.setVisibility(View.VISIBLE);
@@ -191,7 +193,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 					for(int i = 0; i < jsonArray.length(); i ++) {
 						try {
 							JSONObject json = jsonArray.getJSONObject(i);
-							addTerritory(new LatLng(json.getDouble("latitude"), json.getDouble("longitude")), json.getDouble("radius"));
+							addTerritory(new LatLng(json.getDouble("latitude"), json.getDouble("longitude")), json.getDouble("radius"), BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
@@ -213,7 +215,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 			gMap.setOnCameraChangeListener(new OnCameraChangeListener() {
 				@Override
 				public void onCameraChange(CameraPosition pos) {
-					if(mCircle != null) mCircle.setCenter(pos.target);
+					if(mTerritoryMarker != null) mTerritoryMarker.updateCenter(pos.target);
 				}
 			});
 			
@@ -229,7 +231,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 					builder.setPositiveButton("する", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							API.createTerritory(Session.getUser(), mCircle.getCenter().latitude, mCircle.getCenter().longitude, mCharacter.getId(), new JsonHttpResponseHandler() {
+							API.createTerritory(Session.getUser(), mTerritoryMarker.getCenter().latitude, mTerritoryMarker.getCenter().longitude, mCharacter.getId(), new JsonHttpResponseHandler() {
 								@Override
 								public void onStart() {
 									if (mProgressDialog == null) mProgressDialog = Utils.createProgressDialog(SetTerritoryActivity.this);
@@ -241,7 +243,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 								public void onSuccess(JSONObject json) {
 									try {
 										Utils.updateSessionUserInfo(UserGen.get(json.getJSONObject("user").toString()));
-										addTerritory(mCircle.getCenter(), mCircle.getRadius());
+										addTerritory(mTerritoryMarker.getCenter(), mTerritoryMarker.getRadius(), BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
 									} catch (IOException e) {
 										e.printStackTrace();
 									} catch (JsonFormatException e) {
@@ -286,14 +288,21 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 		}
 	}
 	
-	public Circle addTerritory(LatLng latlng, Double radius) {
-		CircleOptions circleOptions = new CircleOptions();
+	public TerritoryMarker addTerritory(LatLng latlng, Double radius, BitmapDescriptor icon) {
+		TerritoryMarker tm = new TerritoryMarker();
+		tm.setIcon(icon);
+		tm.setCenter(latlng);
+		tm.setRadius(radius);
+		tm.setColor(0, 255, 0);
+		tm.addTo(gMap);
+		return tm;
+		/*CircleOptions circleOptions = new CircleOptions();
 		circleOptions.center(latlng);
 		circleOptions.strokeWidth(5);
 		circleOptions.radius(radius);
 		circleOptions.strokeColor(Color.argb(200, 0, 255, 0));
 		circleOptions.fillColor(Color.argb(50, 0, 255, 0));
-		return gMap.addCircle(circleOptions);
+		return gMap.addCircle(circleOptions);*/
 	}
 	
 	public Circle addDistance(LatLng latlng, Double radius) {
@@ -312,7 +321,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 			Toast.makeText(SetTerritoryActivity.this, "陣力が足りません", Toast.LENGTH_LONG).show();
 		}else{
 			mCharacter = character;
-			mCircle.setRadius(character.getRadius());
+			mTerritoryMarker.updateRadius(character.getRadius());
 			mDistance.setRadius(character.getDistance());
 			mSelectDialog.cancel();
 		}

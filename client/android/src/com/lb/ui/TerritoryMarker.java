@@ -8,12 +8,16 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.MarkerOptionsCreator;
 import com.lb.R;
+import com.lb.model.Utils;
 
 public class TerritoryMarker {
 	
@@ -39,6 +43,10 @@ public class TerritoryMarker {
 		mCircleOpt.radius(radius);
 	}
 	
+	public void setIcon(BitmapDescriptor icon) {
+		mMarkerOpt.icon(icon);
+	}
+	
 	public void setColor(int r, int g, int b) {
 		mCircleOpt.strokeColor(Color.argb(200, r, g, b));
 		mCircleOpt.fillColor(Color.argb(50, r, g, b));
@@ -57,6 +65,22 @@ public class TerritoryMarker {
 			mCircle = map.addCircle(mCircleOpt);
 			mMarker = map.addMarker(mMarkerOpt);
 		}
+	}
+
+	public void updateCenter(LatLng latlng) {
+		mMarker.setPosition(latlng);
+		mCircle.setCenter(latlng);
+	}
+	public void updateRadius(Double radius) {
+		mCircle.setRadius(radius);
+	}
+	public LatLng getCenter() {
+		if (mMarker == null) return Utils.getDefaultLatLng();
+		return mMarker.getPosition();
+	}
+	public Double getRadius() {
+		if (mCircle == null) return 100.0;
+		return mCircle.getRadius();
 	}
 	
 	public void showInfoWindow() {
