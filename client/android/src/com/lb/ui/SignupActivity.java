@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,11 +60,11 @@ public class SignupActivity extends Activity implements OnClickListener {
 				mProgressDialog.dismiss();
 				try {
 					User user = UserGen.get(json.toString());
-					
+					String url = PreferenceManager.getDefaultSharedPreferences(SignupActivity.this).getString(PreferenceScreenActivity.PREF_KEY_DEBUG_MODE_URL, getResources().getString(R.string.server_url));
 					Session session = (Session) getApplication();
 					DaoSession daoSession = session.getDaoSession();
 					authDao = daoSession.getAuthDao();
-					auth = new Auth(null, user.getId(), user.getToken(), user.getName(), "");
+					auth = new Auth(null, user.getId(), user.getToken(), user.getName(), url);
 					authDao.insert(auth);
 					
 					Session.setUser(user);
