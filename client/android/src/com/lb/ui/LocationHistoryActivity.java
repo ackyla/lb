@@ -103,7 +103,7 @@ public class LocationHistoryActivity extends FragmentActivity implements OnGoogl
 	
 	@Override
 	public void onMapReady(GoogleMap map, final View v) {
-		if(gMap == null) {
+		if(gMap == null && map != null) {
 			v.setVisibility(View.INVISIBLE);
 			gMap = map;
 			gMap.setMyLocationEnabled(true);
@@ -145,7 +145,7 @@ public class LocationHistoryActivity extends FragmentActivity implements OnGoogl
 		API.getUserLocations(Session.getUser(), date, new JsonHttpResponseHandler() {
 			@Override
 			public void onStart() {
-				gMap.clear();
+				if (gMap != null) gMap.clear();
 				if (mProgressDialog == null) mProgressDialog = Utils.createProgressDialog(LocationHistoryActivity.this);
 				mProgressDialog.show();
 			}

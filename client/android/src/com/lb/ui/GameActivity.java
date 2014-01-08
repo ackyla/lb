@@ -374,7 +374,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	
 	@Override
 	public void onMapReady(GoogleMap map, final View v) {
-		if(gMap == null) {
+		if(gMap == null && map != null) {
 			v.setVisibility(View.INVISIBLE);
 			gMap = map;
 			gMap.setMyLocationEnabled(true);

@@ -148,7 +148,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 	
 	@Override
 	public void onMapReady(GoogleMap map, final View v) {
-		if(gMap == null) {
+		if(gMap == null && map != null) {
 			v.setVisibility(View.INVISIBLE);
 			gMap = map;
 			gMap.setMyLocationEnabled(true);
