@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- このファイルをコピーしてlocal_values.xmlにして使って下さい -->
 <resources>
-    <!-- string name="google_map_api_key">API_KEY</string -->
-    <!-- string name="server_url">http://hoge.com</string -->
-    <!-- boolean name="debug_mode">true</boolean -->
-    <!-- string-array name="debug_server_urls">
-		<item>http://hoge.com/</item>
-		<item>http://hogehoge.com/</item>
-	</string-array -->
+  <!-- string name="google_map_api_key">API_KEY</string -->
+  <!-- string name="server_url">http://hoge.com</string -->
+  <!-- bool name="debug_mode">true</bool -->
+  <!-- string-array name="debug_server_urls">
+       <item>http://hoge.com/</item>
+       <item>http://hogehoge.com/</item>
+       </string-array -->
 </resources>
