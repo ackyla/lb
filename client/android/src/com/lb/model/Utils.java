@@ -40,6 +40,11 @@ public class Utils {
         return date;
     }
     
+    public static String getDateTimeString(Date date) {
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy'/'MM'/'dd' 'HH':'mm':'ss");
+    	return sdf.format(date);
+    }
+    
     /**
      * 現在時刻との相対時間を返す
      * @param date

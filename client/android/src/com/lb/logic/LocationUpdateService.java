@@ -161,7 +161,7 @@ public class LocationUpdateService extends Service{
 							    intent.putExtra("read", json.getBoolean("read"));
 							    Notification.Builder builder = new Notification.Builder(getApplicationContext());
 								String type = json.getString("notification_type");
-								Date date = Utils.parseStringToDate(json.getString("created_at"));								
+								Date date = Utils.parseStringToDate(json.getString("created_at"));
 								if(type.equals("entering")) {
 									// みつかった
 								    builder.setTicker(json.getJSONObject("territory_owner").getString("name") + " のテリトリーに入りました");
@@ -185,7 +185,7 @@ public class LocationUpdateService extends Service{
 								    intent.putExtra("territory_id", json.getJSONObject("territory").getInt("territory_id"));
 								}
 								PendingIntent pendingIntent = PendingIntent.getActivity(LocationUpdateService.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-								builder.setContentInfo(Utils.getRelativeTimeSpanString(date));
+								builder.setContentInfo(Utils.getDateTimeString(date));
 							    builder.setContentIntent(pendingIntent);
 							    builder.setVibrate(new long[] {1000, 700, 250});
 							    builder.setAutoCancel(true);
