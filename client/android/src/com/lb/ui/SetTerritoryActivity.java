@@ -253,11 +253,8 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 									}
 									Toast.makeText(SetTerritoryActivity.this, "テリトリーを設置しました", Toast.LENGTH_LONG).show();
 									
-									// 陣力が足りなくなったらキャラクターリストを開く
-									if (mCharacter.getCost() > Session.getUser().getGps_Point()) {
-										mSelectDialog.setMessage("残り陣力: " + Session.getUser().getGps_Point());
-										mSelectDialog.show();
-									}
+									mSelectDialog.setMessage("残り陣力: " + Session.getUser().getGps_Point());
+									mSelectDialog.show();
 								}
 
 								@Override
