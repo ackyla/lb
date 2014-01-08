@@ -117,7 +117,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.game, menu);
 		return true;
 	}
 

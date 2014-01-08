@@ -40,6 +40,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -91,9 +92,17 @@ public class LocationHistoryActivity extends FragmentActivity implements OnGoogl
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.history, menu);
+		return true;
+	}
+	
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
-	    // Respond to the action bar's Up/Home button
+	    case R.id.action_reload:
+	    	getLocationHistory(mCal);
+	    	break;
 	    case android.R.id.home:
 	    	NavUtils.navigateUpFromSameTask(this);
 	        return true;
