@@ -2,6 +2,7 @@ package com.lb.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import net.vvakame.util.jsonpullparser.JsonFormatException;
@@ -319,7 +320,12 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 						TerritoryMarker territoryMarker = new TerritoryMarker();
 						territoryMarker.setCenter(new LatLng(territory.getLatitude(), territory.getLongitude()));
 						territoryMarker.setRadius(territory.getRadius());
-						territoryMarker.setColor(0, 255, 0);
+						if (Utils.parseStringToDate(territory.getExpirationDate()).compareTo(Calendar.getInstance().getTime()) <= 0) {
+							territoryMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+							territoryMarker.setColor(50, 50, 50);
+						}else{
+							territoryMarker.setColor(0, 255, 0);
+						}
 						territoryMarker.setTitle("territory_" + territory.getId());
 						territoryMarker.setSnippet(territory.getDetectionCount() + "人発見しました");
 						territoryMarker.addTo(gMap);
