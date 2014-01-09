@@ -245,8 +245,8 @@ public class LocationUpdateService extends Service{
 				Log.v("game", "gps connect");
 				LocationRequest request = LocationRequest.create();
 				request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-				request.setInterval(10000);
-				request.setFastestInterval(10000);
+				request.setInterval(300000);
+				request.setFastestInterval(300000);
 				//request.setSmallestDisplacement(5);
 				locationClient.requestLocationUpdates(request, locationListener);
 			}
