@@ -1,14 +1,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
+        android:id="@+id/action_back"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom"
+        android:title="前のテリトリー"
+        android:icon="@drawable/ic_menu_back"/>
+    <item
+        android:id="@+id/action_forward"
+        android:orderInCategory="2"
+        android:showAsAction="ifRoom"
+        android:title="次のテリトリー"
+        android:icon="@drawable/ic_menu_forward"/>
+    <item
         android:id="@+id/action_reload"
-        android:orderInCategory="1" 
+        android:orderInCategory="3" 
         android:showAsAction="ifRoom"
         android:titleCondensed="地図を更新します" 
         android:title="更新" 
         android:icon="@drawable/ic_menu_refresh" />
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="2"
+        android:orderInCategory="4"
         android:showAsAction="ifRoom"
         android:title="設定" 
         android:icon="@android:drawable/ic_menu_preferences"/>
