@@ -14,4 +14,12 @@ describe Territory do
       expect(ter.precision).to eq(char.precision)
     end
   end
+
+  describe "#actives" do
+    it "有効期限切れのテリトリーをかえさない" do
+      ter.expiration_date = ter.created_at
+      ter.save
+      expect(Territory.actives).to_not include(ter)
+    end
+  end
 end

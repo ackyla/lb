@@ -6,7 +6,7 @@ class Territory < ActiveRecord::Base
   has_many :detections
   has_many :invasions
   has_many :invaders, class_name: "User", through: :invasions, source: :user
-  scope :actives, where("expiration_date >= ? ", Time.now)
+  scope :actives, -> { where("expiration_date >= ? ", Time.now) }
 
   before_create do
     self.radius = character.radius
