@@ -19,6 +19,12 @@
         android:text="見る" />
 
     <Button
+        android:id="@+id/bt_supply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="回復" />
+
+    <Button
         android:id="@+id/territory_destroy_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

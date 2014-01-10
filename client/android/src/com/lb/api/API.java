@@ -122,4 +122,12 @@ public class API {
 		params.put("date", date);
 		get("users/locations", params, handler);
 	}
+	
+	public static void supplyGpsPoint(User user, int territoryId, int gpsPoint, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		setUserParams(user, params);
+		params.put("id", Integer.toString(territoryId));
+		params.put("gps_point", Integer.toString(gpsPoint));
+		post("territories/supply", params, handler);
+	}
 }

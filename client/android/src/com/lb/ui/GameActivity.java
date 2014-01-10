@@ -266,12 +266,8 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	@Override
 	public void onLocationUpdate(JSONObject json) {
 		try {
-			user = UserGen.get(json.getJSONObject("user").toString());
-			Session.setUser(user);
-			if(mGameDropdownAdapter != null) {
-				mGameDropdownAdapter.refreshGpsPoint(0, user.getGps_Point(), user.getGps_Point_Limit());
-				mGameDropdownAdapter.notifyDataSetChanged();
-			}	
+			user = Utils.updateSessionUserInfo(UserGen.get(json.getJSONObject("user").toString()));
+			refreshGameDropdownAdapter();	
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JsonFormatException e) {
@@ -501,5 +497,17 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 		
 		// 既読にする
 		if(!read) API.readNotification(Session.getUser(), id, null);
+	}
+
+	@Override
+	public void onSupply() {
+		refreshGameDropdownAdapter();
+	}
+	
+	private void refreshGameDropdownAdapter() {
+		if(mGameDropdownAdapter != null) {
+			mGameDropdownAdapter.refreshGpsPoint(0, user.getGps_Point(), user.getGps_Point_Limit());
+			mGameDropdownAdapter.notifyDataSetChanged();
+		}
 	}
 }
