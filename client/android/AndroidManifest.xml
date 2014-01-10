@@ -70,6 +70,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lb.ui.GameActivity" />
         </activity>
+        <activity
+            android:name="com.lb.ui.SetAvatarActivity"
+            android:label="@string/app_name" >
+        </activity>
         <activity 
             android:name="com.lb.ui.PreferenceScreenActivity"
             android:label="@string/app_name">

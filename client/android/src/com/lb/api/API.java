@@ -1,6 +1,10 @@
 package com.lb.api;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import android.app.Application;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.preference.PreferenceManager;
 
@@ -129,5 +133,15 @@ public class API {
 		params.put("id", Integer.toString(territoryId));
 		params.put("gps_point", Integer.toString(gpsPoint));
 		post("territories/supply", params, handler);
+	}
+	
+	public static void updateAvatar(User user, Bitmap avatar, AsyncHttpResponseHandler handler) {
+		RequestParams params = new RequestParams();
+		setUserParams(user, params);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		avatar.compress(Bitmap.CompressFormat.PNG, 85, out);
+		byte[] byteArray = out.toByteArray();
+		params.put("avatar", new ByteArrayInputStream(byteArray), "image.png");
+		post("users/avatar", params, handler);
 	}
 }

@@ -165,20 +165,30 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
         item2.setTitle("ロケーション履歴");
         item2.setImage(android.R.drawable.ic_menu_recent_history);
         
+        GameDropdownData item3 = new GameDropdownData();
+        item3.setTitle("アバター設定");
+        item3.setImage(android.R.drawable.ic_menu_crop);
+        
         mGameDropdownAdapter = new GameDropdownAdapter(this);
         mGameDropdownAdapter.add(item);
         mGameDropdownAdapter.add(item2);
+        mGameDropdownAdapter.add(item3);
         actionBar.setListNavigationCallbacks(mGameDropdownAdapter, new OnNavigationListener() {
 
 			@Override
 			public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-				if(itemPosition == 0) {
-					
-				}else{
-					Intent intent = new Intent();
-					intent.setClass(getActivity(), LocationHistoryActivity.class);
-					startActivity(intent);
-					getActionBar().setSelectedNavigationItem(0);
+				Intent intent = new Intent();
+				switch(itemPosition) {
+					case 1:
+						intent.setClass(getActivity(), LocationHistoryActivity.class);
+						startActivity(intent);
+						getActionBar().setSelectedNavigationItem(0);
+						break;
+					case 2:
+						intent.setClass(getActivity(), SetAvatarActivity.class);
+						startActivity(intent);
+						getActionBar().setSelectedNavigationItem(0);
+						break;
 				}
 				return true;
 			}
