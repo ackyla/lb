@@ -92,6 +92,8 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
     private GameDropdownAdapter mGameDropdownAdapter;
     private Integer mTerritoryId = 0;
     private LocationClient mLocationClient;
+    private List<TerritoryMarker> mTerritoryMarkerList;
+    private int mTerritoryMarkerListIndex = 0;
 	private final ServiceConnection serviceConnection = new ServiceConnection() {
 
 		@Override
@@ -133,6 +135,12 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			break;
 		case R.id.action_reload:
 			refreshMap();
+			break;
+		case R.id.action_back:
+			backTerritory();
+			break;
+		case R.id.action_forward:
+			forwardTerritory();
 			break;
 		default:
 			break;
@@ -290,6 +298,8 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 	public void refreshMap() {
 		if(gMap != null) {
 			gMap.clear();
+			if(mTerritoryMarkerList == null) mTerritoryMarkerList = new ArrayList<TerritoryMarker>();
+			mTerritoryMarkerList.clear();
 			
 			// テリトリーを表示
 			API.getUserTerritories(Session.getUser(), new JsonHttpResponseHandler() {
@@ -303,6 +313,7 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 				@Override
 				public void onSuccess(JSONArray jsonArray) {
 					List<Territory> territories = new ArrayList<Territory>();
+					
 					try {
 						territories = TerritoryGen.getList(jsonArray.toString());
 					} catch (IOException e1) {
@@ -329,6 +340,8 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 							territoryMarker.showInfoWindow();
 							mTerritoryId = 0;
 						}
+						
+						mTerritoryMarkerList.add(territoryMarker);
 					}
 				}
 
@@ -509,5 +522,24 @@ public class GameActivity extends FragmentActivity implements ILocationUpdateSer
 			mGameDropdownAdapter.refreshGpsPoint(0, user.getGps_Point(), user.getGps_Point_Limit());
 			mGameDropdownAdapter.notifyDataSetChanged();
 		}
+	}
+	
+	private void forwardTerritory() {
+		if(gMap != null && mTerritoryMarkerList != null) {
+			TerritoryMarker tm = mTerritoryMarkerList.get(mTerritoryMarkerListIndex);
+			gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(tm.getCenter(), 12));			
+			mTerritoryMarkerListIndex ++;
+			if(mTerritoryMarkerListIndex >= mTerritoryMarkerList.size()) mTerritoryMarkerListIndex = 0;
+		}
+	}
+	
+	private void backTerritory() {
+		if(gMap != null && mTerritoryMarkerList != null) {
+			TerritoryMarker tm = mTerritoryMarkerList.get(mTerritoryMarkerListIndex);
+			gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(tm.getCenter(), 12));
+			mTerritoryMarkerListIndex --;
+			if(mTerritoryMarkerListIndex < 0) mTerritoryMarkerListIndex = mTerritoryMarkerList.size()-1;
+		}
+		
 	}
 }
