@@ -58,4 +58,24 @@ describe User do
       end
     end
   end
+
+  describe "#use_point" do
+    before do
+      user.gps_point = 100
+    end
+
+    context "ポイント以下の場合" do
+      it "ポイントを消費する" do
+        expect(user.use_point(30)).to be_true
+        expect(user.gps_point).to eq(70)
+      end
+    end
+
+    context "ポイント以上の場合" do
+      it "ポイントを消費しない" do
+        expect(user.use_point(110)).to be_false
+        expect(user.gps_point).to eq(100)
+      end
+    end
+  end
 end

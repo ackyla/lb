@@ -40,7 +40,13 @@ class Territory < ActiveRecord::Base
 
   def supply(point)
     return unless owner.use_point point
-    self.expiration_date += (point * 10).hours
+    now = DateTime.now
+    inc_time = (point * 10).minutes
+    if self.expiration_date < now
+      self.expiration_date = now + inc_time
+    else
+      self.expiration_date += inc_time
+    end
     save
   end
 
