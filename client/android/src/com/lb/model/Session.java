@@ -2,6 +2,8 @@ package com.lb.model;
 
 import com.lb.DaoSession;
 import com.lb.db.LbDbOpenHelper;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import android.app.Application;
 import android.content.Context;
@@ -22,6 +24,9 @@ public class Session extends Application {
     	super.onCreate();
     	mContext = this;
     	this.dbHelper = new LbDbOpenHelper(this, null);
+    	
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext()).build();
+    	ImageLoader.getInstance().init(config);
     }
     
     public static User getUser() {
