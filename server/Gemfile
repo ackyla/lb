@@ -38,3 +38,4 @@ gem 'mysql2'
 gem 'memcached'
 gem 'database_cleaner'
 gem 'factory_girl', '4.3.0', :group => 'test'
+gem 'carrierwave', :require => %w(carrierwave carrierwave/orm/activerecord)

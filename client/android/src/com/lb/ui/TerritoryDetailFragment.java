@@ -161,7 +161,7 @@ public class TerritoryDetailFragment extends Fragment {
 							public void onSuccess(JSONObject json) {
 								// TODO
 								User user = Session.getUser();
-								user.setGps_Point(user.getGps_Point() - SUPPLY_GPS_POINT);
+								user.setGpsPoint(user.getGpsPoint() - SUPPLY_GPS_POINT);
 								Utils.updateSessionUserInfo(user);
 								listener.onSupply();
 								Toast.makeText(getActivity(), "回復しました", Toast.LENGTH_LONG).show();

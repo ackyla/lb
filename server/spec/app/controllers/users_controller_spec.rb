@@ -18,6 +18,23 @@ describe "UsersController" do
     end
   end
 
+  describe "/users/show" do
+    before do
+      @user = create(:user)
+      @params = {user_id: @user.id}
+      get "/users/show", @params
+      @json = JSON.parse last_response.body
+    end
+
+    it "status check" do
+      expect(last_response).to be_ok
+    end
+
+    it "validate avatar url" do
+      expect(last_response).to be_ok
+    end
+  end
+
   describe "/users/notifications" do
     before do
       @user = create(:user)
@@ -73,6 +90,25 @@ describe "UsersController" do
     it "status check" do
       expect(last_response).to be_ok
       expect(@json.length).to eq(2)
+    end
+  end
+
+  describe "/users/avatar" do
+    before do
+      @user = create(:user)
+      @params = {user_id: @user.id, token: @user.token, avatar: File.open(Padrino.root('public/avatars', 'default_avatar.jpg')) }
+      post "/users/avatar", @params
+      @json = JSON.parse last_response.body
+    end
+
+    it "status check" do
+      expect(last_response).to be_ok
+      expect(@json["avatar"]).not_to be_nil
+    end
+
+    it "validate avatar url" do
+      get @json["avatar"]
+      expect(last_response).to be_ok
     end
   end
 end

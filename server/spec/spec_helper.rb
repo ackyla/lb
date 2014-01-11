@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 PADRINO_ENV = 'test' unless defined?(PADRINO_ENV)
 require File.expand_path(File.dirname(__FILE__) + "/../config/boot")
 
@@ -23,6 +24,29 @@ RSpec.configure do |conf|
 
   conf.after(:each) do
     DatabaseCleaner.clean
+  end
+
+  conf.after(:all) do
+    if Padrino.env == :test
+      FileUtils.rm_rf(Dir["#{Padrino.root}/spec/support/uploads"])
+    end
+  end
+end
+
+if defined?(CarrierWave)
+  constants = Object.constants.map{|name| Object.const_get(name)}
+
+  constants.select{|c| c.class == Class and c < CarrierWave::Uploader::Base }.each do |klass|
+    next if klass.anonymous?
+    klass.class_eval do
+      def cache_dir
+        "#{Padrino.root}/spec/support/uploads/tmp"
+      end 
+               
+      def store_dir
+        "#{Padrino.root}/spec/support/uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
+      end 
+    end
   end
 end
 

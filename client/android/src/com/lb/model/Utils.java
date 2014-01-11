@@ -7,9 +7,11 @@ import java.util.Date;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.lb.R;
+import com.lb.ui.PreferenceScreenActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.view.WindowManager.BadTokenException;
 
@@ -69,5 +71,14 @@ public class Utils {
      */
     public static LatLng getDefaultLatLng() {
     	return new LatLng(35.360549, 138.727786);
+    }
+    
+    public static String getAbsoluteUrl(String relativeUrl) {
+		boolean debug = Session.getContext().getResources().getBoolean(R.bool.debug_mode);
+		String url = Session.getContext().getResources().getString(R.string.server_url);
+		if (debug) {
+			url = PreferenceManager.getDefaultSharedPreferences(Session.getContext()).getString(PreferenceScreenActivity.PREF_KEY_DEBUG_MODE_URL, url);
+		}
+		return url + relativeUrl;
     }
 }

@@ -9,3 +9,4 @@ db/*.db
 .*.sw*
 vendor/ruby/*
 db/schema.rb
+public/avatars/user

@@ -156,6 +156,7 @@ public class TitleActivity extends Activity {
 			@Override
 			public void onSuccess(JSONObject json) {
 				try {
+					Log.i("game", "user="+json);
 					User user = UserGen.get(json.toString());
 					
 					user.setId(auth.getUser_id());

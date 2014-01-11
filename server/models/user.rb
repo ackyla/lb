@@ -8,6 +8,8 @@ class User < ActiveRecord::Base
   has_many :notifications, dependent: :destroy
   MINIMUM_TIME_INTERVAL = 300
 
+  mount_uploader :avatar, AvatarUploader
+
   before_create do
     token = SecureRandom.base64(16)
     self.token = token
@@ -51,8 +53,15 @@ class User < ActiveRecord::Base
   def to_hash
     hash = Hash[self.attributes]
     hash["user_id"] = self.id
+    hash["avatar"] = self.avatar.url
     hash.delete "id"
     hash
+  end
+
+  def to_json(options=nil)
+    params = self.attributes
+    params["avatar"] = self.avatar.url
+    ActiveSupport::JSON.encode(params, options)
   end
 
   private

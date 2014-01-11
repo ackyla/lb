@@ -139,9 +139,9 @@ public class API {
 		RequestParams params = new RequestParams();
 		setUserParams(user, params);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		avatar.compress(Bitmap.CompressFormat.PNG, 85, out);
+		avatar.compress(Bitmap.CompressFormat.JPEG, 85, out);
 		byte[] byteArray = out.toByteArray();
-		params.put("avatar", new ByteArrayInputStream(byteArray), "image.png");
+		params.put("avatar", new ByteArrayInputStream(byteArray), "image.jpeg");
 		post("users/avatar", params, handler);
 	}
 }

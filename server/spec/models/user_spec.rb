@@ -78,4 +78,16 @@ describe User do
       end
     end
   end
+
+  describe "#update_avatar" do
+    before do
+      user.avatar = File.open Padrino.root('public/avatars', 'default_avatar.jpg')
+      user.save
+    end
+
+    it "アバターが設定される" do
+      expect(user.avatar.file).not_to be_nil
+      expect(File.exists? user.avatar.file.file).to be_true
+    end
+  end
 end

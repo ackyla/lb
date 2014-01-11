@@ -12,13 +12,15 @@ public class User {
 	@JsonKey
 	private static String name;
 	@JsonKey
-	private static int gps_point;
+	private static int gpsPoint;
 	@JsonKey
-	private static int gps_point_limit;
+	private static int gpsPointLimit;
 	@JsonKey
 	private static int level;
 	@JsonKey
 	private static int exp;
+	@JsonKey
+	private static String avatar;
 	
 	public int getId() {
 		return id;
@@ -41,18 +43,18 @@ public class User {
 		this.name = name;
 	}
 	
-	public int getGps_Point() {
-		return gps_point;
+	public int getGpsPoint() {
+		return gpsPoint;
 	}
-	public void setGps_Point(int gps_point) {
-		this.gps_point = gps_point;
+	public void setGpsPoint(int gpsPoint) {
+		this.gpsPoint = gpsPoint;
 	}
 	
-	public int getGps_Point_Limit() {
-		return gps_point_limit;
+	public int getGpsPointLimit() {
+		return gpsPointLimit;
 	}
-	public void setGps_Point_Limit(int gps_point_limit) {
-		this.gps_point_limit = gps_point_limit;
+	public void setGpsPointLimit(int gpsPointLimit) {
+		this.gpsPointLimit = gpsPointLimit;
 	}
 	
 	public int getLevel() {
@@ -67,5 +69,12 @@ public class User {
 	}
 	public void setExp(int exp) {
 		this.exp = exp;
+	}
+	
+	public String getAvatar() {
+		return avatar;
+	}
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 }

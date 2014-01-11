@@ -35,6 +35,13 @@ Bundler.require(:default, PADRINO_ENV)
 # Add your before (RE)load hooks here
 #
 Padrino.before_load do
+  # carrierwave
+  CarrierWave.configure do |config|
+    config.permissions = 0666
+    config.directory_permissions = 0777
+    config.storage = :file
+    config.cache_dir = Padrino.root('tmp')+"/uploads"
+  end
 end
 
 ##

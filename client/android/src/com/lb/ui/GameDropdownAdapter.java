@@ -1,6 +1,10 @@
 package com.lb.ui;
 
 import com.lb.R;
+import com.lb.model.Session;
+import com.lb.model.Utils;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -45,7 +49,13 @@ public class GameDropdownAdapter extends ArrayAdapter<GameDropdownData>{
         pb.setProgress(item.getGpsPoint());
         TextView tv3 =  (TextView) view.findViewById(R.id.tv_gps_point);
         tv3.setText("陣力 "+item.getGpsPoint()+"/"+item.getGpsPointMax());
-        
+        ImageView iv = (ImageView) view.findViewById(R.id.iv_avatar);
+        ImageLoader loader = ImageLoader.getInstance();
+		DisplayImageOptions options = new DisplayImageOptions.Builder()
+        .cacheInMemory(true)
+        .cacheOnDisc(true)
+        .build();
+		loader.displayImage(Utils.getAbsoluteUrl(Session.getUser().getAvatar()), iv, options);
         return view;
     }
  

@@ -102,7 +102,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(SetTerritoryActivity.this);
 			builder.setTitle("設置するテリトリーを選んで下さい");
-			builder.setMessage("残り陣力: "+Session.getUser().getGps_Point());
+			builder.setMessage("残り陣力: "+Session.getUser().getGpsPoint());
 			builder.setView(v);
 			builder.setCancelable(false);
 			/*builder.setNegativeButton("キャンセル", new AlertDialog.OnClickListener() {
@@ -253,7 +253,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 									}
 									Toast.makeText(SetTerritoryActivity.this, "テリトリーを設置しました", Toast.LENGTH_LONG).show();
 									
-									mSelectDialog.setMessage("残り陣力: " + Session.getUser().getGps_Point());
+									mSelectDialog.setMessage("残り陣力: " + Session.getUser().getGpsPoint());
 									mSelectDialog.show();
 								}
 
@@ -314,7 +314,7 @@ public class SetTerritoryActivity extends FragmentActivity implements OnGoogleMa
 
 	@Override
 	public void onClickCharacterListItem(Character character) {
-		if(character.getCost() > Session.getUser().getGps_Point()) {
+		if(character.getCost() > Session.getUser().getGpsPoint()) {
 			Toast.makeText(SetTerritoryActivity.this, "陣力が足りません", Toast.LENGTH_LONG).show();
 		}else{
 			mCharacter = character;

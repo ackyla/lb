@@ -8,7 +8,7 @@ Server::App.controllers :users do
     end
   end
 
-  before :territories, :notifications, :locations do
+  before :territories, :notifications, :locations, :avatar do
     login(params)
   end
 
@@ -45,5 +45,12 @@ Server::App.controllers :users do
   get :locations, :provides => :json do
     locations = Location.where("user_id = ? AND created_at >= ? AND created_at < ?", @user.id, Date.parse(params[:date]), Date.parse(params[:date])+1)
     locations.to_json
+  end
+
+  post :avatar, :provides => :json do
+    @user.avatar = params[:avatar]
+    @user.save
+    res = {:avatar => uri(@user.avatar.url) }
+    res.to_json
   end
 end
