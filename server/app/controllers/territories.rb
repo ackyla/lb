@@ -41,8 +41,8 @@ Server::App.controllers :territories do
   end
 
   post :move, provides: :json do
-    @territory.latitude = params[:latitude]
-    @territory.longitude = params[:longitude]
+    coord = Coordinate.find_or_create(lat: params[:latitude], long: params[:longitude])
+    @territory.coordinate = coord
     @territory.save
     @territory.to_json
   end

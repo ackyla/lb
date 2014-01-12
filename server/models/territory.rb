@@ -2,6 +2,7 @@
 class Territory < ActiveRecord::Base
   belongs_to :owner, class_name: "User"
   belongs_to :character
+  belongs_to :coordinate
   has_and_belongs_to_many :locations
   has_many :detections
   has_many :invasions
@@ -26,7 +27,7 @@ class Territory < ActiveRecord::Base
   end
 
   def add_location(loc)
-    return unless loc.distance(self) < self.radius
+    return unless loc.coordinate.distance(self.coordinate) < self.radius
     locations << loc
     self.save
   end
@@ -50,7 +51,7 @@ class Territory < ActiveRecord::Base
     save
   end
 
-  def within_range(loc)
-    loc.distance(self) < self.character.distance
+  def within_range(coord)
+    coord.distance(self.coordinate) < self.character.distance
   end
 end

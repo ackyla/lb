@@ -20,8 +20,9 @@ class User < ActiveRecord::Base
     return unless character
     return if character.cost > self.gps_point
 
-    ter = self.my_territories.new(latitude: latitude, longitude: longitude, character: character)
-    return unless ter.within_range(locations.last)
+    coord = Coordinate.find_or_create(lat: latitude, long: longitude)
+    ter = self.my_territories.new(character: character, coordinate: coord)
+    return unless ter.within_range(locations.last.coordinate)
 
     self.gps_point -= character.cost
     return (save and ter)

@@ -14,7 +14,8 @@ describe "TerritoriesController" do
   describe "#create" do
     before do
       params = {
-        latitude: loc.latitude, longitude: loc.longitude,
+        latitude: loc.coordinate.lat,
+        longitude: loc.coordinate.long,
         user_id: user.id, token: user.token,
         character_id: char.id
       }
@@ -70,8 +71,8 @@ describe "TerritoriesController" do
       ter.reload
 
       expect(last_response).to be_ok
-      expect(ter.latitude).to eq(params[:latitude])
-      expect(ter.longitude).to eq(params[:longitude])
+      expect(ter.coordinate.lat).to eq(params[:latitude])
+      expect(ter.coordinate.long).to eq(params[:longitude])
     end
   end
 

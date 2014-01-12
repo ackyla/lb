@@ -3,15 +3,14 @@ require 'spec_helper'
 
 describe "LocationsController" do
   let(:loc) { create(:location) }
-
   describe "#create" do
     before do
       @user = create(:user)
       @params = {
         user_id: @user.id,
         token: @user.token,
-        latitude: 35.0,
-        longitude: 135.8
+        latitude: loc.coordinate.lat,
+        longitude: loc.coordinate.long
       }
       @pre_point = @user.gps_point
       @user2 = create(:user2)
@@ -32,10 +31,9 @@ describe "LocationsController" do
 
     it "ロケーションの生成" do
       json = JSON.parse last_response.body
-      loc = Location.find(json["location"]["id"])
       expect(json["status"]).to eq("ok")
       expect(loc).not_to be_nil
-      expect(@user.locations).to include(loc)
+      expect(@user.locations).to include(Location.find(json["location"]["id"]))
     end
 
     it "侵入状態の更新" do
