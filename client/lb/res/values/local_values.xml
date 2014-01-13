@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="google_map_api_key">AIzaSyCRZoXx5YQugvL7ZYHhWM_pdVT-86M3nhw</string>
+  <string name="server_url">http://ackyla.com:3000</string>
+  <bool name="debug_mode">true</bool>
+  <string-array name="debug_server_urls">
+    <item>http://ackyla.com:3000/</item>
+    <item>http://192.168.11.6:3000/</item>
+	</string-array>
+</resources>

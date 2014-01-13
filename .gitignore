@@ -29,3 +29,6 @@ client/android/res/values/local_values.xml
 
 build/
 .gradle/
+
+.idea/
+*.iml
