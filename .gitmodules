@@ -1,0 +1,6 @@
+[submodule "lb-client"]
+	path = lb-client
+	url = https://github.com/ackyla/lb-client.git
+[submodule "lb-server"]
+	path = lb-server
+	url = https://github.com/ackyla/lb-server.git
